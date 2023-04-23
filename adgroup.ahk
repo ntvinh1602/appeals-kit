@@ -13,7 +13,7 @@
 }
 
 :*:``reject:: {
-  AppUI := Gui("+AlwaysOnTop", "Reject - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Reject - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "How many unique violations are there?")
@@ -76,7 +76,7 @@
 }
 
 :*:``terminated:: {
-  AppUI := Gui("+AlwaysOnTop", "Terminated - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Terminated - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of termination?")
@@ -126,7 +126,7 @@
 :*:``ban:: { ; Prohibited/Restricted Industry
   restriction := ["18+", "21+", "25+", "Prohibited Industry"]
 
-  AppUI := Gui("+AlwaysOnTop", "Prohibited/Restricted Industry - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Prohibited/Restricted Industry - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the advertised products/services?")
@@ -169,7 +169,7 @@
 }
 
 :*:``tpp:: { ; Third-party Product
-  AppUI := Gui("+AlwaysOnTop", "Third-party Product - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Third-party Product - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of Third-party Product violation?")
@@ -239,7 +239,7 @@
     "Both video and LP do not have any disclaimers"
   ]
 
-  AppUI := Gui("+AlwaysOnTop", "No Disclaimer - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "No Disclaimer - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the advertised product?")
@@ -317,7 +317,7 @@
 }
 
 :*:``counterfeit:: { ; Counterfeit Product
-  AppUI := Gui("+AlwaysOnTop", "Counterfeit Product - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Counterfeit Product - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the infringed brand?")
@@ -353,7 +353,7 @@
 }
 
 :*:``brand:: { ; Brand Elements
-  AppUI := Gui("+AlwaysOnTop", "Brand Elements - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Brand Elements - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the infringed brand?")
@@ -389,7 +389,7 @@
 }
 
 :*:``nudity:: { ; Nudity
-  AppUI := Gui("+AlwaysOnTop", "Nudity - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Nudity - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the exposed body parts?")
@@ -425,7 +425,7 @@
 }
 
 :*:``political:: { ; Political Content
-  AppUI := Gui("+AlwaysOnTop", "Political Content - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Political Content - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the political content?")
@@ -467,7 +467,7 @@
 }
 
 :*:``interface:: { ; Third-party Interface
-  AppUI := Gui("+AlwaysOnTop", "Third-party Interface - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Third-party Interface - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the third-party brand?")
@@ -503,7 +503,7 @@
 }
 
 :*:``promise:: { ; Performance Promise
-  AppUI := Gui("+AlwaysOnTop", "Performance Promise - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Performance Promise - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the performance promise claim?")
@@ -539,7 +539,7 @@
 }
 
 :*:``exposure:: { ; Sexual Exposure
-  AppUI := Gui("+AlwaysOnTop", "Sexual Exposure - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Sexual Exposure - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "Male or Female Exposure?")
@@ -589,7 +589,7 @@
 }
 
 :*:``product:: { ; Unacceptable LP (product)
-  AppUI := Gui("+AlwaysOnTop", "Unacceptable LP (product) - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Unacceptable LP (product) - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the prohibited product?")
@@ -621,7 +621,7 @@
 }
 
 :*:``false:: { ; False Description/Inconsistent Information
-  AppUI := Gui("+AlwaysOnTop", "False Description/Inconsistent Information - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "False Description/Inconsistent Information - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText(
@@ -659,7 +659,7 @@
 }
 
 :*:``doctor:: { ; Medical Worker Image
-  AppUI := Gui("+AlwaysOnTop", "Medical Worker Image - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Medical Worker Image - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
  
   AppUI.AddText("w400 y+10", "Where is the violation?")
@@ -709,7 +709,7 @@
 }
 
 :*:``absolute:: { ; Absolute Terms
-  AppUI := Gui("+AlwaysOnTop", "Absolute Terms - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Absolute Terms - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the absolute claim?")
@@ -758,7 +758,7 @@
 }
 
 :*:``language:: { ; Ad Language Mismatch
-  AppUI := Gui("+AlwaysOnTop", "Ad Language Mismatch - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Ad Language Mismatch - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the unacceptable language?")
@@ -804,7 +804,7 @@
 }
 
 :*:``exag:: { ; Exaggerated Description/Financial Misrepresentation
-  AppUI := Gui("+AlwaysOnTop", "Exaggerated Description/Financial Misrepresentation - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Exaggerated Description/Financial Misrepresentation - Appeals Toolkit " build)
   AppUI.SetFont("s10", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of violation?")
@@ -858,3 +858,60 @@
     Reload
   }
 }
+
+:*:``film:: { ; Full-length Filming
+  A_Clipboard :=
+  (
+    "This ad group cannot be approved since it violates our policy prohibiting full-length filming. We do not allow ads to feature a full-length clip from a film, TV program, or official video of a third party without proof of authorized use. This ad group features full-length clip of a film in ad video:
+
+    Please remove the content for re-review of this ad group or provide proof of authorized use. Proof can be added under Settings > Business Information > Business Verification in your ad account settings."
+  )
+  Send "^v"
+}
+
+:*:``drug:: { ; Drugs
+  AppUI := Gui("+AlwaysOnTop", "Drugs - Appeals Toolkit " build)
+  AppUI.SetFont("s10", "Tahoma")
+
+  AppUI.AddText("w400 y+10", "What is the depiction of drugs?")
+  Violation := AppUI.AddEdit("wp xp y+10")
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("w400 y+10", "Where is the violation?")
+  Position := AppUI.AddComboBox(
+    "wp xp y+10 Choose1",
+    ["ad video", "ad title"]
+  )
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("w400 y+10", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+10 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it violates our policy prohibiting Drugs. We do not allow ads that feature, facilitate, or promote prescription or recreational drugs, or accessories associated with drug use. This policy applies to real scenes, TV/Film scenes, virtual cartoons/games, and images. This ad group specifically mentions ... in ad video:
+
+      Please modify this ad group to align with our ad policy."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+10", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it violates our policy prohibiting Drugs. We do not allow ads that feature, facilitate, or promote prescription or recreational drugs, or accessories associated with drug use. This policy applies to real scenes, TV/Film scenes, virtual cartoons/games, and images. This ad group specifically mentions " Violation.Text " in " Position.Text ":
+
+      Please modify this ad group to align with our ad policy."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+

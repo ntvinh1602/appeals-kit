@@ -5,7 +5,7 @@
 #Include suspension\reply-template.ahk
 #Include suspension\function.ahk
 
-!e:: { ; Open TBS and JEDI
+!e:: { ; (Full Version Only) Open TBS and JEDI
   If version = "full" {
     SendMode "Event"
     SetKeyDelay 75 
@@ -18,11 +18,16 @@
     
     ; Open JEDI (payment page)
     A_Clipboard := "https://www.adsintegrity.net/se/actor?actors=" openlinkid "&ruleId=9999999996&/"
-    Send "{F6}^v{Enter}^{Tab}"
+    Send "{F6}^v{Enter}"
     
+    /*
     ; Open Actor360 TBS
+    Send "^{Tab}"
     A_Clipboard := "https://satellite.bytedance.net/troubleshooting/actor/1/" openlinkid
-    Send "{F6}^v{Enter}^+{Tab}^+{Tab}^+{Tab}"
+    Send "{F6}^v{Enter}^+{Tab}"
+    */
+    
+    Send "^+{Tab}^+{Tab}"
     
     ; Open TBS
     A_Clipboard := openlinkid
@@ -36,35 +41,51 @@
   }
 }
 
-!1:: { ; Label: Keep block L0, Fraudulent Behavior
+!a:: { ; (Full Version Only) Open TBS for selected adv ID
+  If version = "full" {
+    SendMode "Event"
+    SetKeyDelay 75
+    previousclip := A_Clipboard
+    
+    Send "^c^t"
+    SendInput "https://satellite.bytedance.net/audit/supervise_i18n/fe/adv"
+    Send "{Enter}"
+    Sleep 3000
+    Click "375 259"
+    SendInput "^v"
+    Click "1807 285"
+    A_Clipboard := previousclip
+  }
+}
+
+!1:: { ; (Full Version Only) Label: Keep block L0
   If version = "full" {
     BoxTicking()
-    RootCause("Fraudulent")
     Decision("L0")
     Remark("qq")
   }
 }
 
-!2:: { ; Label: Unblock, False Auto Suspension
+!2:: { ; (Full Version Only) Label: Unblock No Violation
   If version = "full" {
     BoxTicking()
-    RootCause("False Auto")
     IdentifiedRisk("No Violation")
     Decision("No Violation")
     Remark("qq")
   }
 }
 
-!3:: { ; Label: More Info, Request Info
+!3:: { ; (Full Version Only) Label: More Info
   If version = "full" {
     BoxTicking()
+    IdentifiedRisk("More Information")    
     RootCause("Request Info")
     Decision("Request Info")
     Remark("qq")
   }
 }
 
-!s:: { ; Reply Silent Advertiser request docs
+!s:: { ; (Full Version Only) Reply Silent Advertiser request docs
   If version = "full" {
     SendMode "Event"
     Send "{End}"
@@ -89,25 +110,7 @@
   }
 }
 
-!d:: { ; Reply No Violation
-  If version = "full" {
-    SendMode "Event"
-    Send "^+{Tab}{End}"
-    Click "111 274"
-    Click "412 368"
-    Click "117 554"
-    Click "284 671"
-    Sleep 50
-    Send "^a"
-    Sleep 100
-    A_Clipboard := NoVioAdv
-    Send "^v"
-    SkiptoBusinessLabels()
-    Send "!2"
-  }
-}
-
-!r:: { ; Reply Not Correct Documents
+!r:: { ; (Full Version Only) Reply Not Correct Documents
   If version = "full" {
     SendMode "Event"
     Send "{End}"
@@ -125,15 +128,14 @@
     Send "^v"
     SkiptoBusinessLabels()
     BoxTicking()
-    BusinessLabel("Silent Adv")
+    BusinessLabel("Silent Advertiser")
     Decision("L0")
     RootCause("Fraudulent")
-    Click "783 480" ; Remark
-    SendInput "Incorrect document submission"
+    Remark("Incorrect document submission")
   }
 }
 
-!f:: { ; Whitelist and Unblock Keystone 947
+!f:: { ; (Full Version Only) Whitelist and Unblock Keystone 947
   If version = "full" {
     whiteid := A_Clipboard
     SendMode "Event"
@@ -157,7 +159,7 @@
   }
 }
 
-!x:: { ; Filter Features
+!x:: { ; (Full Version Only) Filter Features
   If version = "full" {
     Click "417 372"
     Sleep 100
@@ -177,6 +179,18 @@
   }
 }
 
+:*:``reopen:: { ; (Full Version Only) Sales reopen, divert to AEP
+  If version = "full" {
+    A_Clipboard :=
+    (
+      "Kindly follow AA Escalation Process for any further inquiries or concerns about this decision. Please ensure that you choose the correct escalation Level 3 so appropriate handlers and resources can be allocated for assistance.
+      For further information about Escalation Process kindly check out this doc: https://bytedance.sg.feishu.cn/docx/doxcnQbcflJUQUDkga4wCZIcXid
+      Thanks for your patience and understanding."
+    )
+    Send "^v"
+  }
+}
+
 :*:````:: { ; All Replies
   scenario := [
   "1. No Violation",
@@ -192,10 +206,10 @@
   "Over 180 Days",
   ]
 
-  AppUI := Gui("+AlwaysOnTop", "Account Suspension - Appeals Toolkit " patch)
+  AppUI := Gui("+AlwaysOnTop", "Account Suspension Reply - Appeals Kit v" build)
   AppUI.SetFont("s9", "Tahoma")
   
-  TabUI := AppUI.AddTab3("w518", ["Main", "Deceptive Behavior"])
+  TabUI := AppUI.AddTab3(, ["Main", "Deceptive Behavior", "About"])
   
   AppUI.AddText(
     "Section",
@@ -293,7 +307,8 @@
       viocategory
     ),
     DateInput := AppUI.AddDateTime(
-      "w120 xs+210 ys+70"
+      "w120 xs+210 ys+70",
+      IniRead("settings.ini", "Suspension", "dateformat")
     ),
     BrandInput := AppUI.AddEdit(
       "w150 R1 xs+340 ys+70"
@@ -311,35 +326,35 @@
       picategory
     ),
     AdultList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       adultcategory
     ),
     IPList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       ipcategory
     ),
     MisleadList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       misleadcategory
     ),
     FormatList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       formatcategory
     ),
     PoliticsList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       politicscategory
     ),
     RestrictedList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       restrictedcategory
     ),
     ScamList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       scamcategory
     ),
     TheftList := AppUI.AddDropDownList(
-      "w490 xs+10 yp Hidden Choose1",
+      "w490 xs yp Hidden Choose1",
       theftcategory
     )
   ]
@@ -392,30 +407,49 @@
     If A_Index > 5
       deceptiveinputs[A_Index].OnEvent("Change", PreviewChange)
   }
-
+  TabUI.UseTab(3)
+  
+  AppUI.AddLink(
+    "",
+    (
+      'Thanks for using Appeals Kit!
+      
+      Don`'t know how to use? Click <a     href="https://bytedance.sg.feishu.cn/docx/E2zGdOV74oNUigxY1eilRurBglc">here</a> to read the manual
+      
+      Want to know what`'s news? Click <a     href="https://bytedance.sg.feishu.cn/docx/Vmb7dTcu2oPvJzxbHxElHFxEgEh">here</a> to read the full changelog
+      
+      Any bugs or suggestions? Bear with it for the time being.
+      '         
+    )
+  )
+  
   TabUI.UseTab()
   
   AppUI.AddGroupBox(
-    "w515 h45 xp ys+135 Section",
+    "w345 h45 xp ys+135 Section",
     "Settings"
   )
   AutoSubmit := AppUI.AddCheckBox(
     "xs+10 ys+20 Checked",
-    "Auto Submit (open Business Label form immediately)"
+    "Auto-submit"
+  )    
+  Staff := AppUI.AddCheckBox(
+    "x+20 yp",
+    "Reply to Staff"
+  )
+  Language := AppUI.AddDropDownList(
+    "w100 x+20 yp-5 Choose1",
+    ["Vietnamese","Indonesia","Thai"]
   )
   If version = "lite" {
     AutoSubmit.Enabled := False
     AutoSubmit.Value := 0
+    Language.Enabled := False
   }
-    
-  Staff := AppUI.AddCheckBox(
-    "x+35 ys+20",
-    "Reply to Staff"
-  )
   Staff.OnEvent("Click", PreviewChange)
   
   AppUI.AddGroupBox(
-    "w345 h230 xs y+15 Section",
+    "w345 h230 xs y+10 Section",
     "Preview"
   )  
   Preview := AppUI.AddEdit(
@@ -424,12 +458,12 @@
   )
   
   AppUI.AddGroupBox(
-    "w160 h180 xs+355 ys",
-    "Strategies"
+    "w160 h227 xs+355 ys-47",
+    "Risk Strategies"
   )
   strategy := [
     HSE := AppUI.AddRadio(
-      "xp+10 yp+20 Checked",
+      "xp+10 yp+22 Checked",
       "High Precision SE"
     ),
     SilentAdv := AppUI.AddRadio(
@@ -455,6 +489,14 @@
     ManualPunish := AppUI.AddRadio(
       "xp yp+20",
       "Manual Punishment"
+    ),
+    EndURL := AppUI.AddRadio(
+      "xp yp+20",
+      "End-Return-URL"
+    ),
+    Zephyr := AppUI.AddRadio(
+      "xp yp+20",
+      "Zephyr (Tianshu) Hit"
     ),
     OtherStrat := AppUI.AddRadio(
       "xp yp+20",
@@ -711,6 +753,7 @@
     } Else If SelectScenario.Text = "Payment Issues" {
       BrandInput.Enabled := False
       DateInput.Enabled := False
+      OtherStrat.Value := 1
       Loop deceptiveinputs.Length - 5
         deceptiveinputs[A_Index + 5].Enabled := False
       Fail.Visible := 1
@@ -743,6 +786,7 @@
     } Else If SelectScenario.Text = "Suspended on BC Level" {
       BrandInput.Enabled := False
       DateInput.Enabled := False
+      OtherStrat.Value := 1
       Loop deceptiveinputs.Length - 5
         deceptiveinputs[A_Index + 5].Enabled := False
       If Staff.Value = 1  
@@ -782,6 +826,7 @@
           Remark("qq")
         } Else If SelectScenario.Text = "2. Spam Behavior" {
           RootCause("Fraudulent")
+          IdentifiedRisk("Direct Content")
           Decision("L0")
           Remark("qq")
         } Else If SelectScenario.Text = "3. Direct Content" {
@@ -801,20 +846,24 @@
           Remark("qq")
         } Else If SelectScenario.Text = "Indirect Violation" {
           RootCause("Fraudulent")
-          If IndContent.Value = 1
-            IdentifiedRisk("Indirect Content")
-          Else If IndACE.Value = 1
-            IdentifiedRisk("Indirect ACE")
-          Else
-            IdentifiedRisk("Indirect Payment")
           Decision("L0")
-          Remark("qq")
+          If IndContent.Value = 1 {
+            IdentifiedRisk("Indirect Content")
+            Remark("qq")
+          } Else If IndACE.Value = 1 {
+            IdentifiedRisk("Indirect ACE")
+            Remark("qq")
+          } Else {
+            IdentifiedRisk("Indirect Payment")
+            Remark("Actor 360 - Payment risk confirmed - Jedi")
+          }
         } Else If SelectScenario.Text = "Request Delivery Proof" {
           RootCause("Request Info")
           IdentifiedRisk("More Information")
           Decision("Request Info")
           Remark("qq")
         } Else If SelectScenario.Text = "Payment Issues" {
+          BusinessLabel("Payment Failure")
           RootCause("Fraudulent")
           IdentifiedRisk("Direct Payment")
           Decision("Payment Failure")
@@ -864,7 +913,7 @@
     "Counterfeit Product"
   ]
 
-  RemarkUI := Gui("+AlwaysOnTop", "Remark - Appeals Toolkit " patch)
+  RemarkUI := Gui("+AlwaysOnTop", "Account Suspension Remark - Appeals Kit v" build)
   RemarkUI.SetFont("s9", "Tahoma")
 
   RemarkUI.AddGroupBox(

@@ -1,9 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
 version := "full"
-patch := "0.2"
-
-#Include %A_ScriptDir%
+build := IniRead("settings.ini", "App", "build")
 
 ; Account Suspension
 #Include suspension.ahk
