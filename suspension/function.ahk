@@ -36,8 +36,14 @@ BusinessLabel(BizLabel) {
     SendInput "Contr"
   Else If BizLabel = "Manual Punishment"
     SendInput "Ma"
+  Else If BizLabel = "End-Return-URL"
+    SendInput "End"
+  Else If BizLabel = "Zephyr (Tianshu) Hit"
+    SendInput "Z"
   Else If BizLabel = "BC Punishment"
     SendInput "BC"
+  Else If BizLabel = "Payment Failure"
+    SendInput "Fa"
   Click "780 383"
   Click "780 236"
 }
@@ -77,7 +83,7 @@ IdentifiedRisk(Risk) {
   Else If Risk = "Direct Payment"
     SendInput "3.1"
   Else If Risk = "More Information"
-    SendInput "more"
+    SendInput "mo"
   Click "780 468"
   Sleep 100
 }
