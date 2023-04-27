@@ -3,193 +3,190 @@
 #Include suspension\violation-en.ahk
 #Include suspension\violation-vn.ahk
 #Include suspension\reply-template.ahk
-#Include suspension\function.ahk
+#Include suspension\functions.ahk
 
-!e:: { ; (Full Version Only) Open TBS and JEDI
-  If version = "full" {
-    SendMode "Event"
-    SetKeyDelay 75 
-    Send "^c"
-    
-    ; Open JEDI (features page)
-    openlinkid := Trim(A_Clipboard)
-    A_Clipboard := "https://www.adsintegrity.net/se/actor/detail?value=" openlinkid "&/"
-    Send "^{Tab}^{Tab}{F6}^v{Enter}^{Tab}"
-    
-    ; Open JEDI (payment page)
-    A_Clipboard := "https://www.adsintegrity.net/se/actor?actors=" openlinkid "&ruleId=9999999996&/"
-    Send "{F6}^v{Enter}"
-    
-    /*
-    ; Open Actor360 TBS
-    Send "^{Tab}"
-    A_Clipboard := "https://satellite.bytedance.net/troubleshooting/actor/1/" openlinkid
-    Send "{F6}^v{Enter}^+{Tab}"
-    */
-    
-    Send "^+{Tab}^+{Tab}"
-    
-    ; Open TBS
-    A_Clipboard := openlinkid
-    Click "93 207"
-    Sleep 300
-    Click "93 207"
-    Click "100 292"
-    Click "431 266"
-    SendInput "^v"
-    Click "1807 285"
-  }
-}
+#HotIf version = "full" and ActiveBrowser()
 
-!a:: { ; (Full Version Only) Open TBS for selected adv ID
-  If version = "full" {
-    SendMode "Event"
-    SetKeyDelay 75
-    previousclip := A_Clipboard
-    
-    Send "^c^t"
-    SendInput "https://satellite.bytedance.net/audit/supervise_i18n/fe/adv"
-    Send "{Enter}"
-    Sleep 3000
-    Click "375 259"
-    SendInput "^v"
-    Click "1807 285"
-    A_Clipboard := previousclip
-  }
-}
-
-!1:: { ; (Full Version Only) Label: Keep block L0
-  If version = "full" {
-    BoxTicking()
-    Decision("L0")
-    Remark("qq")
-  }
-}
-
-!2:: { ; (Full Version Only) Label: Unblock No Violation
-  If version = "full" {
-    BoxTicking()
-    IdentifiedRisk("No Violation")
-    Decision("No Violation")
-    Remark("qq")
-  }
-}
-
-!3:: { ; (Full Version Only) Label: More Info
-  If version = "full" {
-    BoxTicking()
-    IdentifiedRisk("More Information")    
-    RootCause("Request Info")
-    Decision("Request Info")
-    Remark("qq")
-  }
-}
-
-!s:: { ; (Full Version Only) Reply Silent Advertiser request docs
-  If version = "full" {
-    SendMode "Event"
-    Send "{End}"
-    Click "159 219"
-    MouseClickDrag "Left", 265, 276, 264, 393
-    Click "143 280"
+!e:: { ; Open TBS and JEDI
+  SendMode "Event"
+  SetKeyDelay 75 
+  Send "^c"
+  advid := StrReplace(A_Clipboard,"`r`n")
+  
+  ; Open JEDI (features)
+  A_Clipboard := "https://www.adsintegrity.net/se/actor/detail?value=" advid "&/"
+  Send "^{Tab}^{Tab}"
+  If ActiveBrowser("chrome")
+    Send "{F6}"
+  Else {
+    Click "782 61"
     Sleep 100
-    Click "119 274"
-    Click "314 419"
-    Click "453 604"
-    Click "287 763"
-    Send "^a"
-    Sleep 100
-    A_Clipboard := BizLicenseAdv
-    Send "^v"
-    SkiptoBusinessLabels()
-    BoxTicking()
-    BusinessLabel("Silent Advertiser")
-    RootCause("Request Info")
-    Decision("Request Info")
-    Remark("qq")
   }
+  Send "^v{Enter}^{Tab}"
+  
+  ; Open JEDI (dashboard)
+  A_Clipboard := "https://www.adsintegrity.net/se/actor?actors=" advid "&ruleId=9999999996&/"
+  If ActiveBrowser("chrome")
+    Send "{F6}"
+  Else {
+    Click "782 61"
+    Sleep 100
+  }
+  Send "^v{Enter}"
+  
+  /*
+  ; Open Actor360 TBS
+  Send "^{Tab}"
+  A_Clipboard := "https://satellite.bytedance.net/troubleshooting/actor/1/" openlinkid
+  Send "{F6}^v{Enter}^+{Tab}"
+  */
+  
+  Send "^+{Tab}^+{Tab}"
+  
+  ; Open TBS
+  A_Clipboard := advid
+  Click "93 207"
+  Sleep 300
+  Click "93 207"
+  Click "100 292"
+  Click "431 266"
+  SendInput "^v"
+  Click "1807 285"
 }
 
-!r:: { ; (Full Version Only) Reply Not Correct Documents
-  If version = "full" {
-    SendMode "Event"
-    Send "{End}"
-    Click "159 219"
-    MouseClickDrag "Left", 265, 265, 265, 353
-    Click "155 331"
-    Sleep 100
-    Click "164 273"
-    Click "172 507"
-    Click "178 887"
-    Click "308 965"
-    Send "^a"
-    Sleep 100
-    A_Clipboard := NoDocAdv
-    Send "^v"
-    SkiptoBusinessLabels()
-    BoxTicking()
-    BusinessLabel("Silent Advertiser")
-    Decision("L0")
-    RootCause("Fraudulent")
-    Remark("Incorrect document submission")
-  }
+!a:: { ; Open TBS for selected adv ID
+  previousclip := A_Clipboard
+  SendMode "Event"
+  SetKeyDelay 75
+  Send "^c"
+  advid := A_Clipboard
+  OpenURL("https://satellite.bytedance.net/audit/supervise_i18n/fe/adv")
+  Sleep 3000
+  Click "375 259"
+  SendInput advid
+  Click "1807 285"
+  A_Clipboard := previousclip
 }
 
-!f:: { ; (Full Version Only) Whitelist and Unblock Keystone 947
-  If version = "full" {
-    whiteid := A_Clipboard
-    SendMode "Event"
-    SetKeyDelay 100
-    Send "^w^{Tab}^{Tab}^{Tab}^{Tab}"
-    Sleep 500
-    Click "493 766"
-    Send "^v"
-    Click "1110 605"
-    Send "{End}"
-    Click "1807 1002"
-    A_Clipboard := "https://www.adsintegrity.net/audit/keystone/materialCreate/947"
-    Send "{F6}^v{Enter}"
-    A_Clipboard := whiteid
-    Send "^+{Tab}^+{Tab}^+{Tab}"
-    Click "266 490"
-    Click "1902 137"
-    Click "1470 436"
-    Click "1016 441"
-    SendInput "No Violation"
-  }
+!1:: { ; Label: Keep block L0   
+  BoxTicking()
+  Decision("L0")
+  Remark("qq")
+
 }
 
-!x:: { ; (Full Version Only) Filter Features
-  If version = "full" {
-    Click "417 372"
-    Sleep 100
-    Click "403 406"
-    Click "403 444"
-    Click "403 485"
-    Click "403 514"
-    Click "403 562"
-    Click "403 589"
-    Click "403 631"
-    Click "403 676"
-    Click "403 710"
-    Click "403 748"
-    Click "403 778"
-    MouseClickDrag "Left", 561, 420, 561, 451
-    Click "403 612"
-  }
+!2:: { ; Label: Unblock No Violation
+  BoxTicking()
+  IdentifiedRisk("No Violation")
+  Decision("No Violation")
+  Remark("qq")
 }
 
-:*:``reopen:: { ; (Full Version Only) Sales reopen, divert to AEP
-  If version = "full" {
-    A_Clipboard :=
-    (
-      "Kindly follow AA Escalation Process for any further inquiries or concerns about this decision. Please ensure that you choose the correct escalation Level 3 so appropriate handlers and resources can be allocated for assistance.
-      For further information about Escalation Process kindly check out this doc: https://bytedance.sg.feishu.cn/docx/doxcnQbcflJUQUDkga4wCZIcXid
-      Thanks for your patience and understanding."
-    )
-    Send "^v"
-  }
+!3:: { ; Label: More Info  
+  BoxTicking()
+  IdentifiedRisk("More Information")    
+  RootCause("Request Info")
+  Decision("Request Info")
+  Remark("qq")
 }
+
+!s:: { ; Reply Silent Advertiser request docs
+  SendMode "Event"
+  Send "{End}"
+  Click "159 219"
+  MouseClickDrag "Left", 265, 276, 264, 393
+  Click "143 280"
+  Sleep 100
+  Click "119 274"
+  Click "314 419"
+  Click "453 604"
+  Click "287 763"
+  Send "^a"
+  Sleep 100
+  A_Clipboard := BizLicenseAdv
+  Send "^v"
+  SkiptoBusinessLabels()
+  BoxTicking()
+  BusinessLabel("Silent Advertiser")
+  RootCause("Request Info")
+  Decision("Request Info")
+  Remark("qq")
+}
+
+!r:: { ; Reply Not Correct Documents
+  SendMode "Event"
+  Send "{End}"
+  Click "159 219"
+  MouseClickDrag "Left", 265, 265, 265, 353
+  Click "155 331"
+  Sleep 100
+  Click "164 273"
+  Click "172 507"
+  Click "178 887"
+  Click "308 965"
+  Send "^a"
+  Sleep 100
+  A_Clipboard := NoDocAdv
+  Send "^v"
+  SkiptoBusinessLabels()
+  BoxTicking()
+  BusinessLabel("Silent Advertiser")
+  Decision("L0")
+  RootCause("Fraudulent")
+  Remark("Incorrect document submission")
+}
+
+!f:: { ; Whitelist and Unblock Keystone 947  
+  whiteid := A_Clipboard
+  SendMode "Event"
+  SetKeyDelay 100
+  Send "^w^{Tab}^{Tab}^{Tab}^{Tab}"
+  Sleep 500
+  Click "493 766"
+  Send "^v"
+  Click "1110 605"
+  Send "{End}"
+  Click "1807 1002"
+  A_Clipboard := "https://www.adsintegrity.net/audit/keystone/materialCreate/947"
+  Send "{F6}^v{Enter}"
+  A_Clipboard := whiteid
+  Send "^+{Tab}^+{Tab}^+{Tab}"
+  Click "266 490"
+  Click "1902 137"
+  Click "1470 436"
+  Click "1016 441"
+  SendInput "No Violation"
+}
+
+!x:: { ; Filter Features    
+  Click "416 382"
+  Sleep 100
+  Click "403 406"
+  Click "403 444"
+  Click "403 485"
+  Click "403 514"
+  Click "403 562"
+  Click "403 589"
+  Click "403 631"
+  Click "403 676"
+  Click "403 710"
+  Click "403 748"
+  Click "403 778"
+  MouseClickDrag "Left", 561, 420, 561, 451
+  Click "403 612"
+}
+
+:*:``reopen:: { ; Sales reopen, divert to AEP    
+  A_Clipboard :=
+  (
+    "Kindly follow AA Escalation Process for any further inquiries or concerns about this decision. Please ensure that you choose the correct escalation Level 3 so appropriate handlers and resources can be allocated for assistance.
+    For further information about Escalation Process kindly check out this doc: https://bytedance.sg.feishu.cn/docx/doxcnQbcflJUQUDkga4wCZIcXid
+    Thanks for your patience and understanding."
+  )
+  Send "^v"
+}
+
+#HotIf ActiveBrowser()
 
 :*:````:: { ; All Replies
   scenario := [
@@ -209,7 +206,7 @@
   AppUI := Gui("+AlwaysOnTop", "Account Suspension Reply - Appeals Kit v" build)
   AppUI.SetFont("s9", "Tahoma")
   
-  TabUI := AppUI.AddTab3(, ["Main", "Deceptive Behavior", "About"])
+  TabUI := AppUI.AddTab3(, ["Main", "Deceptive Behavior"])
   
   AppUI.AddText(
     "Section",
@@ -407,21 +404,6 @@
     If A_Index > 5
       deceptiveinputs[A_Index].OnEvent("Change", PreviewChange)
   }
-  TabUI.UseTab(3)
-  
-  AppUI.AddLink(
-    "",
-    (
-      'Thanks for using Appeals Kit!
-      
-      Don`'t know how to use? Click <a     href="https://bytedance.sg.feishu.cn/docx/E2zGdOV74oNUigxY1eilRurBglc">here</a> to read the manual
-      
-      Want to know what`'s news? Click <a     href="https://bytedance.sg.feishu.cn/docx/Vmb7dTcu2oPvJzxbHxElHFxEgEh">here</a> to read the full changelog
-      
-      Any bugs or suggestions? Bear with it for the time being.
-      '         
-    )
-  )
   
   TabUI.UseTab()
   
@@ -807,79 +789,76 @@
 
   SubmitBtn(*) {
     A_Clipboard := Preview.Value
-    If version = "full" {
-      AppUI.Hide()
-      Send "^v"
-      If AutoSubmit.Value = 1 {
-        SkiptoBusinessLabels()
-        BoxTicking()
-        Loop strategy.Length
-          If strategy[A_Index].Value = 1
-            If strategy[A_Index].Text != "Others" {
-              SelectedStrat := strategy[A_Index].Text
-              BusinessLabel(SelectedStrat)
-            }
-        If SelectScenario.Text = "1. No Violation" {
-          RootCause("False Auto")
-          IdentifiedRisk("No Violation")
-          Decision("No Violation")
-          Remark("qq")
-        } Else If SelectScenario.Text = "2. Spam Behavior" {
-          RootCause("Fraudulent")
-          IdentifiedRisk("Direct Content")
-          Decision("L0")
-          Remark("qq")
-        } Else If SelectScenario.Text = "3. Direct Content" {
-          RootCause("Policy Violation")
-          IdentifiedRisk("Direct Content")
-          If L0.Value = 1
-            Decision("L0")
-          Else If L1.Value = 1
-            Decision("L1")
-          Else
-            Decision("L2")
-          Remark("Actor 360 - ")
-        } Else If SelectScenario.Text = "4. Request Identity Documents" {
-          RootCause("Request Info")
-          IdentifiedRisk("More Information")
-          Decision("Request Info")
-          Remark("qq")
-        } Else If SelectScenario.Text = "Indirect Violation" {
-          RootCause("Fraudulent")
-          Decision("L0")
-          If IndContent.Value = 1 {
-            IdentifiedRisk("Indirect Content")
-            Remark("qq")
-          } Else If IndACE.Value = 1 {
-            IdentifiedRisk("Indirect ACE")
-            Remark("qq")
-          } Else {
-            IdentifiedRisk("Indirect Payment")
-            Remark("Actor 360 - Payment risk confirmed - Jedi")
-          }
-        } Else If SelectScenario.Text = "Request Delivery Proof" {
-          RootCause("Request Info")
-          IdentifiedRisk("More Information")
-          Decision("Request Info")
-          Remark("qq")
-        } Else If SelectScenario.Text = "Payment Issues" {
-          BusinessLabel("Payment Failure")
-          RootCause("Fraudulent")
-          IdentifiedRisk("Direct Payment")
-          Decision("Payment Failure")
-          Remark("Actor 360 - Payment risk confirmed - TS")
-        } Else If SelectScenario.Text = "Suspended on BC Level" {
-          BusinessLabel("BC Punishment")
-          RootCause("Others")
-          Decision("L0")
-          Remark("BC Punished")
-        } Else If SelectScenario.Text = "Over 180 Days" {
-          RootCause("Others")
-          Decision("L0")
-          Remark("Suspension appeal past 180 days")
-        }
-      }
+    If AutoSubmit.Value = 1 {
+      SelectedScene := SelectScenario.Text
+      Loop strategy.Length
+        If strategy[A_Index].Value = 1
+          SelectedStrat := strategy[A_Index].Text
+      For n in [IndContent, IndACE, IndPayment]
+        If n.Value = 1
+          IndirectType := n.Text
+      For n in [L0, L1, L2]
+        If n.Value = 1
+          DirectDecision := n.Text
       AppUI.Destroy()
+      Send "^v"
+      SkiptoBusinessLabels()
+      BoxTicking()
+      BusinessLabel(SelectedStrat)
+      If SelectedScene = "1. No Violation" {
+        RootCause("False Auto")
+        IdentifiedRisk("No Violation")
+        Decision("No Violation")
+        Remark("qq")
+      } Else If SelectedScene = "2. Spam Behavior" {
+        RootCause("Fraudulent")
+        IdentifiedRisk("Direct Content")
+        Decision("L0")
+        Remark("qq")
+      } Else If SelectedScene = "3. Direct Content" {
+        RootCause("Policy Violation")
+        IdentifiedRisk("Direct Content")
+        Decision(DirectDecision)
+        Remark("Actor 360 - ")
+      } Else If SelectedScene = "4. Request Identity Documents" {
+        RootCause("Request Info")
+        IdentifiedRisk("More Information")
+        Decision("Request Info")
+        Remark("qq")
+      } Else If SelectedScene = "Indirect Violation" {
+        RootCause("Fraudulent")
+        Decision("L0")
+        If IndirectType = "Content" {
+          IdentifiedRisk("Indirect Content")
+          Remark("qq")
+        } Else If IndirectType = "ACE" {
+          IdentifiedRisk("Indirect ACE")
+          Remark("qq")
+        } Else {
+          IdentifiedRisk("Indirect Payment")
+          Remark("Actor 360 - Payment risk confirmed - Jedi")
+        }
+      } Else If SelectedScene = "Request Delivery Proof" {
+        RootCause("Request Info")
+        IdentifiedRisk("More Information")
+        Decision("Request Info")
+        Remark("qq")
+      } Else If SelectedScene = "Payment Issues" {
+        BusinessLabel("Payment Failure")
+        RootCause("Fraudulent")
+        IdentifiedRisk("Direct Payment")
+        Decision("Payment Failure")
+        Remark("Actor 360 - Payment risk confirmed - TS")
+      } Else If SelectedScene = "Suspended on BC Level" {
+        BusinessLabel("BC Punishment")
+        RootCause("Others")
+        Decision("L0")
+        Remark("BC Punished")
+      } Else If SelectedScene = "Over 180 Days" {
+        RootCause("Others")
+        Decision("L0")
+        Remark("Suspension appeal past 180 days")
+      }
     } Else {
       AppUI.Destroy()
       Send "^v"
@@ -1100,12 +1079,11 @@
   ShowGUI(RemarkUI)
 
   RemarkPreviewChange(*) {
-    Loop 3 {
+    Loop 3
       subspam[A_Index].Enabled := False
-      subindirectcont[A_Index].Enabled := False
-    }
     Loop 2 {
       submoreinfo[A_Index].Enabled := False
+      subindirectcont[A_Index].Enabled := False
       subindirectace[A_Index].Enabled := False
       subpayment[A_Index].Enabled := False
       subidrequest[A_Index].Enabled := False
@@ -1113,10 +1091,13 @@
     }
     aceproof.Enabled := False
     If NoViolation360.Value = 1 {
+      indirectcontvio.Enabled := False
       RemarkPreview.Value := "Actor 360 - No Violation"
     } Else If Direct.Value = 1 {
+      indirectcontvio.Enabled := False
       RemarkPreview.Value := "Actor 360 - "
     } Else If MoreInfo.Value = 1 {
+      indirectcontvio.Enabled := False
       Loop 2
         submoreinfo[A_Index].Enabled := True
       If MoreInfo1.Value = 1
@@ -1124,6 +1105,7 @@
       Else
         RemarkPreview.Value := "Actor 360 - More information - 2nd request"  
     } Else If Spam.Value = 1 {
+      indirectcontvio.Enabled := False
       Loop 3
         subspam[A_Index].Enabled := True
       If SpamVideo.Value = 1
@@ -1137,13 +1119,16 @@
         subindirectcont[A_Index].Enabled := True
       RemarkPreview.Value := "Actor 360 - " indirectcontft.Text " associated with actor violating " indirectcontlv.Text " - " indirectcontvio.Text
     } Else If IndirectACE.Value = 1 {
+      indirectcontvio.Enabled := False
       Loop 2
         subindirectace[A_Index].Enabled := True
       RemarkPreview.Value := "Actor 360 - " acefeatures.Text " associated with actor violating " acetype.Text
     } Else If ACEProofRq.Value = 1 {
+      indirectcontvio.Enabled := False
       aceproof.Enabled := True
       RemarkPreview.Value := "Actor 360 - " aceproof.Text " - Proof request"
     } Else If Payment.Value = 1 {
+      indirectcontvio.Enabled := False
       Loop 2
         subpayment[A_Index].Enabled := True
       If PaymentTS.Value = 1
@@ -1151,8 +1136,10 @@
       Else
         RemarkPreview.Value := "Actor 360 - Payment risk confirmed - Jedi"
     } Else If NoViolation.Value = 1 {
+      indirectcontvio.Enabled := False
       RemarkPreview.Value := "No Violation"
     } Else If IDRequest.Value = 1 {
+      indirectcontvio.Enabled := False
       Loop 2
         subidrequest[A_Index].Enabled := True
       If ID1.Value = 1
@@ -1160,6 +1147,7 @@
       Else
         RemarkPreview.Value := "More information - 2nd request" 
     } Else {
+      indirectcontvio.Enabled := False
       Loop 2
         subbizrequest[A_Index].Enabled := True
       If Biz1.Value = 1

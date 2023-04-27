@@ -1,28 +1,40 @@
 ﻿#Requires AutoHotkey v2.0
 
-; Key Remap
+#HotIf version = "full" and ActiveBrowser()
 
-!q:: { ; (Full Version Only)
-  If version = "full"
-    SendInput "^+{Tab}"
+!q:: { ; Switch to the tab on the left
+  SendInput "^+{Tab}"
 }
 
-!w:: { ; (Full Version Only)
-  If version = "full"
-    SendInput "^{Tab}"
+!w:: { ; Switch to the tab on the right
+  SendInput "^{Tab}"
 }
 
-!`:: { ; (Full Version Only)
-  If version = "full"
+!WheelDown:: { ; Press End
     SendInput "{End}"
 }
 
-^Space:: {  ; (Full Version Only)
-  If version = "full"
+!WheelUp:: { ; Press Home
+    SendInput "{Home}"
+}
+
+:*:``rj:: { ; Minimal reply temp    
+  A_Clipboard :=
+  (
+    "Dear Valuable Client,
+
+    TikTok For Business."
+  )
+  Send "^v"
+}
+
+#HotIf version = "full"
+
+^Space:: {  ; Press Enter
     SendInput "{Enter}"
 }
 
-; Account Disapproval
+#HotIf ActiveBrowser()
 
 :*:``extreme:: { ; High/Extreme Risk Request Docs
   A_Clipboard :=
@@ -49,9 +61,7 @@
   Send "^v"
 }
 
-; T0 Proactive
-
-:*:``t0:: {
+:*:``t0:: { ; T0 Proactive
   pcc := [
     "https://bytedance.sg.feishu.cn/docs/doccnIbnmgMRkyJlvt1cakgpCYd",
     "https://bytedance.sg.feishu.cn/docs/doccn7grSHplBqjcZSwQ5IdwntP"
@@ -172,16 +182,236 @@
   }
 }
 
-; Others
-
-:*:``rj:: { ; (Full Version Only) Minimal reply temp
-  If version = "full" {
-    A_Clipboard :=
-    (
-      "Dear Valuable Client,
-
-      TikTok For Business."
-    )
-    Send "^v"
+!`:: { ; Open URL from Adv ID and Ad group ID
+  AppUI := Gui("+AlwaysOnTop", "Link Opener - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+  
+  TabUI := AppUI.AddTab3(, ["Main", "Settings"])
+  
+  AppUI.AddGroupBox(
+    "w170 h125 Section",
+    "Detail"
+  )
+  AppUI.AddText(
+    "xs+10 ys+20",
+    "Advertiser ID"
+  )
+  AdvID := AppUI.AddEdit("w150 xp y+5")
+  
+  AppUI.AddText(
+    "xs+10 y+10",
+    "Ad Group ID (optional)"
+  )
+  AdGroupID := AppUI.AddEdit("w150 xp y+5")
+  
+  AppUI.AddGroupBox(
+    "w190 h125 xs+180 ys Section",
+    "Go to"
+  )
+  AppUI.AddButton(
+    "wp-20 xs+10 ys+20",
+    "TikTok Ad Manager"
+  ).OnEvent("Click", TTAM)
+  
+  AppUI.AddButton(
+    "wp xp y+10",
+    "VIP && Allowlist Lookup"
+  ).OnEvent("Click", Allowlist)
+  
+  AppUI.AddButton(
+    "wp xp y+10",
+    "JEDI (features && payment)"
+  ).OnEvent("Click", JEDI)
+  
+  TabUI.UseTab(2)
+  AppUI.AddText(
+    ,
+    "BI-Client Delay (in miliseconds)"
+  )
+  BIDelay := AppUI.AddEdit(
+    "w100 xp y+5",
+    IniRead("settings.ini", "LinkOpener", "binewtabdelay")
+  )
+  AppUI.AddButton(
+    "wp xp y+10",
+    "Save"
+  ).OnEvent("Click", Save)
+  
+  ShowGUI(AppUI)
+  
+  Save(*) {
+    IniWrite(BIDelay.Text, "settings.ini", "LinkOpener", "binewtabdelay")
+  }
+  
+  TTAM(*) {
+    If Trim(AdvID.Text) != "" {
+      If Trim(AdGroupID.Text) = ""
+        A_Clipboard := "https://ads.tiktok.com/i18n/perf/creative?aadvid=" Trim(AdvID.Text)
+      Else
+        A_Clipboard := "https://ads.tiktok.com/i18n/perf/creative?aadvid=" Trim(AdvID.Text) "&keyword=" Trim(AdGroupID.Text) "&search_type=2"
+      AppUI.Destroy()
+      OpenURL(A_Clipboard)
+    }
+  }
+  
+  Allowlist(*) {
+    If Trim(AdvID.Text) != "" or Trim(AdGroupID.Text) != "" {
+      If Trim(AdvID.Text) != ""
+        A_Clipboard := "https://www.adsintegrity.net/integrity_experience_center/vip/search?searchType=adAccountId&searchValue=" Trim(AdvID.Text)
+      Else
+        A_Clipboard := "https://www.adsintegrity.net/integrity_experience_center/vip/search?searchType=adGroupId&searchValue=" Trim(AdGroupID.Text)
+      AppUI.Destroy()
+      OpenURL(A_Clipboard)
+    }
+  }
+  
+  JEDI(*) {
+    If Trim(AdvID.Text) != "" {
+      JEDIfeature := "https://www.adsintegrity.net/se/actor/detail?value=" Trim(AdvID.Text) "&/"
+      JEDIpayment := "https://www.adsintegrity.net/se/actor?actors=" Trim(AdvID.Text) "&ruleId=9999999996&/"
+      AppUI.Destroy()
+      OpenURL(JEDIfeature, JEDIpayment)
+    }
   }
 }
+
+#HotIf
+
+!h:: { ; Help Page
+  AppUI := Gui("+AlwaysOnTop", "Help - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+  
+  TabUI := AppUI.AddTab3(
+    ,
+    [
+      "Ad Group",
+      "Account Suspension",
+      "Others",
+      "About"
+    ]
+  )
+  AppUI.AddText(
+    "Section",
+    (
+      "``pass
+      ``reject
+      ``terminated
+      ``ban
+      ``tpp
+      ``disclaimer
+      ``counterfeit
+      ``brand
+      ``nudity
+      ``political
+      ``interface
+      ``promise
+      ``exposure
+      ``product
+      ``false
+      ``doctor
+      ``spark
+      ``absolute
+      ``b/a
+      ``language
+      ``exag
+      ``film
+      ``drug
+      ``organ
+      ``text
+      ``weightloss
+      ``format
+      ``hint
+      ``insult
+      ``smoking
+      ``privacy
+      ``shock
+      ``tiktok"
+    )
+  )
+  AppUI.AddText(
+    "x+20 ys",
+    (
+      "Pass
+      Reject
+      Terminated/Deleted AG
+      Prohibited/Restricted Industry
+      Third-party Product
+      No Disclaimer
+      Counterfeit Product
+      Brand Elements
+      Nudity
+      Political Content
+      Third-party Interface
+      Performance Promise
+      Sexual Exposure
+      Unacceptable LP (product)
+      False Description/Inconsistent Information
+      Medical Worker Image
+      Spark Ads
+      Absolute Terms
+      Before-After Comparisons
+      Ad Language Mismatch
+      Exaggerated Description/Financial Misrepresentation
+      Full-length Filming
+      Drugs
+      Sensitive Organ Simulation
+      Unacceptable Ad Text
+      Weight Loss
+      Unacceptable LP (format)
+      Sexual Hint
+      Insult
+      Smoking
+      Lack of Privacy Policy
+      Sensational Element
+      TikTok Element"
+    )
+  )
+  
+  TabUI.UseTab(2)
+  AppUI.AddText(
+    "Section",
+    (
+      "````
+      qq"
+    )
+  )
+  AppUI.AddText(
+    "x+20 ys",
+    (
+      "Reply Templates
+      Remark Templates"
+    )
+  )
+  
+  TabUI.UseTab(3)
+  AppUI.AddText(
+    "Section",
+    (
+      "``t0
+      ``extreme
+      ``low"
+    )
+  )
+  AppUI.AddText(
+    "x+20 ys",
+    (
+      "T0 Proactive
+      Account Disapproval - High/Extreme risk accounts
+      Account Disapproval - Low risk accounts"
+    )
+  )
+  
+  TabUI.UseTab(4)
+  AppUI.AddLink(
+    "",
+    (
+      'Thanks for using Appeals Kit!
+      
+      Click <a     href="https://bytedance.sg.feishu.cn/docx/Vmb7dTcu2oPvJzxbHxElHFxEgEh">here</a> to learn more about Appeals Kit.
+      '         
+    )
+  )
+  
+  ShowGUI(AppUI)
+}
+

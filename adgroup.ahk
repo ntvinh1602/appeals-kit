@@ -1,5 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
+#HotIf ActiveBrowser()
+
 :*:``pass:: {
   A_Clipboard :=
   (
@@ -13,8 +15,8 @@
 }
 
 :*:``reject:: {
-  AppUI := Gui("+AlwaysOnTop", "Reject - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Reject - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "How many unique violations are there?")
   AppUI.AddRadio("wp xp y+10 vAmount Checked", "Only 1")
@@ -76,8 +78,8 @@
 }
 
 :*:``terminated:: {
-  AppUI := Gui("+AlwaysOnTop", "Terminated - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Terminated - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of termination?")
   Deleted := AppUI.AddRadio("wp xp y+10 Checked", "Removed or deleted (for auction ads)")
@@ -126,8 +128,8 @@
 :*:``ban:: { ; Prohibited/Restricted Industry
   restriction := ["18+", "21+", "25+", "Prohibited Industry"]
 
-  AppUI := Gui("+AlwaysOnTop", "Prohibited/Restricted Industry - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Prohibited/Restricted Industry - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the advertised products/services?")
   Product := AppUI.AddEdit("R1 wp xp y+10")
@@ -169,8 +171,8 @@
 }
 
 :*:``tpp:: { ; Third-party Product
-  AppUI := Gui("+AlwaysOnTop", "Third-party Product - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Third-party Product - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of Third-party Product violation?")
   Logo := AppUI.AddRadio("wp xp y+10 Checked", "Third-party logo/watermark")
@@ -239,8 +241,8 @@
     "Both video and LP do not have any disclaimers"
   ]
 
-  AppUI := Gui("+AlwaysOnTop", "No Disclaimer - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "No Disclaimer - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the advertised product?")
   SelectProd := AppUI.AddDropDownList("wp xp y+10 Choose1", product)
@@ -317,8 +319,8 @@
 }
 
 :*:``counterfeit:: { ; Counterfeit Product
-  AppUI := Gui("+AlwaysOnTop", "Counterfeit Product - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Counterfeit Product - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the infringed brand?")
   Brand := AppUI.AddEdit("R1 wp xp y+10")
@@ -353,8 +355,8 @@
 }
 
 :*:``brand:: { ; Brand Elements
-  AppUI := Gui("+AlwaysOnTop", "Brand Elements - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Brand Elements - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the infringed brand?")
   Brand := AppUI.AddEdit("R1 wp xp y+10")
@@ -389,8 +391,8 @@
 }
 
 :*:``nudity:: { ; Nudity
-  AppUI := Gui("+AlwaysOnTop", "Nudity - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Nudity - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the exposed body parts?")
   Nudity := AppUI.AddEdit("R1 wp xp y+10")
@@ -425,8 +427,8 @@
 }
 
 :*:``political:: { ; Political Content
-  AppUI := Gui("+AlwaysOnTop", "Political Content - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Political Content - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the political content?")
   Politics := AppUI.AddComboBox("wp xp y+10 Choose1", ["image of armed personnel"])
@@ -467,8 +469,8 @@
 }
 
 :*:``interface:: { ; Third-party Interface
-  AppUI := Gui("+AlwaysOnTop", "Third-party Interface - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Third-party Interface - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the third-party brand?")
   Brand := AppUI.AddEdit("wp xp y+10")
@@ -502,22 +504,34 @@
   }
 }
 
-:*:``promise:: { ; Performance Promise
-  AppUI := Gui("+AlwaysOnTop", "Performance Promise - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+:*:``promise:: { ; Performance Promise | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Performance Promise - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
-  AppUI.AddText("w400 y+10", "What is the performance promise claim?")
-  Promise := AppUI.AddEdit("wp xp y+10")
+  AppUI.AddText("w350 y+8", "What is the performance promise claim?")
+  Promise := AppUI.AddEdit("wp xp y+8")
   Promise.OnEvent("Change", PreviewChange)
   
-  AppUI.AddText("w400 y+10", "Where is the violation?")
-  Position := AppUI.AddComboBox("wp xp y+10 Choose1",["landing page", "ad video"])
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["landing page", "ad video"])
   Position.OnEvent("Change", PreviewChange)
   
-  AppUI.AddText("w400 y+10", "Preview")
-  Preview := AppUI.AddEdit("wp xp y+10 R10 ReadOnly")  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it violates our ad policy prohibiting Performance Promises. We do not permit ads to make any product/service promises for a specified amount of time. Specifically, this ad claims ... in landing page:
 
-  AppUI.AddButton("Default wp y+10", "Submit")
+      Please revise this and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
     .OnEvent("Click", SubmitBtn)
   ShowGUI(AppUI)
 
@@ -539,8 +553,8 @@
 }
 
 :*:``exposure:: { ; Sexual Exposure
-  AppUI := Gui("+AlwaysOnTop", "Sexual Exposure - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Sexual Exposure - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "Male or Female Exposure?")
   Female := AppUI.AddRadio("y+10 Checked", "Female")
@@ -589,8 +603,8 @@
 }
 
 :*:``product:: { ; Unacceptable LP (product)
-  AppUI := Gui("+AlwaysOnTop", "Unacceptable LP (product) - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Unacceptable LP (product) - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the prohibited product?")
   Product := AppUI.AddEdit("wp xp y+10")
@@ -621,8 +635,8 @@
 }
 
 :*:``false:: { ; False Description/Inconsistent Information
-  AppUI := Gui("+AlwaysOnTop", "False Description/Inconsistent Information - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "False Description/Inconsistent Information - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText(
     "w400 y+10", 
@@ -659,8 +673,8 @@
 }
 
 :*:``doctor:: { ; Medical Worker Image
-  AppUI := Gui("+AlwaysOnTop", "Medical Worker Image - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Medical Worker Image - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
  
   AppUI.AddText("w400 y+10", "Where is the violation?")
   Position := AppUI.AddComboBox(
@@ -700,7 +714,7 @@
   }
 }
 
-:*:``spark:: { ; Spark Ads
+:*:``spark:: { ; Spark Ads | no prompts
   A_Clipboard :=
   (
     "Your ad group has been approved, however, as your ads is Spark Ads, please note that this ad will not be delivered in other placements except for TikTok. Kindly revise your ad placement to the correct position for Spark Ads."
@@ -709,8 +723,8 @@
 }
 
 :*:``absolute:: { ; Absolute Terms
-  AppUI := Gui("+AlwaysOnTop", "Absolute Terms - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Absolute Terms - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the absolute claim?")
   Violation := AppUI.AddEdit("wp xp y+10")
@@ -747,19 +761,19 @@
   }
 }
 
-:*:``b/a:: { ; Before-After Comparisons
+:*:``b/a:: { ; Before-After Comparisons | no prompts
   A_Clipboard :=
   (
     "This ad group cannot be approved since it violates our ad policy prohibiting before-after comparisons. We do not permit ads to show any before-and-after visuals or text to display the effects of a product or service. Specifically, this ad features before-after comparison in ad video:
 
-    Please revise this and we can re-review your ad group."
+    Please revise this by adding disclaimer citing that results could vary from person to person (`"Hiệu quả sản phẩm tùy thuộc vào cơ địa mỗi người`") or remove the before-after comparison and we can re-review your ad group."
   )
   Send "^v"
 }
 
 :*:``language:: { ; Ad Language Mismatch
-  AppUI := Gui("+AlwaysOnTop", "Ad Language Mismatch - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Ad Language Mismatch - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the unacceptable language?")
   Violation := AppUI.AddEdit("wp xp y+10")
@@ -804,8 +818,8 @@
 }
 
 :*:``exag:: { ; Exaggerated Description/Financial Misrepresentation
-  AppUI := Gui("+AlwaysOnTop", "Exaggerated Description/Financial Misrepresentation - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Exaggerated Description/Financial Misrepresentation - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What kind of violation?")
   Exag := AppUI.AddRadio("wp xp y+10 Checked", "Exaggerated Descriptions")
@@ -859,7 +873,7 @@
   }
 }
 
-:*:``film:: { ; Full-length Filming
+:*:``film:: { ; Full-length Filming | no prompts
   A_Clipboard :=
   (
     "This ad group cannot be approved since it violates our policy prohibiting full-length filming. We do not allow ads to feature a full-length clip from a film, TV program, or official video of a third party without proof of authorized use. This ad group features full-length clip of a film in ad video:
@@ -870,8 +884,8 @@
 }
 
 :*:``drug:: { ; Drugs
-  AppUI := Gui("+AlwaysOnTop", "Drugs - Appeals Toolkit " build)
-  AppUI.SetFont("s10", "Tahoma")
+  AppUI := Gui("+AlwaysOnTop", "Drugs - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
 
   AppUI.AddText("w400 y+10", "What is the depiction of drugs?")
   Violation := AppUI.AddEdit("wp xp y+10")
@@ -915,3 +929,508 @@
   }
 }
 
+:*:``organ:: { ; Sensitive Organ Simulation | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Sensitive Organ Simulation - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText("w400 y+8", "What is the sensitive organ featured?")
+  Violation := AppUI.AddEdit("wp xp y+10")
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["landing page", "ad video"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group has been rejected since it features Sensitive Organ Simulation which is prohibited by our ad policy. We do not allow ads to feature the simulation of sensitive body parts. This could include using items to imitate a sensitive body part. Specifically, this ad group features ... in landing page:
+
+      Please remove the related content and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group has been rejected since it features Sensitive Organ Simulation which is prohibited by our ad policy. We do not allow ads to feature the simulation of sensitive body parts. This could include using items to imitate a sensitive body part. Specifically, this ad group features " Violation.Text " in "  Position.Text ":
+
+      Please remove the related content and we can re-review your ad group."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``text:: { ; Unacceptable Ad Text | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Unacceptable Ad Text - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText("w350 y+8", "What is the unacceptable ad text?")
+  Violation := AppUI.AddEdit("wp xp y+8")
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "ad title"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it violates our Unacceptable Ad Text policy. We require that all words used in the Ad Text, Display Name and Ad Creative do not contain any symbols such as $%#, incorrect spelling of words or grammatical errors. Specifically, this ad group features ... in ad video:
+
+      Please correct these errors and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it violates our Unacceptable Ad Text policy. We require that all words used in the Ad Text, Display Name and Ad Creative do not contain any symbols such as $%#, incorrect spelling of words or grammatical errors. Specifically, this ad group features " Violation.Text " in " Position.Text ":
+
+      Please correct these errors and we can re-review your ad group."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``weightloss:: { ; Weight Loss | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Weight Loss - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText("w350", "What is the violated claims?")
+  Violation := AppUI.AddEdit("wp xp y+8")
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group has been rejected since it promotes Weight Management. All weight management products, services or supplements are not allowed to use negative remarks about body weight/body shape or suggest ideal body weight/body shape to advertise. This ad group features ... in ad video:
+
+      Please remove the weight management claims or revise the advertised products."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group has been rejected since it promotes Weight Management. All weight management products, services or supplements are not allowed to use negative remarks about body weight/body shape or suggest ideal body weight/body shape to advertise. This ad group features " Violation.Text " in " Position.Text ":
+
+      Please remove the weight management claims or revise the advertised products."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``format:: { ; Unacceptable LP (product) | no prompts
+  A_Clipboard :=
+  (
+    "This ad group cannot be approved since it violates our Unacceptable LP (Format) policy. We require the landing page to be valid and working properly with sufficient information about advertised products. The landing page also cannot require users to submit personal information to proceed.
+    
+    Please revise your landing page and we can re-review the ad group."
+  )
+  Send "^v"
+}
+
+:*:``hint:: { ; Sexual Hint | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Sexual Hint - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText("w350", "What is the sexual hints?")
+  Violation := AppUI.AddEdit("wp xp y+8")
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group has been rejected since it features Sexually Suggestive Content which is prohibited by our ad policy. We do not allow sexually suggestive text, emojis, phrases, images, gestures or audio. Specifically, this ad group features ... in ad video:
+
+      Please remove the related content and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group has been rejected since it features Sexually Suggestive Content which is prohibited by our ad policy. We do not allow sexually suggestive text, emojis, phrases, images, gestures or audio. Specifically, this ad group features " Violation.Text " in " Position.Text ":
+
+      Please remove the related content and we can re-review your ad group."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``insult:: { ; Insult | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Insult - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText(
+    "w350",
+    (
+      "What is the insulting behavior?
+      (Editable field, type it in if you don't see your options listed)"
+    )
+  )
+  Violation := AppUI.AddComboBox(
+    "wp xp y+8 Choose1",
+    [
+      "profane language in lyrics of background music",
+      "profane language"
+    ]
+  )
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it contains Insulting Behaviors. We do not permit any obscene/profane language or gestures to be included in the ad creative. Specifically, this ad contains profane language in lyrics of background music in ad video:
+
+      Please remove the Insulting Behavior mentioned."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it contains Insulting Behaviors. We do not permit any obscene/profane language or gestures to be included in the ad creative. Specifically, this ad contains " Violation.Text " in " Position.Text ":
+
+      Please remove the Insulting Behavior mentioned."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``smoking:: { ; Smoking | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Smoking - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText(
+    "w350",
+    (
+      "What is the smoking violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )
+  )
+  Violation := AppUI.AddComboBox(
+    "wp xp y+8 Choose1",
+    [
+      "depiction of smoking"
+    ]
+  )
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText(
+    "wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it violates our policy prohibiting Smoking & Tobacco. We do not allow ads that feature, facilitate, or promote smoking related activities. This could include holding, lighting, or smoking a cigar, cigarette, e-cigarette or other tobacco-related products and behaviors. This ad group specifically features depiction of smoking in ad video:
+
+      Please modify this ad group to align with our ad policy."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it violates our policy prohibiting Smoking & Tobacco. We do not allow ads that feature, facilitate, or promote smoking related activities. This could include holding, lighting, or smoking a cigar, cigarette, e-cigarette or other tobacco-related products and behaviors. This ad group specifically features " Violation.Text " in " Position.Text ":
+
+      Please modify this ad group to align with our ad policy."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``privacy:: { ; Lack of Privacy Policy | violation
+  AppUI := Gui("+AlwaysOnTop", "Lack of Privacy Policy - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText(
+    "w350",
+    (
+      "Why the privacy policy link is unaccepted?
+      (Editable field, type it in if you don't see your options listed)"
+    )
+  )
+  Violation := AppUI.AddComboBox(
+    "wp xp y+8 Choose1",
+    [
+      "a normal landing page without a privacy policy section readily to read",
+      "broken/invalid"
+    ]
+  )
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R15 ReadOnly",
+    (
+      "This ad group cannot be approved since it does not meet our requirement of Privacy Policy. We require Lead Ads to have either:
+ 
+      1) A privacy policy link which opens a dedicated privacy policy page, or
+ 
+      2) A normal landing page features a privacy policy section readily available to read.
+
+      The privacy policy link of your ad group is a normal landing page without a privacy policy section readily to read. Please revise this and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it does not meet our requirement of Privacy Policy. We require Lead Ads to have either:
+ 
+      1) A privacy policy link which opens a dedicated privacy policy page, or
+ 
+      2) A normal landing page features a privacy policy section readily available to read.
+
+      The privacy policy link of your ad group is " Violation.Text ". Please revise this and we can re-review your ad group."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``shock:: { ; Sensational Element | violation, position
+  AppUI := Gui("+AlwaysOnTop", "Sensational Element - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText(
+    "w350",
+    (
+      "What is the shocking element?
+      (Editable field, type it in if you don't see your options listed)"
+    )
+  )
+  Violation := AppUI.AddComboBox(
+    "wp xp y+8 Choose1",
+    [
+      "prominent and disturbing image of skin conditions",
+      "depiction of pimple popping",
+      "image of clogged toilet",
+      "image of insect infestation"
+    ]
+  )
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText(
+    "wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R10 ReadOnly",
+    (
+      "This ad group cannot be approved since it contains a Potentially Sensational Element. We do not permit any shocking or jarring imagery, sounds, or text that could cause negative user experiences. Specifically, this ad contains prominent and disturbing image of skin conditions in ad video:
+
+      Please revise this and we can re-review your ad group."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it contains a Potentially Sensational Element. We do not permit any shocking or jarring imagery, sounds, or text that could cause negative user experiences. Specifically, this ad contains " Violation.Text " in " Position.Text ":
+
+      Please revise this and we can re-review your ad group."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}
+
+:*:``tiktok:: { ; TikTok Element | violation, position
+  AppUI := Gui("+AlwaysOnTop", "TikTok Element - Appeals Kit v" build)
+  AppUI.SetFont("s9", "Tahoma")
+
+  AppUI.AddText(
+    "w350",
+    (
+      "What is the violated TikTok element?
+      (Editable field, type it in if you don't see your options listed)"
+    )
+  )
+  Violation := AppUI.AddComboBox(
+    "wp xp y+8 Choose1",
+    [
+      "spelling mistakes of TikTok",
+      "claims of partnership with TikTok",
+      "modified TikTok user interface element"
+    ]
+  )
+  Violation.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText(
+    "wp y+8",
+    (
+      "Where is the violation?
+      (Editable field, type it in if you don't see your options listed)"
+    )  
+  )
+  Position := AppUI.AddComboBox("wp xp y+8 Choose1",["ad video", "landing page"])
+  Position.OnEvent("Change", PreviewChange)
+  
+  AppUI.AddText("wp y+8", "Preview")
+  Preview := AppUI.AddEdit(
+    "wp xp y+8 R15 ReadOnly",
+    (
+      "This ad group cannot be approved since it violates our TikTok Element policy. We do not allow ads to feature elements related to TikTok without permission. This could include featuring an undesirable variant of the TikTok Logo, a spelling mistake of `"TikTok`", the description `"TikTok Bestseller`" or other related elements. Specifically, this ad group features spelling mistakes of TikTok in ad video:
+      
+      Please remove the elements related to TikTok for re-review of this ad group or provide proof of partnership. Proof can be added under Settings > Business Information > Business Verification in your ad account settings."
+    )
+  )  
+
+  AppUI.AddButton("Default wp y+8", "Submit")
+    .OnEvent("Click", SubmitBtn)
+  ShowGUI(AppUI)
+
+  PreviewChange(*) {
+    Preview.Value :=
+    (
+      "This ad group cannot be approved since it violates our TikTok Element policy. We do not allow ads to feature elements related to TikTok without permission. This could include featuring an undesirable variant of the TikTok Logo, a spelling mistake of `"TikTok`", the description `"TikTok Bestseller`" or other related elements. Specifically, this ad group features " Violation.Text " in " Position.Text ":
+      
+      Please remove the elements related to TikTok for re-review of this ad group or provide proof of partnership. Proof can be added under Settings > Business Information > Business Verification in your ad account settings."
+    )
+  }
+
+  SubmitBtn(*) {
+    A_Clipboard := Preview.Value
+    AppUI.Destroy()
+    Send "^v"
+    Reload
+  }
+}

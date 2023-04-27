@@ -3,11 +3,13 @@
 version := "full"
 build := IniRead("settings.ini", "App", "build")
 
+#Include app-functions.ahk
+
 ; Account Suspension
 #Include suspension.ahk
 
 ; Ad Group Disapproval
 #Include adgroup.ahk
 
-; Other hotstring and key remaps
+; Other Processes and Hotkeys
 #Include others.ahk
