@@ -1,6 +1,5 @@
 ﻿#Requires AutoHotkey v2.0
 
-
 previous180 := FormatTime(DateAdd(A_Now, -180, "days"), "dddd, dd MMMM, yyyy")
 week := SubStr(A_YWeek, -2)
 TetCountdown := DateDiff(20250129, A_Now, "days") + 1
@@ -12,7 +11,7 @@ ActiveBrowser(Browser?) {
     Else
       Return False
   Else
-    If WinGetProcessName("A") = "msedge.exe" or WinGetProcessName("A") = "BI-Client.exe" or WinGetProcessName("A") = "chrome.exe"
+    If WinGetProcessName("A") = "msedge.exe" or WinGetProcessName("A") = "BI-Client.exe" or WinGetProcessName("A") = "chrome.exe" or WinGetProcessName("A") = "firefox.exe"
       Return True
     Else
       Return False
