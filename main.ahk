@@ -1,10 +1,10 @@
 ﻿#Requires AutoHotkey v2.0
 
-if IniRead("packaged\settings.ini", "Settings", "liteversion") = 0
+if IniRead("appeals-kit-package\settings.ini", "Settings", "liteversion") = 0
   version := "full"
 else
   version := "lite"
-build := IniRead("packaged\settings.ini", "App", "build")
+build := IniRead("appeals-kit-package\settings.ini", "App", "build")
 
 #Include functions.ahk
 
@@ -124,4 +124,4 @@ If FileExist("temp1.exe") {
 
 ;@Ahk2Exe-AddResource icon.ico
 ;@Ahk2Exe-SetMainIcon icon.ico
-;@Ahk2Exe-ExeName %A_ScriptDir%\packaged\Appeals-Kit
+;@Ahk2Exe-ExeName %A_ScriptDir%\appeals-kit-package\Appeals-Kit

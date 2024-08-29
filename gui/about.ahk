@@ -28,11 +28,11 @@ About(MainGUI) {
     "wp y+4",
     "Lite version"
   )
-  LiteCheckbox.Value := IniRead("packaged\settings.ini", "Settings", "liteversion")
+  LiteCheckbox.Value := IniRead("appeals-kit-package\settings.ini", "Settings", "liteversion")
   LiteCheckbox.OnEvent("Click", ApplySetting)
 
   ApplySetting(*) {
-    IniWrite LiteCheckbox.Value, "packaged\settings.ini", "settings", "liteversion"
+    IniWrite LiteCheckbox.Value, "appeals-kit-package\settings.ini", "settings", "liteversion"
     reload
   }
 
@@ -46,29 +46,29 @@ About(MainGUI) {
     If build != LatestBuild {
     
       ; Update build number
-      IniWrite LatestBuild, "packaged\settings.ini", "App", "build"
+      IniWrite LatestBuild, "appeals-kit-package\settings.ini", "App", "build"
       
       ; Search for new setting keys and update if needed
       Loop Parse IniRead("temp.ini"), "`n" {
         CurrentSection := A_LoopField
         Loop Parse IniRead("temp.ini", CurrentSection), "`n" {
           CurrentKey := StrSplit(A_LoopField, "=")[1]
-          KeyCheck := IniRead("packaged\settings.ini", CurrentSection, CurrentKey, "")
+          KeyCheck := IniRead("appeals-kit-package\settings.ini", CurrentSection, CurrentKey, "")
           If KeyCheck = "" {
             NewKeyDefValue := IniRead("temp.ini", CurrentSection, CurrentKey)
-            IniWrite(NewKeyDefValue, "packaged\settings.ini", CurrentSection, CurrentKey)
+            IniWrite(NewKeyDefValue, "appeals-kit-package\settings.ini", CurrentSection, CurrentKey)
           }
         }
       }
   
       ; Search for depreciated setting keys and remove if needed
-      Loop Parse IniRead("packaged\settings.ini"), "`n" {
+      Loop Parse IniRead("appeals-kit-package\settings.ini"), "`n" {
         CurrentSection := A_LoopField
-        Loop Parse IniRead("packaged\settings.ini", CurrentSection), "`n" {
+        Loop Parse IniRead("appeals-kit-package\settings.ini", CurrentSection), "`n" {
           CurrentKey := StrSplit(A_LoopField, "=")[1]
           KeyCheck := IniRead("temp.ini", CurrentSection, CurrentKey, "")
           If KeyCheck = "" {
-            IniDelete("packaged\settings.ini", CurrentSection, CurrentKey)
+            IniDelete("appeals-kit-package\settings.ini", CurrentSection, CurrentKey)
           }
         }
       }

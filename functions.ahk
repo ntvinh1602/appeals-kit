@@ -25,7 +25,7 @@ OpenURL(URL*) {
       A_Clipboard := URL[A_Index]
       Send "^t"
       If ActiveBrowser("BI-Client") {
-        Sleep IniRead("packaged\settings.ini", "Settings", "bidelay")
+        Sleep IniRead("appeals-kit-package\settings.ini", "Settings", "bidelay")
         Send "{Tab}^v{Enter}"
       } Else
         Send "^v{Enter}"
