@@ -17,29 +17,6 @@ URLCreator(MainGUI) {
   )
 
   MainGUI.UI.AddText(
-    "w630 xp y+10",
-    (
-      "How to use:
-
-        - Paste ad group ID and/or advertiser ID to corresponding boxes then click the destination you want to open
-        - Latest clipboard will be automatically pasted into ad group IDs box
-        - Use `"Switch`" to switch the content of ad group ID and advertiser ID boxes      
-        - Use `"Clear`" to delete content of all boxes
-        - Active windows need to be Chrome or BI-Client for it to works
-        - If it doesn't work, link has already been copied in latest clipboard, paste and open it manually
-      
-      Required input for destinations:
-
-        - Content Search (previously known as Troubleshooting):
-          + 1 ad group ID
-          + Multiple ad group IDs (maximum 100, seperated by spaces, tabs, commas or linebreaks)
-          
-        - Actor Search, JEDI and Industry Qualification:
-          + 1 advertiser ID"      
-    )
-  )
-
-  MainGUI.UI.AddText(
     "w200 xs+430 ys Section",
     "Edit"
   )
