@@ -1,5 +1,11 @@
 #Requires AutoHotkey v2.0
 
+; Account Suspension CRs
+#Include %A_ScriptDir%\canned-responses\suspension\scenario.ahk
+
+; Other CRs
+#Include %A_ScriptDir%\canned-responses\others.ahk
+
 Suspension_UI(MainGUI) {
   
   ; 1st column

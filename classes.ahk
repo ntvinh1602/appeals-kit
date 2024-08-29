@@ -1,5 +1,26 @@
 ﻿#Requires AutoHotkey v2.0
 
+; Account Suspension Labels
+#Include canned-responses\suspension\policy-labels\english\ace.ahk
+#Include canned-responses\suspension\policy-labels\english\adult_sexual_content.ahk
+#Include canned-responses\suspension\policy-labels\english\false_content.ahk
+#Include canned-responses\suspension\policy-labels\english\ip_infringement.ahk
+#Include canned-responses\suspension\policy-labels\english\political_religion_culture.ahk
+#Include canned-responses\suspension\policy-labels\english\prohibited_industry.ahk
+#Include canned-responses\suspension\policy-labels\english\restricted_content.ahk
+#Include canned-responses\suspension\policy-labels\english\ri_pric.ahk
+#Include canned-responses\suspension\policy-labels\english\violence_horror_dangerous.ahk
+
+#Include canned-responses\suspension\policy-labels\vietnamese\ace.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\adult_sexual_content.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\false_content.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\ip_infringement.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\political_religion_culture.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\prohibited_industry.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\restricted_content.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\ri_pric.ahk
+#Include canned-responses\suspension\policy-labels\vietnamese\violence_horror_dangerous.ahk
+
 Class UI {
   __New(Title) {
     this.Title := Title
