@@ -15,35 +15,26 @@ About(MainGUI) {
     )
   )
   MainGUI.UI.AddText(
-    "w630 xs y+20",
-    (
-      "Công thức nấu chân giò giả cầy kiểu Bắc:
-        
-        Nguyên liệu:
-        - 1kg thịt móng giò và chân giò
-        - 1 chén riềng giã nhỏ
-        - 5-6 thìa canh mẻ
-        - 2 thìa canh mắm tôm
-        - 2 thìa canh nước nghệ tươi
-        - 2 thìa canh dầu điều
-        - 1 thìa canh rượu trắng, đường, nước mắm, bột canh, hạt nêm
-        - Hành lá, rau răm, rau ngổ, rau húng...
-        - Măng củ
-        - Bún tươi
-
-        Hướng dẫn:
-        - Móng giò và chân giò đem thui bằng rơm (nếu không có thì bọc giấy báo và đốt) sao cho lớp bì ngả màu sậm nâu vàng là được. Sau đó, rửa sạch, chặt miếng vừa ăn.
-        - Ướp móng giò, chân giò với: 1 bát riềng giã nhỏ, 5-6 thìa canh mẻ, 2 thìa canh mắm tôm, 2 thìa canh nước nghệ tươi (giã nhỏ, vắt lấy nước), 2 thìa canh dầu điều, 1 thìa canh rượu trắng, 1 thìa canh đường, 1 thìa canh nước mắm, 1 thìa cà phê bột canh, 1 thìa cà phê hạt nêm. Dùng đũa đảo đều và ướp tối thiểu trong 1 giờ cho ngấm gia vị.
-        - Phần độn ăn thêm (tùy chọn theo khẩu vị mỗi gia đình): Măng củ tươi, thái miếng vừa ăn, luộc hết đắng và xào sơ.
-        - Cách nấu chân giò giả cầy: Nên nấu tối thiểu 2 lửa sẽ giúp món ăn tròn vị và thơm ngon:
-        - Cho chân giò đã ướp vào nồi, bật bếp đảo thịt và móng cho săn lại để gia vị ngấm gia vị. Đổ nước xâm xấp, thêm măng đã xào vào và đun sôi, hạ lửa nhỏ ninh trong 30 phút, tắt bếp. Trước khi gần ăn 30 phút thì bật bếp, đun 30-45 phút tùy theo khẩu vị mỗi người (thích giòn sần sật hoặc mềm). Cuối cùng rắc hành lá, rau răm, rau ngổ thái rối, đảo đều và tắt bếp, múc ra thưởng thức nóng với bún hoặc cơm đều ngon."
-    )
-  )
-  MainGUI.UI.AddText(
     "w200 xs+430 ys Section",
     "Update"
   )
   MainGUI.Button("Check for Update", Update)
+
+  MainGUI.UI.AddText(
+    "w200 xs y+8 Section",
+    "Settings"
+  )
+  LiteCheckbox := MainGUI.UI.AddCheckbox(
+    "wp y+4",
+    "Lite version"
+  )
+  LiteCheckbox.Value := IniRead("settings.ini", "Settings", "liteversion")
+  LiteCheckbox.OnEvent("Click", ApplySetting)
+
+  ApplySetting(*) {
+    IniWrite LiteCheckbox.Value, "settings.ini", "settings", "liteversion"
+    reload
+  }
 
   Update() {
     ; Download files from cloud

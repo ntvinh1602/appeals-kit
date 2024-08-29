@@ -1,5 +1,11 @@
 ﻿#Requires AutoHotkey v2.0
 
+if IniRead("settings.ini", "Settings", "liteversion") = 0
+  version := "full"
+else
+  version := "lite"
+build := IniRead("settings.ini", "App", "build")
+
 #Include functions.ahk
 
 ; Account Suspension Labels
@@ -96,19 +102,19 @@ If FileExist("temp1.exe") {
   If FileExist("temp2.exe") {
   
     ; Delete old build to reclaim correct filename for new build
-    FileDelete "Appeals Kit lite.exe"
+    FileDelete "Appeals-Kit.exe"
     
     ; Rename new build to correct filename
-    FileMove "temp2.exe", "Appeals Kit lite.exe"
+    FileMove "temp2.exe", "Appeals-Kit.exe"
     
     ; Run new build with correct filename
-    Run "Appeals Kit lite.exe"
+    Run "Appeals-Kit.exe"
     ExitApp
   
   ; New build is running with correct filename, clean up temporary file
   } Else {
     FileDelete "temp1.exe"
-    MsgBox "Update completed! You're using Appeals Kit lite v" build
+    MsgBox "Update completed! You're using Appeals Kit v" build
   }
 } Else {
   If FileExist("temp.ini") {
@@ -118,4 +124,4 @@ If FileExist("temp1.exe") {
 
 ;@Ahk2Exe-AddResource icon.ico
 ;@Ahk2Exe-SetMainIcon icon.ico
-;@Ahk2Exe-ExeName Appeals Kit lite
+;@Ahk2Exe-ExeName Appeals-Kit
