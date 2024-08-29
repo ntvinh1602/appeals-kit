@@ -124,4 +124,4 @@ If FileExist("temp1.exe") {
 
 ;@Ahk2Exe-AddResource icon.ico
 ;@Ahk2Exe-SetMainIcon icon.ico
-;@Ahk2Exe-ExeName Appeals-Kit
+;@Ahk2Exe-ExeName %A_ScriptDir%\packaged\Appeals-Kit
