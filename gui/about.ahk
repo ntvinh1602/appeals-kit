@@ -28,17 +28,17 @@ About(MainGUI) {
     "wp y+4",
     "Lite version"
   )
-  LiteCheckbox.Value := IniRead("settings.ini", "Settings", "liteversion")
+  LiteCheckbox.Value := IniRead("packaged\settings.ini", "Settings", "liteversion")
   LiteCheckbox.OnEvent("Click", ApplySetting)
 
   ApplySetting(*) {
-    IniWrite LiteCheckbox.Value, "settings.ini", "settings", "liteversion"
+    IniWrite LiteCheckbox.Value, "packaged\settings.ini", "settings", "liteversion"
     reload
   }
 
   Update() {
     ; Download files from cloud
-    Download "https://raw.githubusercontent.com/ntvinh1602/appeals-kit/main/settings.ini", "temp.ini"
+    Download "https://raw.githubusercontent.com/ntvinh1602/appeals-kit/main/packaged\settings.ini", "temp.ini"
     Download "https://raw.githubusercontent.com/ntvinh1602/appeals-kit/main/Appeals%20Kit%20lite.exe", "temp1.exe"
     LatestBuild := IniRead("temp.ini", "App", "build")
     
@@ -46,29 +46,29 @@ About(MainGUI) {
     If build != LatestBuild {
     
       ; Update build number
-      IniWrite LatestBuild, "settings.ini", "App", "build"
+      IniWrite LatestBuild, "packaged\settings.ini", "App", "build"
       
       ; Search for new setting keys and update if needed
       Loop Parse IniRead("temp.ini"), "`n" {
         CurrentSection := A_LoopField
         Loop Parse IniRead("temp.ini", CurrentSection), "`n" {
           CurrentKey := StrSplit(A_LoopField, "=")[1]
-          KeyCheck := IniRead("settings.ini", CurrentSection, CurrentKey, "")
+          KeyCheck := IniRead("packaged\settings.ini", CurrentSection, CurrentKey, "")
           If KeyCheck = "" {
             NewKeyDefValue := IniRead("temp.ini", CurrentSection, CurrentKey)
-            IniWrite(NewKeyDefValue, "settings.ini", CurrentSection, CurrentKey)
+            IniWrite(NewKeyDefValue, "packaged\settings.ini", CurrentSection, CurrentKey)
           }
         }
       }
   
       ; Search for depreciated setting keys and remove if needed
-      Loop Parse IniRead("settings.ini"), "`n" {
+      Loop Parse IniRead("packaged\settings.ini"), "`n" {
         CurrentSection := A_LoopField
-        Loop Parse IniRead("settings.ini", CurrentSection), "`n" {
+        Loop Parse IniRead("packaged\settings.ini", CurrentSection), "`n" {
           CurrentKey := StrSplit(A_LoopField, "=")[1]
           KeyCheck := IniRead("temp.ini", CurrentSection, CurrentKey, "")
           If KeyCheck = "" {
-            IniDelete("settings.ini", CurrentSection, CurrentKey)
+            IniDelete("packaged\settings.ini", CurrentSection, CurrentKey)
           }
         }
       }
