@@ -263,7 +263,7 @@ F4:: {
       #"Replaced Value22" = Table.ReplaceValue(#"Replaced Value21","10010009","Delayed Suspension",Replacer.ReplaceText,{"Punish Time.reason_type"}),
       #"Replaced Value23" = Table.ReplaceValue(#"Replaced Value22","10001012","Live Content Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"})
     in
-        #"Replaced Value23"'
+      #"Replaced Value23"'
   )
   Send "^v"
 }
