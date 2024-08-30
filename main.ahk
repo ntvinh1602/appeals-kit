@@ -23,7 +23,7 @@ MainGUI(Tab) {
     [
       "Ad Account",
       "Ad Group",
-      "Duplicate LPs",
+      "Tools",
       "About",
     ]
   )
@@ -39,7 +39,7 @@ MainGUI(Tab) {
 
   ; Quick Links
   TabUI.UseTab(3)
-  DuplicateLPs(Library)
+  Tools(Library)
 
   ; About
   TabUI.UseTab(4)

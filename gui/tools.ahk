@@ -1,42 +1,104 @@
 #Requires AutoHotkey v2.0
 
-DuplicateLPs(MainGUI) {
+Tools(MainGUI) {
   MainGUI.UI.AddText(
     "w200 Section",
-    "Ticket Content / Adv IDs"
+    "Input"
   )
-  TicketText := MainGUI.UI.AddEdit(
+  InputText := MainGUI.UI.AddEdit(
     "w415 xp y+2 R6",
     A_Clipboard
   )
-  
-  MainGUI.UI.AddText(
-    "wp xp y+10",
-    "Unique LPs"
-  )
-  LPResults := MainGUI.UI.AddEdit(
-    "w630 xp y+2 Multi R30 ReadOnly",
-    ""
-  )
 
   MainGUI.UI.AddText(
-    "w200 xs+430 ys Section",
+    "w200 xp y+8 Section",
     "Action"
   )
-  MainGUI.UI.AddButton(
-    "Default wp y+2",
-    "Show Unique LPs"
-  ).OnEvent("Click", RemoveDupLP)
-  MainGUI.UI.AddButton(
-    "Default wp y+2",
-    "Run Autopay Check"
-  ).OnEvent("Click", Autopay)
+
+  MainGUI.Button("Filter Unique LPs", RemoveDupLP, true)
+  MainGUI.Button("Loop IDs on Actor Search", Autopay, true)
+
+  MainGUI.UI.AddText(
+    "w200 x+15 ys Section",
+    "Search by Ad Group ID(s)"
+  )
+  MainGUI.Button("Content Search", AGSearch, true)
+
+  MainGUI.UI.AddText(
+    "wp xs y+8",
+    "Search by Advertiser ID"
+  )
+  MainGUI.Button("Actor Search", ActorSearch, true)
+  MainGUI.Button("JEDI", JEDI, true)
+  MainGUI.Button("Industry Qualification", Industry, true)
+
+  AGSearch(*) {
+    AdGroupIDs := InputText.Text
+    For char in ["`r`n", "`r", "`n", "`t", " "] {
+      AdGroupIDs := StrReplace(AdGroupIDs, char, ",")
+      AdGroupIDs := Trim(AdGroupIDs, ",")
+    }
+    MainGUI.UI.Destroy()
+    OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?ad_ids=" AdGroupIDs "&search_type=ad&show_type=ad")
+  }
+  
+  ActorSearch(*) {
+    if InputText.Text = "" {
+      MainGUI.UI.Destroy()
+      SendMode "Event"
+      SetKeyDelay 75
+      Send "^a^c"
+      Click
+      loop parse A_Clipboard, "`n", "`r"
+        if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+          AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+          break
+        }
+    } else {
+      AdvID := InputText.Text
+      For char in ["`r`n", "`r", "`n", "`t", " "]
+        AdvID := StrReplace(AdvID, char, "")
+      MainGUI.UI.Destroy()
+    }
+    OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=5")
+  }
+
+  JEDI(*) {
+    if InputText.Text = "" {
+      MainGUI.UI.Destroy()
+      SendMode "Event"
+      SetKeyDelay 75
+      Send "^a^c"
+      Click
+      loop parse A_Clipboard, "`n", "`r"
+        if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+          AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+          break
+        }
+    } else {
+      AdvID := InputText.Text
+      For char in ["`r`n", "`r", "`n", "`t", " "]
+        AdvID := StrReplace(AdvID, char, "")
+      MainGUI.UI.Destroy()
+    }
+    OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&/")
+  }
+  
+  Industry(*) {
+    AdvID := InputText.Text
+    For char in ["`r`n", "`r", "`n", "`t", " "]
+      AdvID := StrReplace(AdvID, char, "")
+    MainGUI.UI.Destroy()
+    OpenURL("https://www.adsintegrity.net/actor-integrity-center/evaluation-lookup/accounts/details?accountId=" AdvID "&businessPlatform=13&propertyType=3")
+  }
 
   RemoveDupLP(*) {
-    RawTextArray := StrSplit(TicketText.Value, "`n", "`r")
+    RawTextArray := StrSplit(InputText.Value, "`n", "`r")
     LandingPages := []
     UniqueLP := []
     DuplicateCreative := []
+
+    MainGUI.UI.Destroy()
   
     loop parse A_Clipboard, "`n", "`r" {
       LPIndex := A_Index + 1
@@ -76,14 +138,15 @@ DuplicateLPs(MainGUI) {
       if link != ""
         outputText .= DuplicateCreative[A_Index] "`n" link "`n`n"
     }
-    LPResults.Value := outputText
+
+    MsgBox(outputText, "Unique Landing Pages")
   }
 
   Autopay(*) {
     SendMode "Event"
     SetKeyDelay 75
 
-    AdvIDList := TicketText.Text
+    AdvIDList := InputText.Text
     For char in ["`r`n", "`r", "`n", "`t", " "]
       AdvIDList := StrReplace(AdvIDList, char, ",")
     AdvIDList := Trim(AdvIDList, ",")

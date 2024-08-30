@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v2.0
 
-#HotIf ActiveBrowser()
+;#HotIf ActiveBrowser()
 
 ; Template Library
 :*:````:: { ; Account Suspension
@@ -14,54 +14,6 @@
 }
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")
-
-F11:: {
-  RawTextArray := StrSplit(A_Clipboard, "`n", "`r")
-  LandingPages := []
-  UniqueLP := []
-  DuplicateCreative := []
-
-  loop parse A_Clipboard, "`n", "`r" {
-    LPIndex := A_Index + 1
-    if A_LoopField = "Landing page link" or A_LoopField = "Embedded LP:"
-      LandingPages.Push RawTextArray[LPIndex]
-  }
-
-  for link in LandingPages {
-    if A_Index = 1 {
-      UniqueLP.Push link
-    } else {
-      duplicate := false
-      loop UniqueLP.Length {
-        if link = UniqueLP[A_Index] {
-          duplicate := true
-          UniqueLP.Push ""
-          break
-        }
-      }
-      if duplicate = false
-        UniqueLP.Push link
-    }
-  }
-
-  for link in UniqueLP {
-    creatives := "Creative "
-    loop LandingPages.Length {
-      if link = LandingPages[A_Index] {
-        creatives .= A_Index ", "
-      }
-    }
-    DuplicateCreative.Push creatives
-  }
-
-  outputText := "Total Ad Creative: " LandingPages.Length "`n`n"
-  for link in UniqueLP {
-    if link != ""
-      outputText .= DuplicateCreative[A_Index] link "`n`n"
-  }
-
-  MsgBox(outputText, "Unique Landing Pages")
-}
 
 !a:: { ; Left Arrow
   SendInput "{Left}"
@@ -132,18 +84,9 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   SendMode "Event"
   SetKeyDelay 75
   Send "^c"
-  actor360 := "https://satellite.tiktok-row.net/troubleshooting/actor/1/" A_Clipboard "?page=2"
-  video := "https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" A_Clipboard "&search_type=video&show_type=video"
-  jedi := "https://www.adsintegrity.net/se/actor/detail?value=" A_Clipboard "&type=1"
-  OpenURL(actor360)
-  OpenURL(video)
-  OpenURL(jedi)
-}
-
-F4:: {
-  SendMode "Event"
-  SetKeyDelay 75
-  Send "^c^{Tab}^a^v{Enter}"
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" A_Clipboard "?page=2")
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" A_Clipboard "&search_type=video&show_type=video")
+  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" A_Clipboard "&type=1")
 }
 
 !x:: { ; Filter Features
@@ -158,18 +101,6 @@ F4:: {
   Click "403 667" ; email
   Click "403 703" ; registered email
   Click "403 740" ; phone number
-}
-
-!c:: { ; Extract Videos
-  SendMode "Event"
-  MouseClick "left", 1061, 336, 1, 0
-  Sleep 300
-  MouseClick "left", 1061, 666, 1, 0
-  MouseClick "left", 266, 333, 1, 0
-  MouseClick "left", 698, 269, 1, 0
-  Sleep 300
-  MouseClick "left", 889, 281, 1, 0
-  MouseClick "left", 1044, 766, 1, 0
 }
 
 :*:``rj:: { ; Minimal reply temp    

@@ -17,19 +17,17 @@ ActiveBrowser(Browser?) {
       Return False
 }
 
-OpenURL(URL*) {  
+OpenURL(URL) {  
   If ActiveBrowser() {
     SendMode "Event"
     SetKeyDelay 75
-    Loop URL.Length {
-      A_Clipboard := URL[A_Index]
-      Send "^t"
-      If ActiveBrowser("BI-Client") {
-        Sleep IniRead("settings.ini", "Settings", "bidelay")
-        Send "{Tab}^v{Enter}"
-      } Else
-        Send "^v{Enter}"
-    }
+    A_Clipboard := URL
+    Send "^t"
+    If ActiveBrowser("BI-Client") {
+      Sleep IniRead("settings.ini", "Settings", "bidelay")
+      Send "{Tab}^v{Enter}"
+    } Else
+      Send "^v{Enter}"
   }
 }
 
