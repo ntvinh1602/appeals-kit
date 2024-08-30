@@ -467,7 +467,7 @@ PermaBan() {
       
       POLICY_LABEL_TEMPLATE
       
-      If you are located in the European Economic Area, you may have other ways to seek resolution, such as out-of-court dispute settlement processes or in-court proceedings.Learn More: https://www.tiktok.com/legal/page/row/complaint-handling/en
+      If you are located in the European Economic Area, you may have other ways to seek resolution, such as out-of-court dispute settlement processes or in-court proceedings. Learn More: https://www.tiktok.com/legal/page/row/complaint-handling/en
       
       For more information, please refer to Account Suspensions of our Help Center: https://ads.tiktok.com/help/article/account-suspensions?redirected=1
       

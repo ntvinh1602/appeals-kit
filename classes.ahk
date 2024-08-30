@@ -1,25 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
 ; Account Suspension Labels
-#Include canned-responses\suspension\policy-labels\english\ace.ahk
-#Include canned-responses\suspension\policy-labels\english\adult_sexual_content.ahk
-#Include canned-responses\suspension\policy-labels\english\false_content.ahk
-#Include canned-responses\suspension\policy-labels\english\ip_infringement.ahk
-#Include canned-responses\suspension\policy-labels\english\political_religion_culture.ahk
-#Include canned-responses\suspension\policy-labels\english\prohibited_industry.ahk
-#Include canned-responses\suspension\policy-labels\english\restricted_content.ahk
-#Include canned-responses\suspension\policy-labels\english\ri_pric.ahk
-#Include canned-responses\suspension\policy-labels\english\violence_horror_dangerous.ahk
-
-#Include canned-responses\suspension\policy-labels\vietnamese\ace.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\adult_sexual_content.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\false_content.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\ip_infringement.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\political_religion_culture.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\prohibited_industry.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\restricted_content.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\ri_pric.ahk
-#Include canned-responses\suspension\policy-labels\vietnamese\violence_horror_dangerous.ahk
+#Include canned-responses\suspension\policy.ahk
 
 Class UI {
   __New(Title) {
@@ -365,129 +347,6 @@ Class AdGroup extends UI {
 }
 
 Class AccountSuspension extends UI {
-  static PolicyCat := [
-    "RI & PRIC",
-    "ACE",
-    "Prohibited Industry",
-    "Restricted Content",
-    "IP Infringement",
-    "Politics & Region & Culture",
-    "Misleading & False Content",
-    "Adult & Sexual Content",
-    "Violence & Horror & Dangerous Activity",
-  ]
-  static PolicyLabel := [
-    [
-      "Others - Actor Integrity (default for auto suspension)",
-      "Misleading - Employment Scams",
-      "Misleading - Misleading",
-      "Deceptive Behavior - Recidivism",
-      "Deceptive Behavior - Priming",
-      "Deceptive Behavior - Deceptive Behavior",
-      "Information Security - Account Takeover",
-      "Information Security - Suspicious Activity",
-      "Capital Risk - Bad Debt",
-      "Capital Risk - Non-payment/Transaction Failure",
-      "Inauthentic - Inauthentic Behavior",
-      "PRIC Others - Post_Review Others",
-    ],
-    [
-      "Body Harm",
-      "Data Theft",
-      "IP Owner Complaint",
-      "Forced Consumption",
-      "Delivery Inconsistency",
-      "Non-delivery",
-      "Abnormal Price",
-    ],
-    [
-      "Adult Supplies, Services, Entertainment",
-      "Breast Enhancement",
-      "Child Sexual Abuse Material",
-      "Cosmetics and Cosmetic Service",
-      "Enabling Dishonest Behaviors",
-      "Finance",
-      "Firearms",
-      "Gambling",
-      "Medical Institutions, Devices and Services",
-      "Medicine & Supplements",
-      "Others",
-      "Prohibited Industry",
-      "Recreational Drugs",
-      "Utility Softwares",
-      "Weight Loss",
-    ],
-    [
-      "Drug Production & Trafficking",
-      "Financial Misrepresentation",
-      "Live Gambling",
-      "Smoking & Cigarettes",
-      "Weapons",
-      "Drugs",
-    ],
-    [
-      "Trademark Impersonation",
-      "Counterfeit Products",
-    ],
-    [
-      "Political Content - Critical",
-      "Minor Endangerment",
-      "Minor Exposure",
-      "Minor Abuse",
-      "Minor Illegal Behavior",
-      "Minor Inappropriate Behavior",
-      "Faith-based Claims",
-      "Cults",
-      "Religious Figures",
-      "Offensive Content",
-      "Skin Whitening",
-      "Terrorism",
-      "War",
-      "Religious Symbols",
-    ],
-    [
-      "Dishonest Business Practice",
-      "Body Image",
-      "Weightloss",
-    ],
-    [
-      "Implied Genitalia Exposure",
-      "Genitalia Exposure",
-      "Sexual Activity",
-    ],
-    [
-      "Violence",
-      "Sexual Crimes",
-      "Self-harm",
-    ]
-  ]
-
-  static LabelTemplate := [
-    en_ri_pric,
-    en_ace,
-    en_prohibited_industry,
-    en_restricted_content,
-    en_ip_infringement,
-    en_political_religion_culture,
-    en_false_content,
-    en_adult_sexual_content,
-    en_violence_horror_dangerous
-  ]
-
-  static LabelLocal := [
-    [ ; VN
-      vn_ri_pric,
-      vn_ace,
-      vn_prohibited_industry,
-      vn_restricted_content,
-      vn_ip_infringement,
-      vn_political_religion_culture,
-      vn_false_content,
-      vn_adult_sexual_content,
-      vn_violence_horror_dangerous
-    ],
-  ]
-
   static Seperator := 
   (
     "
@@ -540,16 +399,16 @@ Class AccountSuspension extends UI {
       "w350 y+8",
       "Local Language"
     )
-    LanguageControl := this.UI.AddDropDownList(
+    SelectedLanguage := this.UI.AddDropDownList(
       "wp xp y+8 Choose1",
       [
-        "VN",
+        "Vietnamese",
       ]
     )
-    LanguageControl.OnEvent("Change", PreviewChange)
+    SelectedLanguage.OnEvent("Change", PreviewChange)
     EnglishOnly := this.UI.AddCheckbox(
       "w350 y+8",
-      "No local language, English CR only"
+      "Remove local language, English response only"
     )
     EnglishOnly.OnEvent("Click", PreviewChange)
 
@@ -559,21 +418,21 @@ Class AccountSuspension extends UI {
         "wp xp y+8",
         "Policy Category"
       )
-      CategoryControl := this.UI.AddDropDownList(
+      SelectedCategory := this.UI.AddDropDownList(
         "wp xp y+8 Choose1",
-        AccountSuspension.PolicyCat
+        Policy["Category"]
       )
       this.UI.AddText(
         "wp xp y+8",
         "Policy Label"
       )
-      LabelControl := this.UI.AddDropDownList(
+      SelectedLabel := this.UI.AddDropDownList(
         "wp xp y+8 Choose1",
-        AccountSuspension.PolicyLabel[1]
+        Policy["RI & PRIC"]
       )
-      LastPolicyCat := AccountSuspension.PolicyCat[1]
-      CategoryControl.OnEvent("Change", PreviewChange)
-      LabelControl.OnEvent("Change", PreviewChange)
+      LastPolicyCat := Policy["Category"][1]
+      SelectedCategory.OnEvent("Change", PreviewChange)
+      SelectedLabel.OnEvent("Change", PreviewChange)
     }
 
     ; Preview
@@ -608,13 +467,13 @@ Class AccountSuspension extends UI {
     }
     PreviewChange(*) {
       if EnglishOnly.Value = 0
-        this.Preview.Value := this.Template[1] AccountSuspension.Seperator this.LocalLanguage[LanguageControl.Value][1]
+        this.Preview.Value := this.Template[1] AccountSuspension.Seperator this.LocalLanguage[SelectedLanguage.Value][1]
       else
         this.Preview.Value := this.Template[1]
       loop this.templateswitcher.Length
         if this.templateswitcher[A_Index] = 1 {
           if EnglishOnly.Value = 0 {
-            this.Preview.Value := this.Template[this.alldetails[A_Index].Value] AccountSuspension.Seperator this.LocalLanguage[LanguageControl.Value][this.alldetails[A_Index].Value]
+            this.Preview.Value := this.Template[this.alldetails[A_Index].Value] AccountSuspension.Seperator this.LocalLanguage[SelectedLanguage.Value][this.alldetails[A_Index].Value]
             break
           } else {
             this.Preview.Value := this.Template[this.alldetails[A_Index].Value]
@@ -631,14 +490,14 @@ Class AccountSuspension extends UI {
       if PolicyLabel {
         this.labelreply := ""
         this.labellocal := ""
-        if CategoryControl.Text != LastPolicyCat {
-          LastPolicyCat := CategoryControl.Text
-          LabelControl.Delete()
-          LabelControl.Add(AccountSuspension.PolicyLabel[CategoryControl.Value])
-          LabelControl.Choose(1)
+        if SelectedCategory.Text != LastPolicyCat {
+          LastPolicyCat := SelectedCategory.Text
+          SelectedLabel.Delete()
+          SelectedLabel.Add(Policy[SelectedCategory.Text])
+          SelectedLabel.Choose(1)
         }
-        this.labelreply := AccountSuspension.LabelTemplate[CategoryControl.Value][LabelControl.Value]
-        this.labellocal := AccountSuspension.LabelLocal[LanguageControl.Value][CategoryControl.Value][LabelControl.Value]
+        this.labelreply := english[SelectedLabel.Text]
+        this.labellocal := PolicyLanguage[SelectedLanguage.Text][SelectedLabel.Text]
         this.Preview.Value := StrReplace(
           this.Preview.Value,
           "POLICY_LABEL_TEMPLATE",
