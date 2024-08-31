@@ -11,11 +11,13 @@ build := IniRead("settings.ini", "App", "build")
 #Include remaps.ahk
 
 #Include gui\adgroup.ahk
+#Include gui\new_adgroup.ahk
 #Include gui\suspension.ahk
 #Include gui\tools.ahk
 #Include gui\about.ahk
 
 MainGUI(Tab) {
+
   Library := UI("九陰真經 - Còn " TetCountdown " ngày nữa là Tết!")
   Library.ButtonPosition := "wp xs y+2"
   TabUI := Library.UI.AddTab3(
@@ -25,6 +27,7 @@ MainGUI(Tab) {
       "Ad Group",
       "Tools",
       "About",
+      "NewAdGroup",
     ]
   )
   TabUI.Choose(Tab)
@@ -44,6 +47,10 @@ MainGUI(Tab) {
   ; About
   TabUI.UseTab(4)
   About(Library)
+
+  ; About
+  TabUI.UseTab(5)
+  NewAG(Library)
 
   Library.ShowUI()
 }

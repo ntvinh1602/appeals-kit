@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v2.0
 
-#HotIf ActiveBrowser()
+;#HotIf ActiveBrowser()
 
 ; Template Library
 :*:````:: { ; Account Suspension
