@@ -1,6 +1,6 @@
 ﻿#Requires AutoHotkey v2.0
 
-;#HotIf ActiveBrowser()
+#HotIf ActiveBrowser()
 
 ; Template Library
 :*:````:: { ; Account Suspension
@@ -9,7 +9,7 @@
 :*:``1:: { ; Ad Group Rejection
   MainGUI(2)
 }
-:*:``2:: { ; URL Creator
+:*:``2:: { ; Tools
   MainGUI(3)
 }
 
@@ -21,6 +21,15 @@
 
 !s:: { ; Right Arrow
   SendInput "{Right}"
+}
+
+F1:: { ; Click Submit
+  SendMode "Event"
+  SetDefaultMouseSpeed 0
+  Click
+  MouseGetPos &previousX, &previousY
+  Click "1830 1010"
+  MouseMove previousX, previousY
 }
 
 !1:: { ; Switch to Ad Task Tab in ad group ticket view

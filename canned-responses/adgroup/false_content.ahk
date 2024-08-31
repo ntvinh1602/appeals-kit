@@ -127,38 +127,6 @@ Promise() {
   ) 
 }
 
-FDes() {
-  FDes := AdGroup("False Description")
-  FDes.Template := [
-    (
-      "This ad group cannot be approved since it contains a False Description and/or Inconsistent Information. The pricing featured in the ad creative must match what is written in the ad text and sold on the landing page. We also do not allow any unreasonably priced items (like $0) or outdated promotions to be advertised. Specifically, this ad claims DETAIL_ONE in ad creative but DETAIL_TWO in landing page. Please revise this and we can re-review your ad group."
-    )
-  ]
-  FDes.Detail(
-    "ComboBox",
-    (
-      "What is the claim in ad creative?"
-    ),
-    [],
-    false
-  )
-  FDes.Detail(
-    "ComboBox",
-    (
-      "What is the claim in landing page?"
-    ),
-    [],
-    false
-  )
-  FDes.BottomUI(
-    false, ; violation location
-    true, ; opening/closing
-    true, ; screenshot disclaimer
-    true, ; t0 grace period
-    "creative", ; policy url
-  ) 
-}
-
 Doctor() {
   Doctor := AdGroup("Medical Worker Image")
   Doctor.Template := [
@@ -339,6 +307,22 @@ MaliciousCompare() {
   )
   MaliciousCompare.BottomUI(
     true, ; violation location
+    true, ; opening/closing
+    true, ; screenshot disclaimer
+    true, ; t0 grace period
+    "creative", ; policy url
+  )
+}
+
+FinancialMisrepresentation() {
+  FinancialMisrepresentation := AdGroup("Financial Misrepresentation")
+  FinancialMisrepresentation.Template := [
+    (
+      "This ad group cannot be approved since it violates our ad policy prohibiting Financial Misrepresentation. We do not permit ads to make any exaggerated or unsubstantiated claims regarding financial or activity description. Please revise this and we can re-review your ad group."
+    )
+  ]
+  FinancialMisrepresentation.BottomUI(
+    false, ; violation location
     true, ; opening/closing
     true, ; screenshot disclaimer
     true, ; t0 grace period

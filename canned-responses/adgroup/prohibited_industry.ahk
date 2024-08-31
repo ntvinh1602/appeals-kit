@@ -40,22 +40,6 @@ Ban() {
   )
 }
 
-FinancialMisrepresentation() {
-  FinancialMisrepresentation := AdGroup("Financial Misrepresentation")
-  FinancialMisrepresentation.Template := [
-    (
-      "This ad group cannot be approved since it violates our ad policy prohibiting Financial Misrepresentation. We do not permit ads to make any exaggerated or unsubstantiated claims regarding financial or activity description. Please revise this and we can re-review your ad group."
-    )
-  ]
-  FinancialMisrepresentation.BottomUI(
-    false, ; violation location
-    true, ; opening/closing
-    true, ; screenshot disclaimer
-    true, ; t0 grace period
-    "creative", ; policy url
-  )
-}
-
 PRIC() {
   PRIC := AdGroup("PRIC")
   PRIC.Template := [

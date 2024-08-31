@@ -56,7 +56,6 @@ AdGroup_UI(MainGUI) {
   MainGUI.Button("Absolute Terms", Absolute)
   MainGUI.Button("Before-After Comparisons", BA)
   MainGUI.Button("Exaggerated Description", Exag)
-  MainGUI.Button("False Description", FDes)
   MainGUI.Button("Financial Misrepresentation", FinancialMisrepresentation)
   MainGUI.Button("Insult", Insult)
   MainGUI.Button("Malicious Comparison", MaliciousCompare)
