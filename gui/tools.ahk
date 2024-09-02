@@ -1,6 +1,8 @@
 #Requires AutoHotkey v2.0
 
 Tools(MainGUI) {
+
+  ; Column 1
   MainGUI.UI.AddText(
     "w200 Section",
     "Input"
@@ -8,6 +10,12 @@ Tools(MainGUI) {
   InputText := MainGUI.UI.AddEdit(
     "w415 xp y+2 R6",
     A_Clipboard
+  )
+
+  ; Column 3
+  MainGUI.UI.AddText(
+    "w200 x+15 ys Section",
+    "Input Edit"
   )
 
   MainGUI.UI.AddText(
@@ -32,6 +40,8 @@ Tools(MainGUI) {
   MainGUI.Button("All Videos", AllVideo, true)
   MainGUI.Button("JEDI", JEDI, true)
   MainGUI.Button("Industry Qualification", Industry, true)
+
+
 
   AGSearch(*) {
     AdGroupIDs := InputText.Text
