@@ -21,7 +21,6 @@ OpenURL(URL) {
   If ActiveBrowser() {
     SendMode "Event"
     SetKeyDelay 75
-    OldClipboard := A_Clipboard
     A_Clipboard := URL
     Send "^t"
     If ActiveBrowser("BI-Client") {
@@ -29,7 +28,6 @@ OpenURL(URL) {
       Send "{Tab}^v{Enter}"
     } Else
       Send "^v{Enter}"
-    A_Clipboard := OldClipboard
   }
 }
 

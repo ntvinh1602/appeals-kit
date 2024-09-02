@@ -93,9 +93,10 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   SendMode "Event"
   SetKeyDelay 75
   Send "^c"
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" A_Clipboard "?page=2")
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" A_Clipboard "&search_type=video&show_type=video")
-  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" A_Clipboard "&type=1")
+  AdvID := A_Clipboard
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
+  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
 }
 
 !x:: { ; Filter Features
