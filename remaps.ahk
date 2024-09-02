@@ -10,6 +10,7 @@
   MainGUI(2)
 }
 :*:``2:: { ; Tools
+  Send "^c"
   MainGUI(3)
 }
 
@@ -202,9 +203,10 @@ F6:: { ; Copy ticket platform info to Lark Sheet
       #"Replaced Value20" = Table.ReplaceValue(#"Replaced Value19","10012001","Credit Control",Replacer.ReplaceText,{"Punish Time.reason_type"}),
       #"Replaced Value21" = Table.ReplaceValue(#"Replaced Value20","10002003","BI Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"}),
       #"Replaced Value22" = Table.ReplaceValue(#"Replaced Value21","10010009","Delayed Suspension",Replacer.ReplaceText,{"Punish Time.reason_type"}),
-      #"Replaced Value23" = Table.ReplaceValue(#"Replaced Value22","10001012","Live Content Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"})
+      #"Replaced Value23" = Table.ReplaceValue(#"Replaced Value22","10001012","Live Content Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"}),
+      #"Replaced Value24" = Table.ReplaceValue(#"Replaced Value23","99001002","ATO",Replacer.ReplaceText,{"Punish Time.reason_type"})
     in
-      #"Replaced Value23"'
+      #"Replaced Value24"'
   )
   Send "^v"
 }
