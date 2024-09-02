@@ -29,6 +29,7 @@ Tools(MainGUI) {
     "Search by Advertiser ID"
   )
   MainGUI.Button("Actor Search", ActorSearch, true)
+  MainGUI.Button("All Videos", AllVideo, true)
   MainGUI.Button("JEDI", JEDI, true)
   MainGUI.Button("Industry Qualification", Industry, true)
 
@@ -61,6 +62,27 @@ Tools(MainGUI) {
       MainGUI.UI.Destroy()
     }
     OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=5")
+  }
+  
+  AllVideo(*) {
+    if InputText.Text = "" {
+      MainGUI.UI.Destroy()
+      SendMode "Event"
+      SetKeyDelay 75
+      Send "^a^c"
+      Click
+      loop parse A_Clipboard, "`n", "`r"
+        if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+          AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+          break
+        }
+    } else {
+      AdvID := InputText.Text
+      For char in ["`r`n", "`r", "`n", "`t", " "]
+        AdvID := StrReplace(AdvID, char, "")
+      MainGUI.UI.Destroy()
+    }
+    OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
   }
 
   JEDI(*) {
