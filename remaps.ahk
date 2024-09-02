@@ -10,7 +10,7 @@
   MainGUI(2)
 }
 :*:``2:: { ; Tools
-  Send "^c"
+  SendEvent "^c"
   MainGUI(3)
 }
 
