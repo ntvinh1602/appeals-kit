@@ -10,6 +10,7 @@
   MainGUI(2)
 }
 :*:``2:: { ; Tools
+  SendEvent "^c"
   MainGUI(3)
 }
 
@@ -93,9 +94,10 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   SendMode "Event"
   SetKeyDelay 75
   Send "^c"
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" A_Clipboard "?page=2")
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" A_Clipboard "&search_type=video&show_type=video")
-  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" A_Clipboard "&type=1")
+  AdvID := A_Clipboard
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
+  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
 }
 
 !x:: { ; Filter Features
@@ -201,9 +203,10 @@ F6:: { ; Copy ticket platform info to Lark Sheet
       #"Replaced Value20" = Table.ReplaceValue(#"Replaced Value19","10012001","Credit Control",Replacer.ReplaceText,{"Punish Time.reason_type"}),
       #"Replaced Value21" = Table.ReplaceValue(#"Replaced Value20","10002003","BI Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"}),
       #"Replaced Value22" = Table.ReplaceValue(#"Replaced Value21","10010009","Delayed Suspension",Replacer.ReplaceText,{"Punish Time.reason_type"}),
-      #"Replaced Value23" = Table.ReplaceValue(#"Replaced Value22","10001012","Live Content Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"})
+      #"Replaced Value23" = Table.ReplaceValue(#"Replaced Value22","10001012","Live Content Punishment",Replacer.ReplaceText,{"Punish Time.reason_type"}),
+      #"Replaced Value24" = Table.ReplaceValue(#"Replaced Value23","99001002","ATO",Replacer.ReplaceText,{"Punish Time.reason_type"})
     in
-      #"Replaced Value23"'
+      #"Replaced Value24"'
   )
   Send "^v"
 }

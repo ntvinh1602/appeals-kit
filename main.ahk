@@ -40,7 +40,7 @@ MainGUI(Tab) {
   TabUI.UseTab(2)
   AdGroup_UI(Library)
 
-  ; Quick Links
+  ; Tools
   TabUI.UseTab(3)
   Tools(Library)
 
