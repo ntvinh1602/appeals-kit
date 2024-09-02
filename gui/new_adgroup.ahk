@@ -4,44 +4,53 @@
 
 NewAG(MainGUI) {
   ; Dimensions
-  W_Col1 := 300
-  W_Col2 := 300
-  W_Col3 := 300
+  ColWidth := 290
   ColSpacing := 15
   ButtonSpacing := 4
 
   ; Column 1
-  MainGUI.UI.AddText("w" W_Col1 " Section", "Violations")
+  MainGUI.UI.AddText("w" ColWidth " Section", "Violations")
 
   ; Generate violation tree view
   ViolationTree := MainGUI.UI.Add("TreeView", "R35 wp Checked -HScroll")
   TreeParent := Array()
+  TreeChild := Array()
   for category in Violation["Category"] {
-    TreeParent.Push(ViolationTree.Add(category, , "Bold"))
+    TreeParent.Push(ViolationTree.Add(category))
     for label in Violation[category]
-      ViolationTree.Add(label, TreeParent[TreeParent.Length], "Sort")
-    ViolationTree.Modify(TreeParent[TreeParent.Length], "Expand")
+      if label = "Pass"
+        TreeChild.Push(ViolationTree.Add(label, TreeParent[TreeParent.Length], "Sort Select"))
+      else
+        TreeChild.Push(ViolationTree.Add(label, TreeParent[TreeParent.Length], "Sort"))
+    ViolationTree.Modify(TreeParent[A_Index], "Bold Expand")
   }
-  ViolationTree.Modify(TreeParent[1], "VisFirst") ; Scroll to top
+  ViolationTree.Modify(TreeParent[1], "VisFirst")      
 
   ; Column 2
-  MainGUI.UI.AddText(
-    "w" W_Col2 " x+" ColSpacing " ys Section",
-    "Violation Location"
-  )
+  MainGUI.UI.AddText("w" ColWidth " x+" ColSpacing " ys Section", "Options")
+  MainGUI.UI.AddCheckBox("wp xp y+8", "Grace period for T0")
+  MainGUI.UI.AddCheckBox("wp xp y+5", "Screenshots are not exhaustive")
+
+  MainGUI.UI.AddText("wp xp y+8", "Target Audience")
+  MainGUI.UI.AddRadio("wp xp y+8", "Internal")
+  MainGUI.UI.AddRadio("wp xp y+5", "External")
+
+  MainGUI.UI.AddGroupBox("wp xp y+8", "Editing: " ViolationTree.GetText(ViolationTree.GetSelection()))
+
+  ;LocationTree := MainGUI.UI.Add("TreeView", "R35 wp Checked -HScroll")
 
   ; Column 3
   MainGUI.UI.AddText(
-    "w" W_Col3 " x+" ColSpacing " ys Section",
+    "w" ColWidth " x+" ColSpacing " ys Section",
     "Preview"
   )  
   Preview := MainGUI.UI.AddEdit("wp xp y+8 R36 ReadOnly", "")
   MainGUI.UI.AddButton(
-    "Default w" W_Col3/2-ButtonSpacing/2 " xp y+8 R2.5",
+    "Default w" (ColWidth-ButtonSpacing)/2 " xp y+8 R2.5",
     "Submit"
   )
   MainGUI.UI.AddButton(
-    "w" W_Col3/2-ButtonSpacing/2 " x+" ButtonSpacing " yp R2.5",
-    "Copy to Clipboard"
+    "wp x+" ButtonSpacing " yp R2.5",
+    "Copy"
   )
 }
