@@ -14,18 +14,19 @@ Tools(MainGUI) {
 
   ; Column 3
   MainGUI.UI.AddText(
-    "w200 x+15 ys",
+    "w200 x+15 ys Section",
     "Input Edit"
   )
+  MainGUI.Button("Delete", Delete, true)
 
-  ; 
+  ; Lower Sections
   MainGUI.UI.AddText(
-    "w200 xs y+100 Section",
+    "w200 xs-430 ys+120 Section",
     "Action"
   )
-
   MainGUI.Button("Filter Unique LPs", RemoveDupLP, true)
   MainGUI.Button("Loop IDs on Actor Search", Autopay, true)
+  MainGUI.Button("Open TikTok handle", TikTok, true)
 
   MainGUI.UI.AddText(
     "w200 x+15 ys Section",
@@ -42,7 +43,31 @@ Tools(MainGUI) {
   MainGUI.Button("JEDI", JEDI, true)
   MainGUI.Button("Industry Qualification", Industry, true)
 
+  MainGUI.UI.AddText(
+    "wp xs y+8",
+    "Search by Video Item ID"
+  )
+  MainGUI.Button("Lighthouse", Lighthouse, true)
+  
+  TikTok(*) {
+    handle := InputText.Text
+    For char in ["`r`n", "`r", "`n", "`t", " "]
+      handle := StrReplace(handle, char, "")
+    MainGUI.UI.Destroy()
+    OpenURL("https://www.tiktok.com/@" handle)
+  }
 
+  Delete(*) {
+    InputText.Text := ""
+  }
+  
+  Lighthouse(*) {
+    ItemID := InputText.Text
+    For char in ["`r`n", "`r", "`n", "`t", " "]
+      ItemID := StrReplace(ItemID, char, "")
+    MainGUI.UI.Destroy()
+    OpenURL("https://lighthouse.tiktok-row.net/detail/video?item_id=" ItemID "&product=tiktok&config_key=tiktok")
+  }
 
   AGSearch(*) {
     AdGroupIDs := InputText.Text

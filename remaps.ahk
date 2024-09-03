@@ -34,6 +34,21 @@ F1:: { ; Click Submit
   MouseMove previousX, previousY
 }
 
+F3:: { ; Open Actor Search, All Videos and JEDI from ticket
+  SendMode "Event"
+  SetKeyDelay 75
+  Send "^a^c"
+  Click
+  loop parse A_Clipboard, "`n", "`r"
+    if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+      AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+      break
+    }
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
+  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
+}
+
 !1:: { ; Switch to Ad Task Tab in ad group ticket view
   SendMode "Event"
   SetDefaultMouseSpeed 0
@@ -132,7 +147,7 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 :*:``nv:: {
-  A_Clipboard := "after review there is no content violation, no association with bad actors, no bad debts"
+  A_Clipboard := "after review there is no content violation, no association with bad actors manually punished, no bad debts therefore unblock"
   Send "^v"
 }
 
