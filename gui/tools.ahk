@@ -14,12 +14,13 @@ Tools(MainGUI) {
 
   ; Column 3
   MainGUI.UI.AddText(
-    "w200 x+15 ys Section",
+    "w200 x+15 ys",
     "Input Edit"
   )
 
+  ; 
   MainGUI.UI.AddText(
-    "w200 xp y+8 Section",
+    "w200 xs y+100 Section",
     "Action"
   )
 

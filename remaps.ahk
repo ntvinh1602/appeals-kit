@@ -11,6 +11,7 @@
 }
 :*:``2:: { ; Tools
   SendEvent "^c"
+  ClipWait(1)
   MainGUI(3)
 }
 
