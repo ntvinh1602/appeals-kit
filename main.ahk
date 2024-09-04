@@ -11,49 +11,11 @@ build := IniRead("settings.ini", "App", "build")
 #Include remaps.ahk
 
 #Include gui\adgroup.ahk
-#Include gui\new_adgroup.ahk
 #Include gui\suspension.ahk
 #Include gui\tools.ahk
 #Include gui\about.ahk
 
-MainGUI(Tab) {
 
-  Library := UI("九陰真經 - Còn " TetCountdown " ngày nữa là Tết!")
-  Library.ButtonPosition := "wp xs y+2"
-  TabUI := Library.UI.AddTab3(
-    ,
-    [
-      "Ad Account",
-      "Ad Group",
-      "Tools",
-      "About",
-      "NewAdGroup",
-    ]
-  )
-  TabUI.Choose(Tab)
-  
-  ; Account Suspension & Others
-  TabUI.UseTab(1)
-  Suspension_UI(Library)
-
-  ; Ad Group
-  TabUI.UseTab(2)
-  AdGroup_UI(Library)
-
-  ; Tools
-  TabUI.UseTab(3)
-  Tools(Library)
-
-  ; About
-  TabUI.UseTab(4)
-  About(Library)
-
-  ; About
-  TabUI.UseTab(5)
-  NewAG(Library)
-
-  Library.ShowUI()
-}
 
 #Include update.ahk
 

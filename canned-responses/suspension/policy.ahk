@@ -19,7 +19,7 @@ Policy["Category"] := [
   "Violence & Horror & Dangerous Activity",
 ]
 Policy["RI & PRIC"] := [
-  "Others - Actor Integrity (default for auto suspension)",
+  "Others - Actor Integrity",
   "Misleading - Employment Scams",
   "Misleading - Misleading",
   "Deceptive Behavior - Recidivism",

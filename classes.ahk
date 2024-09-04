@@ -523,9 +523,9 @@ class App {
 
   __New(Title, SelectTab) {
     this.Build := IniRead("settings.ini", "App", "build")
-    this.App := Gui("+AlwaysOnTop", Title " - v" this.Build)
-    this.App.SetFont("s9", "Tahoma")
-    this.Tab := this.App.AddTab3(
+    this.UI := Gui("+AlwaysOnTop", Title " - v" this.Build)
+    this.UI.SetFont("s9", "Tahoma")
+    this.Tab := this.UI.AddTab3(
       ,
       App.Tabs
     )
@@ -538,31 +538,55 @@ class App {
   }
 
   AdAccount() {
+    Scenario := [
+      "No Violation",
+      "Over 180 days",
+      "Out of Scope",
+      "SMB Sanctions",
+      "Payment Team",
+      "Credit Team",
+      "ACE Fulfillment",
+      "Suspicious Activity",
+      "Temporary Suspension",
+      "Permanent Suspension",
+    ]
     ; Column 1
-    this.App.AddText(
-      "w200 Section",
-      "Scenario"
+    this.UI.AddText("w200 Section", "Scenario")
+    this.UI.AddListBox(
+      "wp xp y+8 R" Scenario.Length " Choose1",
+      Scenario
     )
+
     ; Column 2
-    this.App.AddText(
-      "w200 x+15 Section",
-      "Options"
-    )
+    this.UI.AddText("w300 x+8 ys Section", "Policy Label")
+    PolicyTree := this.UI.Add("TreeView", "wp xp y+8 R25 -HScroll")
+    TreeParent := array()
+    TreeChild := array()
+    for category in Policy["Category"] {
+      TreeParent.Push(PolicyTree.Add(category))
+      for label in Policy[category]
+        TreeChild.Push(PolicyTree.Add(label, TreeParent[TreeParent.Length], "Sort"))
+    }
+    PolicyTree.Modify(TreeParent[1], "VisFirst Expand")  
+
+
     ; Column 3
-    this.App.AddText(
-      "w200 x+15 Section",
-      "Preview"
+    this.UI.AddText("w350 x+8 ys Section", "Preview")
+    Preview := this.UI.AddEdit(
+      "wp xp y+8 R35 ReadOnly",
+      ""
     )
   }
 
   AdGroup() {
-    this.App.AddText(
+    this.UI.AddText(
       "w200 Section",
       "Ad Group"
     )
+    
   }
   
   Open() {
-    this.App.Show("xCenter yCenter")
+    this.UI.Show("xCenter yCenter")
   }
 }
