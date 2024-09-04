@@ -177,14 +177,19 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 !WheelDown:: { ; Press End
-    SendInput "{End}"
+  SendInput "{End}"
 }
 
 !WheelUp:: { ; Press Home
-    SendInput "{Home}"
+  SendInput "{Home}"
 }
 
 #HotIf version = "full"
+
+:*:``name:: {
+  A_Clipboard := "@Vinh Nguyen	Keep block"
+  Send "^v"
+}  
 
 :*:``qq:: { ; Query account suspension
   A_Clipboard :=

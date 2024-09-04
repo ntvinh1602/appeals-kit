@@ -30,22 +30,22 @@ Tools(MainGUI) {
 
   MainGUI.UI.AddText(
     "w200 x+15 ys Section",
-    "Search by Ad Group ID(s)"
+    "Search Ad Group ID(s)"
   )
   MainGUI.Button("Content Search", AGSearch, true)
 
   MainGUI.UI.AddText(
     "wp xs y+8",
-    "Search by Advertiser ID"
+    "Search Advertiser ID"
   )
   MainGUI.Button("Actor Search", ActorSearch, true)
-  MainGUI.Button("All Videos", AllVideo, true)
+  MainGUI.Button("Content Search (Video/Item)", AllVideo, true)
   MainGUI.Button("JEDI", JEDI, true)
   MainGUI.Button("Industry Qualification", Industry, true)
 
   MainGUI.UI.AddText(
     "wp xs y+8",
-    "Search by Video Item ID"
+    "Search Video Item ID"
   )
   MainGUI.Button("Lighthouse", Lighthouse, true)
   
@@ -217,8 +217,14 @@ Tools(MainGUI) {
       A_Clipboard := A_LoopField
       Send "^a^v{Enter}"
       result := MsgBox(
-        "Is this Autopay Bad Debt?",
-        "Credit Risk Result",
+        (
+          "Select this one?
+          
+          YES: Select this Adv ID (auto pay bad debt, L0 content violation etc.)
+          NO: Ignore, search the next Adv ID
+          Cancel: Stop the search"
+        ),
+        "Selection",
         "YesNoCancel"
       )
       if result = "No"

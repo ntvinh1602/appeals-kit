@@ -31,8 +31,16 @@ About(MainGUI) {
   LiteCheckbox.Value := IniRead("settings.ini", "Settings", "liteversion")
   LiteCheckbox.OnEvent("Click", ApplySetting)
 
+  EnglishOnly := MainGUI.UI.AddCheckbox(
+    "wp y+4",
+    "English Suspension CR only"
+  )
+  EnglishOnly.Value := IniRead("settings.ini", "Settings", "englishonly")
+  EnglishOnly.OnEvent("Click", ApplySetting)
+
   ApplySetting(*) {
     IniWrite LiteCheckbox.Value, "settings.ini", "settings", "liteversion"
+    IniWrite EnglishOnly.Value, "settings.ini", "settings", "englishonly"
     reload
   }
 }

@@ -410,6 +410,7 @@ Class AccountSuspension extends UI {
       "w350 y+8",
       "Remove local language, English response only"
     )
+    EnglishOnly.Value := IniRead("settings.ini", "Settings", "englishonly")
     EnglishOnly.OnEvent("Click", PreviewChange)
 
     ; Policies
