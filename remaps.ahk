@@ -4,7 +4,7 @@
 
 ; New App
 F2:: {
-  App("Test New App", "Ad Account").Open()
+  App("Test New App", "Account Suspension").Open()
 }
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")

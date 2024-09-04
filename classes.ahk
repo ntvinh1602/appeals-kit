@@ -2,6 +2,7 @@
 
 ; Account Suspension Labels
 #Include canned-responses\suspension\policy.ahk
+#Include canned-responses\suspension\scenario.ahk
 
 Class UI {
   __New(Title) {
@@ -346,180 +347,7 @@ Class AdGroup extends UI {
   }
 }
 
-Class AccountSuspension extends UI {
-  static Seperator := 
-  (
-    "
-
-    -------------------------
-
-    "
-  )
-
-  alldetails := []
-  templateswitcher := []
-  detailplaceholder := [
-    "DETAIL_ONE",
-    "DETAIL_TWO",
-    "DETAIL_THREE",
-    "DETAIL_FOUR",
-  ]
-  Detail(Type, Prompt, Options, TemplateSwitcher) {
-    this.UI.AddText(
-      "w350",
-      Prompt
-    )
-    if Type = "ComboBox" {
-      DetailControl := this.UI.AddComboBox(
-        "wp xp y+8 Choose1",
-        Options
-      )
-    } else if Type = "DropDownList" {
-      DetailControl := this.UI.AddDropDownList(
-        "wp xp y+8 Choose1",
-        Options
-      )
-    } else
-      DetailControl := this.UI.AddDateTime(
-        "wp xp y+8",
-        "dd-MM-yyyy"
-      )
-    this.alldetails.Push(DetailControl)
-    if TemplateSwitcher
-      this.templateswitcher.Push(1)
-    else
-      this.templateswitcher.Push(0)
-  }
-  BottomUI(PolicyLabel?) {    
-    loop this.alldetails.Length
-      this.alldetails[A_Index].OnEvent("Change", PreviewChange)
-
-    ; Local Language
-    this.UI.AddText(
-      "w350 y+8",
-      "Local Language"
-    )
-    SelectedLanguage := this.UI.AddDropDownList(
-      "wp xp y+8 Choose1",
-      [
-        "Vietnamese",
-      ]
-    )
-    SelectedLanguage.OnEvent("Change", PreviewChange)
-    EnglishOnly := this.UI.AddCheckbox(
-      "w350 y+8",
-      "Remove local language, English response only"
-    )
-    EnglishOnly.OnEvent("Click", PreviewChange)
-
-    ; Policies
-    if PolicyLabel {
-      this.UI.AddText(
-        "wp xp y+8",
-        "Policy Category"
-      )
-      SelectedCategory := this.UI.AddDropDownList(
-        "wp xp y+8 Choose1",
-        Policy["Category"]
-      )
-      this.UI.AddText(
-        "wp xp y+8",
-        "Policy Label"
-      )
-      SelectedLabel := this.UI.AddDropDownList(
-        "wp xp y+8 Choose1",
-        Policy["RI & PRIC"]
-      )
-      LastPolicyCat := Policy["Category"][1]
-      SelectedCategory.OnEvent("Change", PreviewChange)
-      SelectedLabel.OnEvent("Change", PreviewChange)
-    }
-
-    ; Preview
-    this.UI.AddText(
-      "w350 y+8",
-      "Preview"
-    )
-    this.Preview := this.UI.AddEdit(
-      "wp xp y+5 R20 ReadOnly",
-      ""
-    )
-
-    ; Buttons
-    this.SubmitControl := this.UI.AddButton(
-      "Default w170 y+8",
-      "Submit"
-    ).OnEvent("Click", SubmitBtn)
-    this.UI.AddButton(
-      "w170 x+8 yp",
-      "Copy to Clipboard"
-    ).OnEvent("Click", CopyBtn)
-    
-    SubmitBtn(*) {
-      A_Clipboard := this.Preview.Value
-      this.UI.Destroy()
-      Sleep 50
-      SendInput "^v"
-    }
-    CopyBtn(*) {
-      A_Clipboard := this.Preview.Value
-      this.UI.Destroy()
-    }
-    PreviewChange(*) {
-      if EnglishOnly.Value = 0
-        this.Preview.Value := this.Template[1] AccountSuspension.Seperator this.LocalLanguage[SelectedLanguage.Value][1]
-      else
-        this.Preview.Value := this.Template[1]
-      loop this.templateswitcher.Length
-        if this.templateswitcher[A_Index] = 1 {
-          if EnglishOnly.Value = 0 {
-            this.Preview.Value := this.Template[this.alldetails[A_Index].Value] AccountSuspension.Seperator this.LocalLanguage[SelectedLanguage.Value][this.alldetails[A_Index].Value]
-            break
-          } else {
-            this.Preview.Value := this.Template[this.alldetails[A_Index].Value]
-            break
-          }
-        }
-      loop this.alldetails.Length {
-        this.Preview.Value := StrReplace(
-          this.Preview.Value,
-          this.detailplaceholder[A_Index],
-          this.alldetails[A_Index].Text
-        )
-      }
-      if PolicyLabel {
-        this.labelreply := ""
-        this.labellocal := ""
-        if SelectedCategory.Text != LastPolicyCat {
-          LastPolicyCat := SelectedCategory.Text
-          SelectedLabel.Delete()
-          SelectedLabel.Add(Policy[SelectedCategory.Text])
-          SelectedLabel.Choose(1)
-        }
-        this.labelreply := english[SelectedLabel.Text]
-        this.labellocal := PolicyLanguage[SelectedLanguage.Text][SelectedLabel.Text]
-        this.Preview.Value := StrReplace(
-          this.Preview.Value,
-          "POLICY_LABEL_TEMPLATE",
-          this.labelreply
-        )
-        this.Preview.Value := StrReplace(
-          this.Preview.Value,
-          "POLICY_LABEL_LOCAL",
-          this.labellocal
-        )
-      }
-    }
-    this.ShowUI()
-    PreviewChange()
-  }
-}
-
-class App {
-  static Tabs := [
-    "Ad Account",
-    "Ad Group"
-  ]
+Class App {
 
   __New(Title, SelectTab) {
     this.Build := IniRead("settings.ini", "App", "build")
@@ -527,55 +355,180 @@ class App {
     this.UI.SetFont("s9", "Tahoma")
     this.Tab := this.UI.AddTab3(
       ,
-      App.Tabs
+      ["Account Suspension", "Ad Group",]
     )
     this.Tab.Choose(SelectTab)
-    this.Tab.UseTab(1)
-    this.AdAccount()
-    
+    this.AccountSuspension()    
     this.Tab.UseTab(2)
     this.AdGroup()
   }
 
-  AdAccount() {
-    Scenario := [
-      "No Violation",
-      "Over 180 days",
-      "Out of Scope",
-      "SMB Sanctions",
-      "Payment Team",
-      "Credit Team",
-      "ACE Fulfillment",
-      "Suspicious Activity",
-      "Temporary Suspension",
-      "Permanent Suspension",
-    ]
+  AccountSuspension() {
+    global Scenario
+    global Policy
+
+    Seperator := 
+    (
+      "
+
+      --------------
+      
+      "
+    )
+
+    ShortSpace := "wp xp y+4"
+    LongSpace := "wp xp y+8"
+    this.Tab.UseTab("Account Suspension")
+
+    AllControl := Array()
+
     ; Column 1
     this.UI.AddText("w200 Section", "Scenario")
-    this.UI.AddListBox(
-      "wp xp y+8 R" Scenario.Length " Choose1",
-      Scenario
-    )
+    ; Scenario Tree
+    ScenarioTree := this.UI.Add("TreeView", ShortSpace " CMaroon R" Scenario["Type"].Length)
+    AllControl.Push(ScenarioTree)
+    for scenario in Scenario["Type"]
+      switch scenario {
+        case "Permanent Suspension":
+          ScenarioTree.Add(scenario, , "Select")
+        default:
+          ScenarioTree.Add(scenario)
+      }
 
-    ; Column 2
-    this.UI.AddText("w300 x+8 ys Section", "Policy Label")
-    PolicyTree := this.UI.Add("TreeView", "wp xp y+8 R25 -HScroll")
-    TreeParent := array()
-    TreeChild := array()
+    ; Message number
+    this.UI.AddText(LongSpace, "Message number")
+    MsgNoTree := this.UI.Add("TreeView", ShortSpace " CMaroon R" Scenario["Message"].Length)
+    AllControl.Push(MsgNoTree)
+    for message in Scenario["Message"]
+      switch A_Index {
+        case 1: MsgNoTree.Add(message, , "Select")
+        default: MsgNoTree.Add(message)
+      }      
+
+    ; Advertiser ID
+    this.UI.AddText(LongSpace, "Advertiser ID")
+    InputAdvID := this.UI.AddComboBox(ShortSpace)
+    AllControl.Push(InputAdvID)
+
+    ; Suspension expiration date
+    this.UI.AddText(LongSpace, "Suspension expiration date")
+    SelectDate := this.UI.AddDateTime(ShortSpace, "dd-MM-yyyy")
+    AllControl.Push(SelectDate)
+
+    ; Local language
+    this.UI.AddText(LongSpace, "Local language")
+    SelectLanguage := this.UI.AddDDL(ShortSpace " Choose1", Scenario["Language"])
+    SelectEngOnly := this.UI.AddCheckbox(LongSpace, "No local language, English Only")
+    AllControl.Push(SelectEngOnly)
+    AllControl.Push(SelectLanguage)
+
+    ; Column 2 / Policy label
+    this.UI.AddText("w320 x+8 ys Section", "Policy label")
+    PolicyTree := this.UI.Add("TreeView", ShortSpace " R27 0x400 CMaroon")
+    AllControl.Push(PolicyTree)
+    PolicyParent := Array()
+    PolicyChild := Array()
     for category in Policy["Category"] {
-      TreeParent.Push(PolicyTree.Add(category))
+      PolicyParent.Push(PolicyTree.Add(category))
       for label in Policy[category]
-        TreeChild.Push(PolicyTree.Add(label, TreeParent[TreeParent.Length], "Sort"))
+        switch label {
+          case "Others - Actor Integrity":
+            PolicyChild.Push(PolicyTree.Add(label, PolicyParent[PolicyParent.Length], "Sort Select"))
+          default:
+            PolicyChild.Push(PolicyTree.Add(label, PolicyParent[PolicyParent.Length], "Sort"))
+        }
     }
-    PolicyTree.Modify(TreeParent[1], "VisFirst Expand")  
+    PolicyTree.Modify(PolicyParent[1], "VisFirst Expand")
+    ; Buttons
+    SubmitBtn := this.UI.AddButton("w" (320-4)/2 " xp y+8 R3 Default", "Submit")
+    SubmitBtn.OnEvent("Click", Submit)
+    this.UI.AddButton("w" (320-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
 
-
-    ; Column 3
+    ; Column 3 / Preview
     this.UI.AddText("w350 x+8 ys Section", "Preview")
-    Preview := this.UI.AddEdit(
-      "wp xp y+8 R35 ReadOnly",
-      ""
-    )
+    Preview := this.UI.AddEdit(ShortSpace " R35 ReadOnly", "")
+
+    ; Behavior
+    for control in AllControl
+      switch control.Type {
+        case "CheckBox", "TreeView": control.OnEvent("Click", RefreshPrev)
+        default: control.OnEvent("Change", RefreshPrev)
+      }
+    ScenarioTree.OnEvent("Click", ControlEnable)
+
+    ; Event function    
+    Submit(*) {
+      A_Clipboard := Preview.Value
+      this.UI.Destroy()
+      Sleep 50
+      SendInput "^v"
+    }
+
+    Copy(*) {
+      A_Clipboard := Preview.Value
+      this.UI.Destroy()
+    }
+
+    ControlEnable(*) {
+      switch ScenarioTree.GetText(ScenarioTree.GetSelection()) {
+        case "SMB Sanctions", "ACE Fulfillment":
+          MsgNoTree.Enabled := false
+          InputAdvID.Enabled := true
+          SelectDate.Enabled := false
+          PolicyTree.Enabled := false
+        case "Suspicious Activity":
+          MsgNoTree.Enabled := true
+          InputAdvID.Enabled := false
+          SelectDate.Enabled := false
+          PolicyTree.Enabled := false
+        case "Temporary Suspension":
+          MsgNoTree.Enabled := true
+          InputAdvID.Enabled := false
+          SelectDate.Enabled := true
+          PolicyTree.Enabled := true
+        case "Permanent Suspension":
+          MsgNoTree.Enabled := true
+          InputAdvID.Enabled := false
+          SelectDate.Enabled := false
+          PolicyTree.Enabled := true
+        default:
+          MsgNoTree.Enabled := false
+          InputAdvID.Enabled := false
+          SelectDate.Enabled := false
+          PolicyTree.Enabled := false
+      }
+    }
+
+    RefreshPrev(*) {
+      ChosenScenario := ScenarioTree.GetText(ScenarioTree.GetSelection())
+      ChosenMsgNumber := MsgNoTree.GetText(MsgNoTree.GetSelection())
+      ChosenPolicy := PolicyTree.GetText(PolicyTree.GetSelection())
+
+      switch ChosenScenario {
+        case "Suspicious Activity", "Temporary Suspension", "Permanent Suspension":
+          Preview.Value := EnglishScenario[ChosenScenario][ChosenMsgNumber]
+          if SelectEngOnly.Value = 0
+            Preview.Value .= Seperator ScenarioLanguage[SelectLanguage.Text][ChosenScenario][ChosenMsgNumber]
+        default:
+          Preview.Value := EnglishScenario[ChosenScenario]
+          if SelectEngOnly.Value = 0
+            Preview.Value .= Seperator ScenarioLanguage[SelectLanguage.Text][ChosenScenario]
+      }
+
+      Preview.Value := StrReplace(Preview.Value, "UNBLOCK_DATE", SelectDate.Text)
+      Preview.Value := StrReplace(Preview.Value, "ADVERTISER_ID", InputAdvID.Text)
+      switch ChosenPolicy {
+        case 0:
+          Preview.Value := StrReplace(Preview.Value, "POLICY_LABEL_TEMPLATE", "" )
+          Preview.Value := StrReplace(Preview.Value, "POLICY_LABEL_LOCAL", "" )
+        default:
+          Preview.Value := StrReplace(Preview.Value, "POLICY_LABEL_TEMPLATE", EnglishPolicy[ChosenPolicy])
+          Preview.Value := StrReplace(Preview.Value, "POLICY_LABEL_LOCAL", PolicyLanguage[SelectLanguage.Text][ChosenPolicy])
+      }
+    }
+
+    ControlEnable()
+    RefreshPrev()
   }
 
   AdGroup() {

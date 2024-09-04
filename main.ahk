@@ -11,7 +11,6 @@ build := IniRead("settings.ini", "App", "build")
 #Include remaps.ahk
 
 #Include gui\adgroup.ahk
-#Include gui\suspension.ahk
 #Include gui\tools.ahk
 #Include gui\about.ahk
 

@@ -1,10 +1,10 @@
 #Requires AutoHotkey v2.0
 
-#Include %A_ScriptDir%\canned-responses\suspension\locale\english.ahk
-#Include %A_ScriptDir%\canned-responses\suspension\locale\vietnamese.ahk
+#Include %A_ScriptDir%\canned-responses\suspension\policy\english.ahk
+#Include %A_ScriptDir%\canned-responses\suspension\policy\vietnamese.ahk
 
 PolicyLanguage := Map()
-PolicyLanguage["Vietnamese"] := vietnamese
+PolicyLanguage["Vietnamese"] := VietnamesePolicy
 
 Policy := Map()
 Policy["Category"] := [
