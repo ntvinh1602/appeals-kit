@@ -1,7 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
-;#HotIf ActiveBrowser()
-
+#HotIf ActiveBrowser()
+/*
 ; Template Library
 :*:````:: { ; Account Suspension
   MainGUI(1)
@@ -12,7 +12,7 @@
 :*:``2:: { ; Tools
   SendEvent "^c"
   MainGUI(3)
-}
+} */
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")
 
@@ -169,6 +169,16 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 #HotIf version = "full"
+
+; Test
+F2:: { ; Account Suspension
+  App("Test New App", "Ad Account").Open()
+}
+
+:*:``name:: {
+  A_Clipboard := "@Vinh Nguyen	Keep block"
+  Send "^v"
+}  
 
 :*:``qq:: { ; Query account suspension
   A_Clipboard :=

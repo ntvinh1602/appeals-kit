@@ -514,3 +514,55 @@ Class AccountSuspension extends UI {
     PreviewChange()
   }
 }
+
+class App {
+  static Tabs := [
+    "Ad Account",
+    "Ad Group"
+  ]
+
+  __New(Title, SelectTab) {
+    this.Build := IniRead("settings.ini", "App", "build")
+    this.App := Gui("+AlwaysOnTop", Title " - v" this.Build)
+    this.App.SetFont("s9", "Tahoma")
+    this.Tab := this.App.AddTab3(
+      ,
+      App.Tabs
+    )
+    this.Tab.Choose(SelectTab)
+    this.Tab.UseTab(1)
+    this.AdAccount()
+    
+    this.Tab.UseTab(2)
+    this.AdGroup()
+  }
+
+  AdAccount() {
+    ; Column 1
+    this.App.AddText(
+      "w200 Section",
+      "Scenario"
+    )
+    ; Column 2
+    this.App.AddText(
+      "w200 x+15 Section",
+      "Options"
+    )
+    ; Column 3
+    this.App.AddText(
+      "w200 x+15 Section",
+      "Preview"
+    )
+  }
+
+  AdGroup() {
+    this.App.AddText(
+      "w200 Section",
+      "Ad Group"
+    )
+  }
+  
+  Open() {
+    this.App.Show("xCenter yCenter")
+  }
+}
