@@ -2,9 +2,16 @@
 
 ;#HotIf ActiveBrowser()
 
-; New App
+; Main App
 F2:: {
-  App("Test New App", "Account Suspension").Open()
+  MainApp := App(
+    "Appeals Kit",
+    ["Account Suspension", "Ad Group WIP", "Tools", "About"],
+    3
+  )
+  MainApp.AccountSuspension("Account Suspension")
+  MainApp.AdGroupWIP("Ad Group WIP")
+  MainApp.Open()
 }
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")
