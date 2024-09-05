@@ -14,8 +14,6 @@ build := IniRead("settings.ini", "App", "build")
 #Include gui\tools.ahk
 #Include gui\about.ahk
 
-
-
 #Include update.ahk
 
 ;@Ahk2Exe-AddResource icon.ico
