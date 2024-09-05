@@ -97,7 +97,7 @@ Tools(MainGUI) {
         AdvID := StrReplace(AdvID, char, "")
       MainGUI.UI.Destroy()
     }
-    OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=5")
+    OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
   }
   
   AllVideo(*) {
