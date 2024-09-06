@@ -177,18 +177,23 @@ Class App {
     ; Column 1
     ; Violation tree view
     this.UI.AddText("w260 Section", "Violation")
-    ViolationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R31 Checked")
-    ViolationParent := Array()
+    VioTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R31 Checked")
+    VioCategory := Array()
+    VioLabel := Array()
+    VioLocation := Map()
+    VioInfo := Map()
     for category in Violation["Category"] {
-      ViolationParent.Push(ViolationTree.Add(category))
-      for label in Violation[category]
+      VioCategory.Push(VioTree.Add(category, , "Expand"))
+      for label in Violation[category] {
+        VioLocation[label] := Array()
+        VioInfo[label] := ""
         if label = "Pass"
-          ViolationTree.Add(label, ViolationParent[ViolationParent.Length], "Sort Select")
+          VioLabel.Push(VioTree.Add(label, VioCategory[VioCategory.Length], "Sort Select"))
         else
-          ViolationTree.Add(label, ViolationParent[ViolationParent.Length], "Sort")
-      ViolationTree.Modify(ViolationParent[A_Index], "Expand")
+          VioLabel.Push(VioTree.Add(label, VioCategory[VioCategory.Length], "Sort"))
+      }
     }
-    ViolationTree.Modify(ViolationParent[1], "VisFirst")
+    VioTree.Modify(VioCategory[1], "VisFirst")
 
     ; Column 2
     ; Options
@@ -210,8 +215,12 @@ Class App {
     LocationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon Checked R" AdMaterial.Length)
     for material in AdMaterial
       LocationTree.Add(material, , "Sort")
+    ; Extra information
+    this.UI.AddText(App.LongSpace, "Extra information")
+    this.UI.AddComboBox(App.ShortSpace, [])
+
     ; Buttons
-    SubmitButton := this.UI.AddButton("w" (260-4)/2 " xs y+8 R3 Default", "Submit")
+    SubmitButton := this.UI.AddButton("w" (260-4)/2 " xs y+20 R3 Default", "Submit")
     SubmitButton.OnEvent("Click", Submit)
     this.UI.AddButton("w" (260-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
 
@@ -219,6 +228,8 @@ Class App {
     ; Preview
     this.UI.AddText("w350 x+8 ys Section", "Preview")
     Preview := this.UI.AddEdit(App.ShortSpace " R35 ReadOnly", "")
+
+    ; Control behavior
 
     ; On event function    
     Submit(*) {

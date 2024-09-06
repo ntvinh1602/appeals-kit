@@ -39,7 +39,7 @@ Violation["Category"] := [
 
 Violation["No Violation"] := [
   "Pass",
-  "Deleted / Empty Ad Group",
+  "Deleted / Empty",
 ]
 
 Violation["Ad Format"] := [
