@@ -147,7 +147,7 @@ VietnameseScenario["Temporary Suspension"] := Map(
 
     Chúng tôi rất tiếc khi phải thông báo cho bạn rằng chúng tôi không thể mở lại tài khoản của bạn. Nguyên nhân là vì tài khoản này đã bị tạm ngưng đến UNBLOCK_DATE do quảng cáo của bạn vi phạm Chính sách quảng cáo của TikTok với (các) lý do sau: 
     
-    POLICY_LABEL_LOCAL
+    POLICY_LOCAL
     
     Sau khi trạng thái tạm ngưng tài khoản được gỡ bỏ, bạn sẽ có 2 ngày làm việc để khắc phục và sửa lại tất cả các lỗi vi phạm. Nếu vẫn còn bất kỳ lỗi vi phạm nào sau khoảng thời gian này, chúng tôi sẽ chấm dứt vĩnh viễn tài khoản của bạn.
     
@@ -164,7 +164,7 @@ VietnameseScenario["Temporary Suspension"] := Map(
 
     Rất tiếc, sau khi xem xét tài khoản của bạn một lần nữa, chúng tôi nhận thấy tài khoản này vẫn tiếp tục vi phạm Chính sách quảng cáo của TikTok. Do đó, chúng tôi hiện chưa thể mở lại tài khoản của bạn. Để biết thêm thông tin, vui lòng tham khảo các nội dung liên lạc trước đó của chúng tôi.
     
-    POLICY_LABEL_LOCAL
+    POLICY_LOCAL
     
     Nếu ở trong Khu vực kinh tế châu Âu, bạn có thể giải quyết việc này bằng một số phương thức khác, chẳng hạn như thực hiện giải quyết tranh chấp ngoài tòa án hoặc kiện ra tòa. Tìm hiểu thêm: https://www.tiktok.com/legal/page/row/complaint-handling/en
     
@@ -199,7 +199,7 @@ VietnameseScenario["Permanent Suspension"] := Map(
 
     Chúng tôi rất tiếc khi phải thông báo cho bạn rằng chúng tôi không thể mở lại tài khoản của bạn. Nguyên nhân là vì tài khoản này đã bị chấm dứt vĩnh viễn do vi phạm Chính sách quảng cáo của TikTok với (các) lý do sau: 
     
-    POLICY_LABEL_LOCAL
+    POLICY_LOCAL
     
     Nếu ở trong Khu vực kinh tế châu Âu, bạn có thể giải quyết việc này bằng một số phương thức khác, chẳng hạn như thực hiện giải quyết tranh chấp ngoài tòa án hoặc kiện ra tòa. Tìm hiểu thêm: https://www.tiktok.com/legal/page/row/complaint-handling/en
     
@@ -214,7 +214,7 @@ VietnameseScenario["Permanent Suspension"] := Map(
 
     Rất tiếc, sau khi xem xét tài khoản của bạn một lần nữa, chúng tôi nhận thấy tài khoản này vẫn tiếp tục vi phạm Chính sách quảng cáo của TikTok. Do đó, chúng tôi hiện chưa thể mở lại tài khoản của bạn. Để biết thêm thông tin, vui lòng tham khảo các nội dung liên lạc trước đó của chúng tôi.
     
-    POLICY_LABEL_LOCAL
+    POLICY_LOCAL
     
     Nếu ở trong Khu vực kinh tế châu Âu, bạn có thể giải quyết việc này bằng một số phương thức khác, chẳng hạn như thực hiện giải quyết tranh chấp ngoài tòa án hoặc kiện ra tòa. Tìm hiểu thêm: https://www.tiktok.com/legal/page/row/complaint-handling/en
     Để biết thêm thông tin, hãy tham khảo chính sách Tạm ngưng tài khoản trong Trung tâm trợ giúp của chúng tôi: https://ads.tiktok.com/help/article/account-suspensions?redirected=1

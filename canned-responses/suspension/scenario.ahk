@@ -3,8 +3,8 @@
 #Include %A_ScriptDir%\canned-responses\suspension\scenario\english.ahk
 #Include %A_ScriptDir%\canned-responses\suspension\scenario\vietnamese.ahk
 
-ScenarioLanguage := Map()
-ScenarioLanguage["Vietnamese"] := VietnameseScenario
+ScenarioLang := Map()
+ScenarioLang["Vietnamese"] := VietnameseScenario
 
 Scenario := Map()
 

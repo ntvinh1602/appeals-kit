@@ -6,12 +6,12 @@
 F2:: {
   MainApp := App(
     "Appeals Kit",
-    ["Account Suspension", "Ad Group WIP", "Tools", "About"],
-    3
+    ["Account Suspension", "Ad Group", "Tools", "About"],
+    2
   )
-  MainApp.AccountSuspension("Account Suspension")
-  MainApp.AdGroupWIP("Ad Group WIP")
-  MainApp.Open()
+  MainApp.AccountSuspension()
+  MainApp.AdGroup()
+  MainApp.UI.Show("xCenter yCenter")
 }
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")

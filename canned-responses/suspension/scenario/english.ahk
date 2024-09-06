@@ -154,7 +154,7 @@ EnglishScenario["Temporary Suspension"] := Map(
 
     We regret to inform you that we cannot reopen your account as it has been temporarily suspended until UNBLOCK_DATE, as your ads are in violation of the TikTok Advertising Policies for the following reason(s): 
      
-    POLICY_LABEL_TEMPLATE
+    POLICY_TEMPLATE
      
     Once your account suspension is lifted, you will have 2 business days to address and correct all violations. If any violations remain after this period, we will permanently suspend your account.
      
@@ -171,7 +171,7 @@ EnglishScenario["Temporary Suspension"] := Map(
 
     Unfortunately, after another review of your account, we have found ongoing violations of our TikTok Advertising Policies. As a result, we are unable to reopen your account at this time. For more information, please refer to our previous communications.
     
-    POLICY_LABEL_TEMPLATE
+    POLICY_TEMPLATE
     
     If you are located in the European Economic Area, you may have other ways to seek resolution, such as out-of-court dispute settlement processes or in-court proceedings. Learn More: https://www.tiktok.com/legal/page/row/complaint-handling/en
     
@@ -205,7 +205,7 @@ EnglishScenario["Permanent Suspension"] := Map(
 
     We regret to inform you that we cannot reopen your account as it has been permanently suspended due to violation of the TikTok Advertising Policies for the following reason(s): 
     
-    POLICY_LABEL_TEMPLATE
+    POLICY_TEMPLATE
     
     If you are located in the European Economic Area, you may have other ways to seek resolution, such as out-of-court dispute settlement processes or in-court proceedings. Learn More: https://www.tiktok.com/legal/page/row/complaint-handling/en
     
@@ -220,7 +220,7 @@ EnglishScenario["Permanent Suspension"] := Map(
 
     Unfortunately, after another review of your account, we have found ongoing violations of our TikTok Advertising Policies. As a result, we are unable to reopen your account at this time. For more information, please refer to our previous communications.
     
-    POLICY_LABEL_TEMPLATE
+    POLICY_TEMPLATE
     
     If you are located in the European Economic Area, you may have other ways to seek resolution, such as out-of-court dispute settlement processes or in-court proceedings. Learn More: https://www.tiktok.com/legal/page/row/complaint-handling/en
     For more information, please refer to Account Suspensions of our Help Center: https://ads.tiktok.com/help/article/account-suspensions?redirected=1

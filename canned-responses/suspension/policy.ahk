@@ -3,8 +3,8 @@
 #Include %A_ScriptDir%\canned-responses\suspension\policy\english.ahk
 #Include %A_ScriptDir%\canned-responses\suspension\policy\vietnamese.ahk
 
-PolicyLanguage := Map()
-PolicyLanguage["Vietnamese"] := VietnamesePolicy
+PolicyLang := Map()
+PolicyLang["Vietnamese"] := VietnamesePolicy
 
 Policy := Map()
 Policy["Category"] := [
