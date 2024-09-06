@@ -161,6 +161,7 @@ Class App {
   AdGroup() {
     this.Tab.UseTab("Ad Group")
     global Violation
+    global License
 
     AdMaterial := [
       "Landing page",
@@ -174,45 +175,52 @@ Class App {
     ]
 
     ; Column 1
-    this.UI.AddText("w220 Section", "Options")
+    ; Violation tree view
+    this.UI.AddText("w260 Section", "Violation")
+    ViolationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R31 Checked")
+    ViolationParent := Array()
+    for category in Violation["Category"] {
+      ViolationParent.Push(ViolationTree.Add(category))
+      for label in Violation[category]
+        if label = "Pass"
+          ViolationTree.Add(label, ViolationParent[ViolationParent.Length], "Sort Select")
+        else
+          ViolationTree.Add(label, ViolationParent[ViolationParent.Length], "Sort")
+      ViolationTree.Modify(ViolationParent[A_Index], "Expand")
+    }
+    ViolationTree.Modify(ViolationParent[1], "VisFirst")
+
+    ; Column 2
+    ; Options
+    this.UI.AddText("w260 x+8 ys Section", "Options")
     this.UI.AddCheckBox(App.LongSpace, "Grace period for T0")
     this.UI.AddCheckBox(App.ShortSpace, "Screenshots are not exhaustive")
-
+    ; Target audience
     this.UI.AddText(App.LongSpace, "Target audience")
     this.UI.AddRadio(App.LongSpace, "Internal")
     this.UI.AddRadio(App.ShortSpace, "External")
+    ; Industry qualification
+    this.UI.AddText(App.LongSpace, "Industry qualification required?")
+    SelectLicense := this.UI.AddDDL(App.ShortSpace " Choose1", License["Industry"])
 
-    this.UI.AddText(App.LongSpace, "Violation location")
+    ; Selected violation options
+    this.UI.AddGroupBox(App.LongSpace " R10", "Selected violation options")
+    ; Location
+    this.UI.AddText("w240 xp+10 yp+20", "Location")
     LocationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon Checked R" AdMaterial.Length)
     for material in AdMaterial
       LocationTree.Add(material, , "Sort")
-
-    ; Column 2 / Policy label
-    this.UI.AddText("w320 x+8 ys Section", "Violation")
-
-    ; Generate violation tree view
-    ViolationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R27 Checked")
-    TreeParent := Array()
-    for category in Violation["Category"] {
-      TreeParent.Push(ViolationTree.Add(category))
-      for label in Violation[category]
-        if label = "Pass"
-          ViolationTree.Add(label, TreeParent[TreeParent.Length], "Sort Select")
-        else
-          ViolationTree.Add(label, TreeParent[TreeParent.Length], "Sort")
-      ViolationTree.Modify(TreeParent[A_Index], "Expand")
-    }
-    ViolationTree.Modify(TreeParent[1], "VisFirst")
     ; Buttons
-    SubmitButton := this.UI.AddButton("w" (320-4)/2 " xp y+8 R3 Default", "Submit")
+    SubmitButton := this.UI.AddButton("w" (260-4)/2 " xs y+8 R3 Default", "Submit")
     SubmitButton.OnEvent("Click", Submit)
-    this.UI.AddButton("w" (320-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
+    this.UI.AddButton("w" (260-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
 
-    ; Column 3 / Preview
+    ; Column 3
+    ; Preview
     this.UI.AddText("w350 x+8 ys Section", "Preview")
     Preview := this.UI.AddEdit(App.ShortSpace " R35 ReadOnly", "")
 
-    ; Event function    
+    ; On event function    
     Submit(*) {
       A_Clipboard := Preview.Value
       this.UI.Destroy()

@@ -1,5 +1,28 @@
 #Requires AutoHotkey v2.0
 
+License := Map()
+
+License["Industry"] := [
+  "No",
+  "Banking and Financial Products",
+  "Securities Trading",
+  "Physical Precious Metals Trading",
+  "Precious Metals Derivatives Trading",
+  "Dietary Supplement",
+  "Drugs",
+  "Insurance",
+  "Medical Institution",
+  "Medical Devices",
+  "Facial Spa",
+  "Special Cosmetics",
+  "P2P Loan Services",
+  "Chemical Fertilizers",
+  "Pesticides",
+  "Recruitment Platforms/Services",
+  "Overseas Workers Recruitment",
+  "Pharmacy/Pharmaceutical Retail",
+]
+
 Violation := Map()
 
 Violation["Category"] := [
@@ -16,14 +39,13 @@ Violation["Category"] := [
 
 Violation["No Violation"] := [
   "Pass",
-  "Terminated",
-  "License Required",
+  "Deleted / Empty Ad Group",
 ]
 
 Violation["Ad Format"] := [
   "Ad Creative Inconsistency",
   "Ad Language Mismatch",
-  "Broken LP / LP (Format)",
+  "Broken Landing Page",
   "Lack of Privacy Policy",
   "LP - Advertiser Contact Info",
   "Private Personal Information",
@@ -34,7 +56,8 @@ Violation["Ad Format"] := [
   "Unacceptable Ad Image",
   "Unacceptable Ad Text",
   "Unacceptable Ad Video Audio",
-  "Unacceptable LP (Product)"
+  "Unacceptable LP (Product)",
+  "Unacceptable LP (Format)",
 ]
 
 Violation["Prohibited & Restricted Industry"] := [
@@ -53,7 +76,8 @@ Violation["Misleading & False Content"] := [
   "No Disclaimer",
   "Performance Promise",
   "Potential Sensational Element",
-  "Weightloss / Body Image"
+  "Weightloss",
+  "Body Image"
 ]
 
 Violation["Violence & Horror & Dangerous Acts"] := [
@@ -88,8 +112,10 @@ Violation["Political & Religion & Culture"] := [
 ]
 
 Violation["Prohibited & Restricted Content"] := [
-  "Drug / Drug Reference",
+  "Drug",
+  "Drug Reference",
   "Live Gambling",
   "Smoking & Cigarettes",
-  "Weapons / Lesser Weapons"
+  "Weapons",
+  "Lesser Weapons"
 ]
