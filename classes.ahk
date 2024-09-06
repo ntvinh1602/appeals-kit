@@ -160,8 +160,8 @@ Class App {
 
   AdGroup() {
     this.Tab.UseTab("Ad Group")
+    global AdGroup
     global Violation
-    global License
 
     AdMaterial := [
       "Landing page",
@@ -198,18 +198,18 @@ Class App {
     ; Column 2
     ; Options
     this.UI.AddText("w260 x+8 ys Section", "Options")
-    this.UI.AddCheckBox(App.LongSpace, "Grace period for T0")
-    this.UI.AddCheckBox(App.ShortSpace, "Screenshots are not exhaustive")
+    SelectT0 := this.UI.AddCheckBox(App.LongSpace, "Grace period for T0")
+    SelectSS := this.UI.AddCheckBox(App.ShortSpace, "Screenshots are not exhaustive")
     ; Target audience
     this.UI.AddText(App.LongSpace, "Target audience")
-    this.UI.AddRadio(App.LongSpace, "Internal")
-    this.UI.AddRadio(App.ShortSpace, "External")
+    SelectInternal := this.UI.AddRadio(App.LongSpace, "Internal")
+    SelectExternal := this.UI.AddRadio(App.ShortSpace, "External")
     ; Industry qualification
     this.UI.AddText(App.LongSpace, "Industry qualification required?")
-    SelectLicense := this.UI.AddDDL(App.ShortSpace " Choose1", License["Industry"])
+    SelectLicense := this.UI.AddDDL(App.ShortSpace " Choose1", AdGroup["Industry"])
 
     ; Selected violation options
-    this.UI.AddGroupBox(App.LongSpace " R10", "Selected violation options")
+    CurrentVioTitle := this.UI.AddGroupBox(App.LongSpace " R10", "")
     ; Location
     this.UI.AddText("w240 xp+10 yp+20", "Location")
     LocationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon Checked R" AdMaterial.Length)
@@ -217,11 +217,10 @@ Class App {
       LocationTree.Add(material, , "Sort")
     ; Extra information
     this.UI.AddText(App.LongSpace, "Extra information")
-    this.UI.AddComboBox(App.ShortSpace, [])
+    InputDetail := this.UI.AddComboBox(App.ShortSpace, [])
 
     ; Buttons
-    SubmitButton := this.UI.AddButton("w" (260-4)/2 " xs y+20 R3 Default", "Submit")
-    SubmitButton.OnEvent("Click", Submit)
+    this.UI.AddButton("w" (260-4)/2 " xs y+20 R3 Default", "Submit").OnEvent("Click", Submit)
     this.UI.AddButton("w" (260-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
 
     ; Column 3
@@ -229,7 +228,20 @@ Class App {
     this.UI.AddText("w350 x+8 ys Section", "Preview")
     Preview := this.UI.AddEdit(App.ShortSpace " R35 ReadOnly", "")
 
-    ; Control behavior
+    ; GUI control behavior
+    for control in [SelectLicense, InputDetail]
+      control.OnEvent("Change", RefreshPreview)
+    for control in [VioTree, LocationTree]
+      control.OnEvent("ItemCheck", RefreshPreview)
+    for control in [SelectT0, SelectSS, SelectExternal, SelectInternal]
+      control.OnEvent("Click", RefreshPreview)
+
+    VioTree.OnEvent("ItemCheck", UncheckCategory)
+    VioTree.OnEvent("ItemSelect", RefreshTitle)
+
+    ; Initialize GUI control default state
+    RefreshTitle()
+    RefreshPreview()
 
     ; On event function    
     Submit(*) {
@@ -242,6 +254,32 @@ Class App {
     Copy(*) {
       A_Clipboard := Preview.Value
       this.UI.Destroy()
+    }
+
+    RefreshTitle(*) {
+      CurrentVioTitle.Text := "Edit - " VioTree.GetText(VioTree.GetSelection())
+    }
+
+    UncheckCategory(*) { ; Prevent checking at violation category
+      for item in VioCategory
+        VioTree.Modify(item, "-Check")
+    }
+
+    RefreshPreview(*) {
+      Preview.Value :=
+      (
+        "Dear Valuable Client,
+
+        Thanks for contacting us and sorry for keeping you waiting.
+    
+        TEST_PLACEHOLDER
+    
+        Hope my explanation is able to assist you. Thanks for your patience and understanding.
+    
+        TikTok For Business."
+      )
+      
+      Preview.Value := StrReplace(Preview.Value, "TEST_PLACEHOLDER", Random())
     }
   }
 }

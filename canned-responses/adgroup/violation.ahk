@@ -1,8 +1,8 @@
 #Requires AutoHotkey v2.0
 
-License := Map()
+AdGroup := Map()
 
-License["Industry"] := [
+AdGroup["Industry"] := [
   "No",
   "Banking and Financial Products",
   "Securities Trading",

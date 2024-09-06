@@ -8,7 +8,7 @@ PolicyLang["Vietnamese"] := VietnamesePolicy
 
 Policy := Map()
 Policy["Category"] := [
-  "RI & PRIC",
+  "Actor Policy",
   "ACE",
   "Prohibited Industry",
   "Restricted Content",
@@ -18,7 +18,7 @@ Policy["Category"] := [
   "Adult & Sexual Content",
   "Violence & Horror & Dangerous Activity",
 ]
-Policy["RI & PRIC"] := [
+Policy["Actor Policy"] := [
   "Others - Actor Integrity",
   "Misleading - Employment Scams",
   "Misleading - Misleading",
@@ -30,7 +30,7 @@ Policy["RI & PRIC"] := [
   "Capital Risk - Bad Debt",
   "Capital Risk - Non-payment/Transaction Failure",
   "Inauthentic - Inauthentic Behavior",
-  "PRIC Others - Post_Review Others",
+  "Others - Post-Review Others",
 ]
 Policy["ACE"] := [
   "Body Harm",
