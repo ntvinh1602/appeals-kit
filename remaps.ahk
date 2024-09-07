@@ -7,10 +7,9 @@ F2:: {
   MainApp := App(
     "Appeals Kit",
     ["Account Suspension", "Ad Group", "Tools", "About"],
-    2
+    1
   )
   MainApp.AccountSuspension()
-  MainApp.AdGroup()
   MainApp.UI.Show("xCenter yCenter")
 }
 
