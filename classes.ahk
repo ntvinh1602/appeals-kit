@@ -1,11 +1,13 @@
 ﻿#Requires AutoHotkey v2.0
 
+#Include canned-responses\adgroup\adgroup.ahk
+#Include canned-responses\adgroup\response.ahk
 #Include canned-responses\suspension\policy.ahk
 #Include canned-responses\suspension\scenario.ahk
-#Include canned-responses\adgroup\violation.ahk
 
 Class App {
   static ShortSpace := "wp xp y+4"
+  static MediumSpace := "wp xp y+6"
   static LongSpace := "wp xp y+8"
 
   __New(Title, Tabs, SelectTab) {
@@ -163,33 +165,25 @@ Class App {
     global AdGroup
     global Violation
 
-    AdMaterial := [
-      "Landing page",
-      "Source",
-      "Ad profile photo",
-      "Ad title",
-      "Ad video",
-      "Ad image",
-      "Download card app description",
-      "Custom image card",
-    ]
-
     ; Column 1
     ; Violation tree view
-    this.UI.AddText("w260 Section", "Violation")
-    VioTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R31 Checked")
     VioCategory := Array()
     VioLabel := Array()
     VioLocation := Map()
     VioInfo := Map()
+    VioChecked := Map()
+    this.UI.AddText("w260 Section", "Violation")
+    VioTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon R31 Checked")
     for category in Violation["Category"] {
       VioCategory.Push(VioTree.Add(category, , "Expand"))
       for label in Violation[category] {
         VioLocation[label] := Array()
         VioInfo[label] := ""
-        if label = "Pass"
-          VioLabel.Push(VioTree.Add(label, VioCategory[VioCategory.Length], "Sort Select"))
-        else
+        VioChecked[label] := false
+        if label = "Pass" {
+          VioLabel.Push(VioTree.Add(label, VioCategory[VioCategory.Length], "Sort Select Check"))
+          VioChecked["Pass"] := true
+        } else
           VioLabel.Push(VioTree.Add(label, VioCategory[VioCategory.Length], "Sort"))
       }
     }
@@ -198,27 +192,25 @@ Class App {
     ; Column 2
     ; Options
     this.UI.AddText("w260 x+8 ys Section", "Options")
-    SelectT0 := this.UI.AddCheckBox(App.LongSpace, "Grace period for T0")
-    SelectSS := this.UI.AddCheckBox(App.ShortSpace, "Screenshots are not exhaustive")
+    SelectT0 := this.UI.AddCheckBox(App.MediumSpace, "Grace period for T0")
+    SelectSS := this.UI.AddCheckBox(App.MediumSpace, "Screenshots are not exhaustive")
     ; Target audience
     this.UI.AddText(App.LongSpace, "Target audience")
-    SelectInternal := this.UI.AddRadio(App.LongSpace, "Internal")
-    SelectExternal := this.UI.AddRadio(App.ShortSpace, "External")
+    SelectInternal := this.UI.AddRadio(App.MediumSpace, "Internal")
+    SelectExternal := this.UI.AddRadio(App.MediumSpace, "External")
     ; Industry qualification
-    this.UI.AddText(App.LongSpace, "Industry qualification required?")
-    SelectLicense := this.UI.AddDDL(App.ShortSpace " Choose1", AdGroup["Industry"])
-
+    SelectLicense := this.UI.AddCheckbox(App.LongSpace, "Request license")
+    SelectIndustry := this.UI.AddDDL(App.MediumSpace " Choose1", AdGroup["Industry"])
     ; Selected violation options
-    CurrentVioTitle := this.UI.AddGroupBox(App.LongSpace " R10", "")
+    CurrentVioLabel := this.UI.AddGroupBox(App.LongSpace " R10 Center", "")
     ; Location
     this.UI.AddText("w240 xp+10 yp+20", "Location")
-    LocationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon Checked R" AdMaterial.Length)
-    for material in AdMaterial
+    LocationTree := this.UI.Add("TreeView", App.ShortSpace " cMaroon Checked R" AdGroup["Material"].Length)
+    for material in AdGroup["Material"]
       LocationTree.Add(material, , "Sort")
-    ; Extra information
-    this.UI.AddText(App.LongSpace, "Extra information")
+    ; Specific details
+    Prompt := this.UI.AddText(App.LongSpace, "Specific details")
     InputDetail := this.UI.AddComboBox(App.ShortSpace, [])
-
     ; Buttons
     this.UI.AddButton("w" (260-4)/2 " xs y+20 R3 Default", "Submit").OnEvent("Click", Submit)
     this.UI.AddButton("w" (260-4)/2 " x+4 yp R3", "Copy").OnEvent("Click", Copy)
@@ -229,18 +221,19 @@ Class App {
     Preview := this.UI.AddEdit(App.ShortSpace " R35 ReadOnly", "")
 
     ; GUI control behavior
-    for control in [SelectLicense, InputDetail]
+    for control in [SelectIndustry, InputDetail]
       control.OnEvent("Change", RefreshPreview)
-    for control in [VioTree, LocationTree]
-      control.OnEvent("ItemCheck", RefreshPreview)
     for control in [SelectT0, SelectSS, SelectExternal, SelectInternal]
       control.OnEvent("Click", RefreshPreview)
 
-    VioTree.OnEvent("ItemCheck", UncheckCategory)
-    VioTree.OnEvent("ItemSelect", RefreshTitle)
+    LocationTree.OnEvent("ItemCheck", RefreshPreview)
+    VioTree.OnEvent("ItemCheck", RefreshVioTree) 
+    VioTree.OnEvent("ItemSelect", RefreshOptions)
+    SelectLicense.OnEvent("Click", RefreshIndustry)
 
     ; Initialize GUI control default state
-    RefreshTitle()
+    RefreshIndustry()
+    RefreshOptions()
     RefreshPreview()
 
     ; On event function    
@@ -256,30 +249,70 @@ Class App {
       this.UI.Destroy()
     }
 
-    RefreshTitle(*) {
-      CurrentVioTitle.Text := "Edit - " VioTree.GetText(VioTree.GetSelection())
-    }
-
-    UncheckCategory(*) { ; Prevent checking at violation category
+    RefreshVioTree(*) { ; Action when violation labels are checked
+      ; Disable checking at violation category
       for item in VioCategory
         VioTree.Modify(item, "-Check")
+
+      ; Pass and Deleted can't be checked/selected with other labels and license request
+      NewCheck := VioChecked.Clone()
+      for item in VioLabel
+        NewCheck[VioTree.GetText(item)] := VioTree.Get(item, "Checked")      
+      Uncheck(Method, Label) { ; Perform uncheck labels function
+        for item in VioLabel
+          if VioTree.GetText(item) = Label = Method {
+            VioTree.Modify(item, "-Check")
+            NewCheck[VioTree.GetText(item)] := false
+            VioChecked := NewCheck ; Update final label status
+          }
+        if Method = false {
+          SelectLicense.Value := false
+          SelectIndustry.Enabled := false
+        }
+      }
+      switch {
+        case not VioChecked["Pass"] and NewCheck["Pass"]:
+          Uncheck(false, "Pass") ; Uncheck all other labels if Pass is checked
+        case not VioChecked["Deleted / Empty"] and NewCheck["Deleted / Empty"]:
+          Uncheck(false, "Deleted / Empty") ; Uncheck all other labels if Deleted is checked
+        case VioChecked["Pass"] and NewCheck["Pass"]:
+          Uncheck(true, "Pass") ; Uncheck "Pass" if other labels are checked
+        case VioChecked["Deleted / Empty"] and NewCheck["Deleted / Empty"]:
+          Uncheck(true, "Deleted / Empty") ; Uncheck Deleted if other labels are checked
+      }
+      RefreshPreview()
+    }
+
+    RefreshIndustry(*) { ; Action when request license is ticked/unticked
+      if SelectLicense.Value {
+        ; Enable industry selection
+        SelectIndustry.Enabled := true
+
+        ; Uncheck No Violation labels
+        for item in VioLabel
+          switch VioTree.GetText(item) {
+            case "Pass", "Deleted / Empty":
+              VioTree.Modify(item, "-Check")
+              VioChecked[VioTree.GetText(item)] := false
+          }
+      } else SelectIndustry.Enabled := false
+      RefreshPreview()
+    }
+
+    RefreshOptions(*) {
+      CurrentVioLabel.Text := VioTree.GetText(VioTree.GetSelection())
+      Prompt.Text := Response[VioTree.GetText(VioTree.GetSelection())]["Prompt"]
     }
 
     RefreshPreview(*) {
-      Preview.Value :=
-      (
-        "Dear Valuable Client,
-
-        Thanks for contacting us and sorry for keeping you waiting.
-    
-        TEST_PLACEHOLDER
-    
-        Hope my explanation is able to assist you. Thanks for your patience and understanding.
-    
-        TikTok For Business."
-      )
-      
-      Preview.Value := StrReplace(Preview.Value, "TEST_PLACEHOLDER", Random())
+      switch {
+        case VioChecked["Pass"]:
+          Preview.Value := Response["Pass"]["Text"][1]
+        case VioChecked["Deleted / Empty"]:
+          Preview.Value := Response["Deleted / Empty"]["Text"][1]
+        default:
+          Preview.Value := Random()
+      }
     }
   }
 }

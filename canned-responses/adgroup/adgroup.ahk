@@ -3,7 +3,6 @@
 AdGroup := Map()
 
 AdGroup["Industry"] := [
-  "No",
   "Banking and Financial Products",
   "Securities Trading",
   "Physical Precious Metals Trading",
@@ -21,6 +20,17 @@ AdGroup["Industry"] := [
   "Recruitment Platforms/Services",
   "Overseas Workers Recruitment",
   "Pharmacy/Pharmaceutical Retail",
+]
+
+AdGroup["Material"] := [
+  "Landing page",
+  "Source",
+  "Ad profile photo",
+  "Ad title",
+  "Ad video",
+  "Ad image",
+  "Download card app description",
+  "Custom image card",
 ]
 
 Violation := Map()
