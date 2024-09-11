@@ -77,6 +77,8 @@ Class App {
     ; Localization
     SelectLocal := this.UI.AddCheckbox("wp xp y+10", "Localization")
     SelectLang := this.UI.AddDDL("wp xp y+6 Choose1", Scenario["Language"])
+    ; 180 day counter
+    this.UI.AddText("wp xp y+30 R3 Center", "180 days before today is " previous180).SetFont("s12", "Segoe UI Light")
 
     ; Column 2
     ; Policy label

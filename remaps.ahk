@@ -1,13 +1,26 @@
 ﻿#Requires AutoHotkey v2.0
 
-;#HotIf ActiveBrowser()
+#HotIf ActiveBrowser()
 
-; Main App
-F2:: {
+:*:````:: { ; Open main app with account suspension tab selected
   MainApp := App(
     "Appeals Kit",
     ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
     1
+  )
+  MainApp.AccountSuspension()
+  MainApp.AdGroup()
+  MainApp.Others()
+  MainApp.Tools()
+  MainApp.About()
+  MainApp.UI.Show("xCenter yCenter")
+}
+
+:*:``1:: { ; Open main app with ad group tab selected
+  MainApp := App(
+    "Appeals Kit",
+    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
+    2
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
