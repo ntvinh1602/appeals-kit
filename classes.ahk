@@ -4,9 +4,6 @@
 #Include canned-responses\suspension\scenario.ahk
 
 Class App {
-  static ShortSpace := "wp xp y+4"
-  static MediumSpace := "wp xp y+6"
-  static LongSpace := "wp xp y+8"
 
   __New(Title, Tabs, SelectTab) {
     this.UI := Gui("+AlwaysOnTop", Title " - v" IniRead("settings.ini", "App", "build"))
@@ -22,7 +19,7 @@ Class App {
     ; Column 1
     ; Scenario
     this.UI.AddText("w200 Section", "Scenario")
-    ScenarioTree := this.UI.Add("TreeView", App.ShortSpace " CMaroon R" Scenario["Type"].Length)
+    ScenarioTree := this.UI.Add("TreeView", "wp xp y+4 CMaroon R" Scenario["Type"].Length)
     for scenario in Scenario["Type"]
       switch scenario {
         case "Permanent Suspension":
@@ -31,37 +28,36 @@ Class App {
           ScenarioTree.Add(scenario)
       }
     ; Message number
-    this.UI.AddText(App.LongSpace, "Message number")
-    MessageTree := this.UI.Add("TreeView", App.ShortSpace " CMaroon R" Scenario["Message"].Length)
+    this.UI.AddText("wp xp y+8", "Message number")
+    MessageTree := this.UI.Add("TreeView", "wp xp y+4 CMaroon R" Scenario["Message"].Length)
     for message in Scenario["Message"]
       switch A_Index {
         case 1: MessageTree.Add(message, , "Select")
         default: MessageTree.Add(message)
       }      
     ; Advertiser ID
-    this.UI.AddText(App.LongSpace, "Advertiser ID")
-    InputAdvID := this.UI.AddComboBox(App.ShortSpace)
+    this.UI.AddText("wp xp y+8", "Advertiser ID")
+    InputAdvID := this.UI.AddComboBox("wp xp y+4")
     ; Suspension expiration date
-    this.UI.AddText(App.LongSpace, "Suspension expiration date")
-    SelectDate := this.UI.AddDateTime(App.ShortSpace, "dd-MM-yyyy")
-    ; Local language
-    this.UI.AddText(App.LongSpace, "Localization")
-    SelectLang := this.UI.AddDDL(App.ShortSpace " Choose1", Scenario["Language"])
-    NoLocale := this.UI.AddCheckbox(App.LongSpace, "No localization! English only!")
+    this.UI.AddText("wp xp y+8", "Suspension expiration date")
+    SelectDate := this.UI.AddDateTime("wp xp y+4", "dd-MM-yyyy")
+    ; Localization
+    SelectLocal := this.UI.AddCheckbox("wp xp y+10", "Localization")
+    SelectLang := this.UI.AddDDL("wp xp y+6 Choose1", Scenario["Language"])
 
     ; Column 2
     ; Policy label
     this.UI.AddText("w320 x+8 ys Section", "Policy label")
-    PolicyTree := this.UI.Add("TreeView", App.ShortSpace " R27 0x400 CMaroon")
-    PolicyCategory := Array()
+    PolicyTree := this.UI.Add("TreeView", "wp xp y+4 R27 0x400 CMaroon")
+    PolicyCat := Array()
     for category in Policy["Category"] {
-      PolicyCategory.Push(PolicyTree.Add(category))
+      PolicyCat.Push(PolicyTree.Add(category))
       for label in Policy[category]
         switch label {
           case "Others - Actor Integrity":
-            PolicyTree.Add(label, PolicyCategory[PolicyCategory.Length], "Sort Select")
+            PolicyTree.Add(label, PolicyCat[PolicyCat.Length], "Sort Select")
           default:
-            PolicyTree.Add(label, PolicyCategory[PolicyCategory.Length], "Sort")
+            PolicyTree.Add(label, PolicyCat[PolicyCat.Length], "Sort")
         }
     }
     ; Buttons
@@ -71,14 +67,15 @@ Class App {
     ; Column 3
     ; Preview
     this.UI.AddText("w350 x+8 ys Section", "Preview")
-    Preview := this.UI.AddEdit(App.ShortSpace " R35 ReadOnly", "")
+    Preview := this.UI.AddEdit("wp xp y+4 R35 ReadOnly", "")
 
     ; GUI control behavior
-    ScenarioTree.OnEvent("Click", RefreshControl)
-    for control in [ScenarioTree, MessageTree, PolicyTree, NoLocale] 
+    for control in [ScenarioTree, MessageTree, PolicyTree, SelectLocal] 
       control.OnEvent("Click", RefreshPreview)
     for control in [InputAdvID, SelectDate, SelectLang]
       control.OnEvent("Change", RefreshPreview)
+    ScenarioTree.OnEvent("Click", RefreshControl)
+    SelectLocal.OnEvent("Click", RefreshControl)
     
     ; Initialize GUI control default state
     RefreshControl()
@@ -125,6 +122,10 @@ Class App {
           SelectDate.Enabled := false
           PolicyTree.Enabled := false
       }
+      switch SelectLocal.Value {
+        case 1: SelectLang.Enabled := true
+        case 0: SelectLang.Enabled := false
+      }
     }
 
     RefreshPreview(*) {
@@ -134,13 +135,13 @@ Class App {
       switch ChosenScenario {
         case "Suspicious Activity", "Temporary Suspension", "Permanent Suspension":
           Preview.Value := EnglishScenario[ChosenScenario][ChosenMessage]
-          if NoLocale.Value = 0 {
+          if SelectLocal.Value = 1 {
             Preview.Value .= "`n`n--------------`n`n"
             Preview.Value .= ScenarioLang[SelectLang.Text][ChosenScenario][ChosenMessage]
           }
         default:
           Preview.Value := EnglishScenario[ChosenScenario]
-          if NoLocale.Value = 0 {
+          if SelectLocal.Value = 1 {
             Preview.Value .= "`n`n--------------`n`n" 
             Preview.Value .= ScenarioLang[SelectLang.Text][ChosenScenario]
           }
