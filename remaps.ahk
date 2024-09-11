@@ -1,18 +1,20 @@
 ﻿#Requires AutoHotkey v2.0
 
-#HotIf ActiveBrowser()
+;#HotIf ActiveBrowser()
 
-; Template Library
-:*:````:: { ; Account Suspension
-  MainGUI(1)
-}
-:*:``1:: { ; Ad Group Rejection
-  MainGUI(2)
-}
-:*:``2:: { ; Tools
-  SendEvent "^c"
-  ClipWait(1)
-  MainGUI(3)
+; Main App
+F2:: {
+  MainApp := App(
+    "Appeals Kit",
+    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
+    1
+  )
+  MainApp.AccountSuspension()
+  MainApp.AdGroup()
+  MainApp.Others()
+  MainApp.Tools()
+  MainApp.About()
+  MainApp.UI.Show("xCenter yCenter")
 }
 
 #HotIf version = "full" and ActiveBrowser("BI-Client")
@@ -32,21 +34,6 @@ F1:: { ; Click Submit
   MouseGetPos &previousX, &previousY
   Click "1830 1010"
   MouseMove previousX, previousY
-}
-
-F3:: { ; Open Actor Search, All Videos and JEDI from ticket
-  SendMode "Event"
-  SetKeyDelay 75
-  Send "^a^c"
-  Click
-  loop parse A_Clipboard, "`n", "`r"
-    if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-      AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-      break
-    }
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
-  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
 }
 
 !1:: { ; Switch to Ad Task Tab in ad group ticket view
@@ -147,7 +134,7 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 :*:``nv:: {
-  A_Clipboard := "after review there is no content violation, no association with bad actors manually punished, no bad debts therefore unblock"
+  A_Clipboard := "after review there is no content violation, no association with bad actors, no bad debts"
   Send "^v"
 }
 
@@ -177,11 +164,11 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 !WheelDown:: { ; Press End
-  SendInput "{End}"
+    SendInput "{End}"
 }
 
 !WheelUp:: { ; Press Home
-  SendInput "{Home}"
+    SendInput "{Home}"
 }
 
 #HotIf version = "full"
@@ -196,7 +183,7 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   (
     'let
       Source = Excel.CurrentWorkbook(){[Name="Table1"]}[Content],
-      #"Removed Columns" = Table.RemoveColumns(Source,{"Punish Reason", "Actor", "Similar Score", "Is in KeyStone", "Delivery Country", "Is self serve", "BC ID", "Create Time", "Ad Group1", "Ad Group2", "COST T60"}),
+      #"Removed Columns" = Table.RemoveColumns(Source,{"Punish Reason", "Actor", "Similar Score", "Is in KeyStone", "Register Country", "Delivery Country", "Is self serve", "BC ID", "Create Time", "Ad Group1", "Ad Group2", "COST T60"}),
       #"Parsed JSON" = Table.TransformColumns(#"Removed Columns",{{"Punish Time", Json.Document}}),
       #"Expanded Punish Time" = Table.ExpandRecordColumn(#"Parsed JSON", "Punish Time", {"create_time", "reason_type", "remark"}, {"Punish Time.create_time", "Punish Time.reason_type", "Punish Time.remark"}),
       #"Changed Type" = Table.TransformColumnTypes(#"Expanded Punish Time",{{"Punish Time.create_time", type datetime}}),

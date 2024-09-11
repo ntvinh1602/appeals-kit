@@ -1,14 +1,14 @@
 #Requires AutoHotkey v2.0
 
-#Include %A_ScriptDir%\canned-responses\suspension\locale\english.ahk
-#Include %A_ScriptDir%\canned-responses\suspension\locale\vietnamese.ahk
+#Include %A_ScriptDir%\canned-responses\suspension\policy\english.ahk
+#Include %A_ScriptDir%\canned-responses\suspension\policy\vietnamese.ahk
 
-PolicyLanguage := Map()
-PolicyLanguage["Vietnamese"] := vietnamese
+PolicyLang := Map()
+PolicyLang["Vietnamese"] := VietnamesePolicy
 
 Policy := Map()
 Policy["Category"] := [
-  "RI & PRIC",
+  "Actor Policy",
   "ACE",
   "Prohibited Industry",
   "Restricted Content",
@@ -18,8 +18,8 @@ Policy["Category"] := [
   "Adult & Sexual Content",
   "Violence & Horror & Dangerous Activity",
 ]
-Policy["RI & PRIC"] := [
-  "Others - Actor Integrity (default for auto suspension)",
+Policy["Actor Policy"] := [
+  "Others - Actor Integrity",
   "Misleading - Employment Scams",
   "Misleading - Misleading",
   "Deceptive Behavior - Recidivism",
@@ -30,7 +30,7 @@ Policy["RI & PRIC"] := [
   "Capital Risk - Bad Debt",
   "Capital Risk - Non-payment/Transaction Failure",
   "Inauthentic - Inauthentic Behavior",
-  "PRIC Others - Post_Review Others",
+  "Others - Post-Review Others",
 ]
 Policy["ACE"] := [
   "Body Harm",
