@@ -59,7 +59,7 @@ VietnamesePolicy["Inauthentic - Inauthentic Behavior"] :=
     
   Để biết thêm thông tin, vui lòng tham khảo chính sách tác nhân quảng cáo của chúng tôi trên trung tâm trợ giúp doanh nghiệp. https://ads.tiktok.com/help/article/actor-policy?"
 )
-VietnamesePolicy["PRIC Others - Post_Review Others"] :=
+VietnamesePolicy["Others - Post-Review Others"] :=
 (
   "Trong quá trình xem xét, chúng tôi phát hiện thấy tài khoản hoặc nội dung của bạn đã có chủ đích né tránh, lợi dụng hoặc cản trở các chính sách và quy trình kiểm duyệt của TikTok đã thiết lập.
     

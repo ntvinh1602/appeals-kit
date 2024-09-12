@@ -30,6 +30,22 @@
   MainApp.UI.Show("xCenter yCenter")
 }
 
+F2:: {
+  SendInput "^c"
+  Sleep 100
+  MainApp := App(
+    "Appeals Kit",
+    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
+    4
+  )
+  MainApp.AccountSuspension()
+  MainApp.AdGroup()
+  MainApp.Others()
+  MainApp.Tools()
+  MainApp.About()
+  MainApp.UI.Show("xCenter yCenter")
+}
+
 #HotIf version = "full" and ActiveBrowser("BI-Client")
 
 !a:: { ; Left Arrow
@@ -45,7 +61,10 @@ F1:: { ; Click Submit
   SetDefaultMouseSpeed 0
   Click
   MouseGetPos &previousX, &previousY
-  Click "1830 1010"
+  switch A_ScreenHeight {
+    case 1080: Click "1830 1010"
+    case 1440: Click "2450 1370"
+  }
   MouseMove previousX, previousY
 }
 
@@ -196,7 +215,7 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   (
     'let
       Source = Excel.CurrentWorkbook(){[Name="Table1"]}[Content],
-      #"Removed Columns" = Table.RemoveColumns(Source,{"Punish Reason", "Actor", "Similar Score", "Is in KeyStone", "Register Country", "Delivery Country", "Is self serve", "BC ID", "Create Time", "Ad Group1", "Ad Group2", "COST T60"}),
+      #"Removed Columns" = Table.RemoveColumns(Source,{"Punish Reason", "Actor", "Similar Score", "Is in KeyStone", "Delivery Country", "Is self serve", "BC ID", "Create Time", "Ad Group1", "Ad Group2", "COST T60"}),
       #"Parsed JSON" = Table.TransformColumns(#"Removed Columns",{{"Punish Time", Json.Document}}),
       #"Expanded Punish Time" = Table.ExpandRecordColumn(#"Parsed JSON", "Punish Time", {"create_time", "reason_type", "remark"}, {"Punish Time.create_time", "Punish Time.reason_type", "Punish Time.remark"}),
       #"Changed Type" = Table.TransformColumnTypes(#"Expanded Punish Time",{{"Punish Time.create_time", type datetime}}),

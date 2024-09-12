@@ -59,7 +59,7 @@ EnglishPolicy["Inauthentic - Inauthentic Behavior"] :=
 
   For more information, please refer to our actor policies on the business help center. https://ads.tiktok.com/help/article/actor-policy?"
 )
-EnglishPolicy["PRIC Others - Post_Review Others"] :=
+EnglishPolicy["Others - Post-Review Others"] :=
 (
   "Our review indicates that your account or content has made deliberate aims to evade, exploit, or obstruct established TikTok policies and moderation processes. 
 
