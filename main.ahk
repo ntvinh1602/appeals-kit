@@ -8,7 +8,7 @@ build := IniRead("settings.ini", "App", "build")
 
 #Include functions.ahk
 #Include classes.ahk
-#Include remaps.ahk
+#Include hotkey.ahk
 #Include update.ahk
 
 ;@Ahk2Exe-AddResource icon.ico
