@@ -359,8 +359,8 @@ Class App {
       "Action"
     )
     this.Button("Filter Unique LPs", RemoveDupLP, true)
-    this.Button("Loop IDs on Actor Search", ManualLoop, true)
-    this.Button("Autoloop (Autopay Bad Debts)", AutopayLoop, true)
+    this.Button("Manual Actor Search Loop", ManualLoop, true)
+    this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)
     this.Button("Open TikTok handle", TikTok, true)
   
     this.UI.AddText(
@@ -426,7 +426,7 @@ Class App {
       StatusUI.Show("xCenter yCenter")
 
       ; Refocus on browser to run script
-      WinActivate "ahk_exe firefox.exe"
+      WinActivate "BI-Client"
       SendMode "Event"
       SetKeyDelay 75
 
@@ -445,7 +445,7 @@ Class App {
             if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
               Result .= id "`n"
               BadActorNum += 1
-              BadActorText.Text := "Yay! I found " BadActorNum " Autopay Bad Debts!"
+              BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
             }
           if A_Index = AdvID.Length {
             ProgressText.Text := "Checking complete!"
