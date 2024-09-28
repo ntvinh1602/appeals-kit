@@ -1,9 +1,9 @@
 ﻿#Requires AutoHotkey v2.0
 
 if IniRead("settings.ini", "Settings", "liteversion") = 0
-  version := "full"
+version := "full"
 else
-  version := "lite"
+version := "lite"
 build := IniRead("settings.ini", "App", "build")
 
 #Include functions.ahk

@@ -394,7 +394,7 @@ Class App {
     AutopayLoop(*) {
       ; Process input data then exit main app to run script
       AdvID := []
-      ResultMsg := ""
+      Result := ""
       BadActorNum := 0
       Stop := false
       InputData := InputText.Text
@@ -408,34 +408,32 @@ Class App {
       ; Create script running status UI
       StatusUI := Gui("+AlwaysOnTop", "Searching...")
       StatusUI.SetFont("s9", "Tahoma")
-      StatusUI.AddText("w400 Center Section", "Finding Autopay Bad Debts in " AdvID.Length " Advertiser IDs")
       StatusUI.AddText(
-        "wp xp y+8 Center",
+        "w400 cMaroon Center Section",
         (
-          "-----------------------------------------------------------------
-          Do not click anywhere else when searching is underway.
-          If you wish to stop the search, click the X button to close this window.
-          ------------------------------------------------------------------"
+          "!!! WARNING !!!
+          Avoid clicking elsewhere while the search is in progress.
+          To stop the search, simply close this window."
         )
       )
-      ProgressText := StatusUI.AddText("wp xp y+8 Center", "Search progress: 0 / " AdvID.Length)
-      ProgressBar := StatusUI.AddProgress("wp xp y+8 h10 cGreen BackgroundMaroon Range0-" AdvID.Length)
+      ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
+      ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
       BadActorText := StatusUI.AddText("wp xp y+8 Center", "Nothing found yet :c")
       CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
       CopyButton.Enabled := false
       CopyButton.OnEvent("Click", Finish)
-      StatusUi.OnEvent("Close", Cancel)
+      StatusUI.OnEvent("Close", Cancel)
       StatusUI.Show("xCenter yCenter")
 
       ; Refocus on browser to run script
-      WinActivate "BI-Client"
+      WinActivate "ahk_exe firefox.exe"
       SendMode "Event"
       SetKeyDelay 75
 
       ; Loop to search
       for id in AdvID {
         if Stop = false {
-          ProgressText.Text := "Search progress: " A_Index " / " AdvID.Length
+          ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(2*(AdvID.Length-A_Index))
           ProgressBar.Value += 1
           A_Clipboard := id
           Send "^a^v{Tab}{Enter}"
@@ -443,18 +441,26 @@ Class App {
           Send "^a^c"
           ClipWait
           CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
-  
-          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0 {
-            if RegExMatch(CrawledText, "Direct Evidence,Bad Debt Amount,\$0\.00") = 0 or RegExMatch(CrawledText, "Bad Debt Amount,\$0\.00,% Bad Debt") = 0 {
-              ResultMsg .= id "`n"
+          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
+            if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
+              Result .= id "`n"
               BadActorNum += 1
               BadActorText.Text := "Yay! I found " BadActorNum " Autopay Bad Debts!"
             }
-          }
-          Send "+{Tab}"
-          if A_Index = AdvID.Length
+          if A_Index = AdvID.Length {
+            ProgressText.Text := "Checking complete!"
             CopyButton.Enabled := true
+          } else Send "+{Tab}"
         } else break
+      }
+
+      FormatSeconds(NumberOfSeconds) { ; Convert number of seconds to hours, minutes and seconds
+        time := 19990101  ; *Midnight* of an arbitrary date.
+        time := DateAdd(time, NumberOfSeconds, "Seconds")
+        if NumberOfSeconds//3600 != 0
+          return NumberOfSeconds//3600 "h " FormatTime(time, "m'm 'ss's'")
+        else
+          return FormatTime(time, "m'm 'ss's'")
       }
 
       Cancel(*) {
@@ -462,7 +468,7 @@ Class App {
       }
 
       Finish(*) {
-        A_Clipboard := ResultMsg
+        A_Clipboard := Result
         StatusUI.Destroy()
       }
     }
