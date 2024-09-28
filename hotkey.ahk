@@ -30,7 +30,21 @@
   MainApp.UI.Show("xCenter yCenter")
 }
 
-F2:: {
+#HotIf version = "full" and ActiveBrowser("BI-Client")
+
+F1:: { ; Click Submit
+  SendMode "Event"
+  SetDefaultMouseSpeed 0
+  Click
+  MouseGetPos &previousX, &previousY
+  switch A_ScreenHeight {
+    case 1080: Click "1830 1010"
+    case 1440: Click "2450 1370"
+  }
+  MouseMove previousX, previousY
+}
+
+F2:: { ; Open main app with Tools tab selected
   SendInput "^c"
   Sleep 100
   MainApp := App(
@@ -46,26 +60,31 @@ F2:: {
   MainApp.UI.Show("xCenter yCenter")
 }
 
-#HotIf version = "full" and ActiveBrowser("BI-Client")
-
-!a:: { ; Left Arrow
-  SendInput "{Left}"
-}
-
-!s:: { ; Right Arrow
-  SendInput "{Right}"
-}
-
-F1:: { ; Click Submit
+F3:: { ; Open Actor Search, All video, JEDI from ticket
   SendMode "Event"
-  SetDefaultMouseSpeed 0
+  SetKeyDelay 75
+  Send "^a^c"
   Click
-  MouseGetPos &previousX, &previousY
-  switch A_ScreenHeight {
-    case 1080: Click "1830 1010"
-    case 1440: Click "2450 1370"
+  loop parse A_Clipboard, "`n", "`r"
+    if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+      AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+      break
+    }
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
+  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
+  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
+}
+
+F6:: { ; Copy ticket platform info to Lark Sheet
+  A_Clipboard := ""
+  SendInput "^c"
+  if !ClipWait(2) {
+    MsgBox "The attempt to copy text onto the clipboard failed."
+    return
   }
-  MouseMove previousX, previousY
+  SendInput "!{Tab}"
+  Sleep 300
+  SendInput "{Home}^{Down}{Down}^v"
 }
 
 !1:: { ; Switch to Ad Task Tab in ad group ticket view
@@ -113,40 +132,31 @@ F1:: { ; Click Submit
   MouseMove previousX, previousY
 }
 
-F6:: { ; Copy ticket platform info to Lark Sheet
-  A_Clipboard := ""
-  SendInput "^c"
-  if !ClipWait(2) {
-    MsgBox "The attempt to copy text onto the clipboard failed."
-    return
-  }
-  SendInput "!{Tab}"
-  Sleep 300
-  SendInput "{Home}^{Down}{Down}^v"
-}
-
-!e:: { ; Open Actor360 + video from selected Adv ID
-  SendMode "Event"
-  SetKeyDelay 75
-  Send "^c"
-  AdvID := A_Clipboard
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
-  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
-}
-
 !x:: { ; Filter Features
   SendMode "Event"
   SetDefaultMouseSpeed 0
-  Click "426 382"
-  Sleep 100
-  Click "403 411" ; video
-  Click "403 490" ; all url types
-  Click "403 596" ; did
-  Click "403 633" ; card info
-  Click "403 667" ; email
-  Click "403 703" ; registered email
-  Click "403 740" ; phone number
+  switch A_ScreenHeight {
+    case 1080:
+      Click "426 382"
+      Sleep 100
+      Click "403 411" ; video
+      Click "403 490" ; all url types
+      Click "403 596" ; did
+      Click "403 633" ; card info
+      Click "403 667" ; email
+      Click "403 703" ; registered email
+      Click "403 740" ; phone number
+    case 1440:
+      Click "476 380"
+      Sleep 100
+      Click "360 411" ; video
+      Click "360 490" ; all url types
+      Click "360 596" ; did
+      Click "360 633" ; card info
+      Click "360 667" ; email
+      Click "360 703" ; registered email
+      Click "360 740" ; phone number
+  }
 }
 
 :*:``rj:: { ; Minimal reply temp    

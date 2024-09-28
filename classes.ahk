@@ -359,7 +359,8 @@ Class App {
       "Action"
     )
     this.Button("Filter Unique LPs", RemoveDupLP, true)
-    this.Button("Loop IDs on Actor Search", Autopay, true)
+    this.Button("Loop IDs on Actor Search", ManualLoop, true)
+    this.Button("Autoloop (Autopay Bad Debts)", AutopayLoop, true)
     this.Button("Open TikTok handle", TikTok, true)
   
     this.UI.AddText(
@@ -375,6 +376,7 @@ Class App {
     this.Button("Actor Search", ActorSearch, true)
     this.Button("Content Search (Video/Item)", AllVideo, true)
     this.Button("JEDI", JEDI, true)
+    this.Button("Video Embedding", VideoEmbedding, true)
     this.Button("Industry Qualification", Industry, true)
   
     this.UI.AddText(
@@ -382,6 +384,117 @@ Class App {
       "Search Video Item ID"
     )
     this.Button("Lighthouse", Lighthouse, true)
+  
+    this.UI.AddText(
+      "wp xs y+8",
+      "Search Ticket ID"
+    )
+    this.Button("Mercury", Mercury, true)
+
+    AutopayLoop(*) {
+      ; Process input data then exit main app to run script
+      AdvID := []
+      ResultMsg := ""
+      BadActorNum := 0
+      Stop := false
+      InputData := InputText.Text
+      for char in ["`r`n", "`r", "`n", "`t", " "]
+        InputData := StrReplace(InputData, char, ",")
+      loop parse InputData, ","
+        if A_LoopField != ""
+          AdvID.Push(A_LoopField)
+      this.UI.Destroy()
+      
+      ; Create script running status UI
+      StatusUI := Gui("+AlwaysOnTop", "Searching...")
+      StatusUI.SetFont("s9", "Tahoma")
+      StatusUI.AddText("w400 Center Section", "Finding Autopay Bad Debts in " AdvID.Length " Advertiser IDs")
+      StatusUI.AddText(
+        "wp xp y+8 Center",
+        (
+          "-----------------------------------------------------------------
+          Do not click anywhere else when searching is underway.
+          If you wish to stop the search, click the X button to close this window.
+          ------------------------------------------------------------------"
+        )
+      )
+      ProgressText := StatusUI.AddText("wp xp y+8 Center", "Search progress: 0 / " AdvID.Length)
+      ProgressBar := StatusUI.AddProgress("wp xp y+8 h10 cGreen BackgroundMaroon Range0-" AdvID.Length)
+      BadActorText := StatusUI.AddText("wp xp y+8 Center", "Nothing found yet :c")
+      CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
+      CopyButton.Enabled := false
+      CopyButton.OnEvent("Click", Finish)
+      StatusUi.OnEvent("Close", Cancel)
+      StatusUI.Show("xCenter yCenter")
+
+      ; Refocus on browser to run script
+      WinActivate "BI-Client"
+      SendMode "Event"
+      SetKeyDelay 75
+
+      ; Loop to search
+      for id in AdvID {
+        if Stop = false {
+          ProgressText.Text := "Search progress: " A_Index " / " AdvID.Length
+          ProgressBar.Value += 1
+          A_Clipboard := id
+          Send "^a^v{Tab}{Enter}"
+          Sleep 1500
+          Send "^a^c"
+          ClipWait
+          CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
+  
+          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0 {
+            if RegExMatch(CrawledText, "Direct Evidence,Bad Debt Amount,\$0\.00") = 0 or RegExMatch(CrawledText, "Bad Debt Amount,\$0\.00,% Bad Debt") = 0 {
+              ResultMsg .= id "`n"
+              BadActorNum += 1
+              BadActorText.Text := "Yay! I found " BadActorNum " Autopay Bad Debts!"
+            }
+          }
+          Send "+{Tab}"
+          if A_Index = AdvID.Length
+            CopyButton.Enabled := true
+        } else break
+      }
+
+      Cancel(*) {
+        Stop := true
+      }
+
+      Finish(*) {
+        A_Clipboard := ResultMsg
+        StatusUI.Destroy()
+      }
+    }
+
+    VideoEmbedding(*) {
+      if InputText.Text = "" {
+        this.UI.Destroy()
+        SendMode "Event"
+        SetKeyDelay 75
+        Send "^a^c"
+        Click
+        loop parse A_Clipboard, "`n", "`r"
+          if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+            AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+            break
+          }
+      } else {
+        AdvID := InputText.Text
+        For char in ["`r`n", "`r", "`n", "`t", " "]
+          AdvID := StrReplace(AdvID, char, "")
+        this.UI.Destroy()
+      }
+      OpenURL("https://www.adsintegrity.net/se/actor?actors=" AdvID "&pageNo=1&pageSize=200&ruleId=9999999989")
+    }
+
+    Mercury(*) {
+      ItemID := InputText.Text
+      For char in ["`r`n", "`r", "`n", "`t", " "]
+        ItemID := StrReplace(ItemID, char, "")
+      this.UI.Destroy()
+      OpenURL("https://www.adsintegrity.net/integrity_experience_center/mercury/tickets/detail/" ItemID "?isOca=false") 
+    }
     
     TikTok(*) {
       handle := InputText.Text
@@ -534,7 +647,7 @@ Class App {
       MsgBox(outputText, "Unique Landing Pages")
     }
   
-    Autopay(*) {
+    ManualLoop(*) {
       SendMode "Event"
       SetKeyDelay 75
   
@@ -543,7 +656,7 @@ Class App {
         AdvIDList := StrReplace(AdvIDList, char, ",")
       AdvIDList := Trim(AdvIDList, ",")
   
-      finalmsg := ""
+      ResultMsg := ""
   
       this.UI.Destroy()
   
@@ -566,13 +679,13 @@ Class App {
         else if result = "Cancel"
           return
         else
-          finalmsg .= A_LoopField "`n"
+          ResultMsg .= A_LoopField "`n"
       }
-      A_Clipboard := finalmsg
-      finalmsg .= "`nClick OK to copy those Adv IDs to clipboard"
+      A_Clipboard := ResultMsg
+      ResultMsg .= "`nClick OK to copy those Adv IDs to clipboard"
       MsgBox(
-        finalmsg,
-        "Autopay Bad Debt Results"
+        ResultMsg,
+        "Results"
       )
     }
   }

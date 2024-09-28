@@ -124,7 +124,7 @@ LicenseRequired() {
     false, ; violation location
     true, ; opening/closing
     false, ; screenshot disclaimer
-    false, ; t0 grace period
+    true, ; t0 grace period
     false, ; policy url
   )
 }
