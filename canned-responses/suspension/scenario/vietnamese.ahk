@@ -101,7 +101,12 @@ VietnameseScenario["Suspicious Activity"] := Map(
   (
     "Quý khách hàng thân mến!
 
-    TikTok đã phát hiện hoạt động đáng ngờ trên tài khoản của bạn. Do đó, chúng tôi đã tạm thời đóng băng tài khoản của bạn để ngăn chặn mọi hoạt động truy cập trái phép có thể xảy ra trong khi chúng tôi đánh giá mức độ nghiêm trọng của sự việc này. Để bảo vệ tính bảo mật của nền tảng và sự an toàn cho tài khoản của bạn, vui lòng gửi hai trong số những giấy tờ sau:  
+    TikTok đã phát hiện hoạt động đáng ngờ trên tài khoản của bạn. Do đó, chúng tôi đã tạm thời đóng băng tài khoản của bạn để ngăn chặn mọi hoạt động truy cập trái phép có thể xảy ra trong khi chúng tôi đánh giá mức độ nghiêm trọng của sự việc này. Để bảo vệ tính bảo mật của nền tảng và sự an toàn cho tài khoản của bạn, vui lòng gửi hai trong số những giấy tờ sau:
+
+    Ảnh chụp CMND/CCCD
+    Ảnh chụp hộ chiếu
+    Ảnh chụp bằng lái xe
+    Ảnh chụp thẻ ngân hàng
      
     *Thông tin bổ sung: 
     1. Chúng tôi cần ảnh chụp thực tế giấy tờ của bạn. 

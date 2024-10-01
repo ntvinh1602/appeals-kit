@@ -108,7 +108,12 @@ EnglishScenario["Suspicious Activity"] := Map(
   (
     "Dear Valued Customer,
 
-    TikTok has detected suspicious activity on your account, and as a result, we have temporarily frozen your account to prevent any potential unauthorized access while we assess the severity of the incident. In order to protect the security of the platform and the safety of your account, please submit two of the following documents:  
+    TikTok has detected suspicious activity on your account, and as a result, we have temporarily frozen your account to prevent any potential unauthorized access while we assess the severity of the incident. In order to protect the security of the platform and the safety of your account, please submit two of the following documents:
+
+    Photo of your official ID
+    Photo of your passport
+    Photo of your driver's license
+    Photo of your bank card
      
     *Additional Information: 
     1. We need a real photo from your documents. 

@@ -360,7 +360,8 @@ Class App {
     )
     this.Button("Filter Unique LPs", RemoveDupLP, true)
     this.Button("Manual Actor Search Loop", ManualLoop, true)
-    this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)
+    if version = "full"
+      this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)
     this.Button("Open TikTok handle", TikTok, true)
   
     this.UI.AddText(
@@ -389,7 +390,7 @@ Class App {
       "wp xs y+8",
       "Search Ticket ID"
     )
-    this.Button("Mercury", Mercury, true)
+    this.Button("Mercury", Mercury, true)      
 
     AutopayLoop(*) {
       ; Process input data then exit main app to run script
