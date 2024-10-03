@@ -5,13 +5,12 @@
 :*:````:: { ; Open main app with account suspension tab selected
   MainApp := App(
     "Appeals Kit",
-    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
+    ["Account Suspension", "Ad Group", "Others", "About"],
     1
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
   MainApp.Others()
-  MainApp.Tools()
   MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
@@ -19,23 +18,33 @@
 :*:``1:: { ; Open main app with ad group tab selected
   MainApp := App(
     "Appeals Kit",
-    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
+    ["Account Suspension", "Ad Group", "Others", "About"],
     2
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
   MainApp.Others()
-  MainApp.Tools()
   MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
 
-#HotIf version = "full" and ActiveBrowser("BI-Client")
+:*:``2:: { ; Open main app with tools tab selected
+  SendInput "^c"
+  Sleep 100
+  MainApp := App(
+    "Appeals Kit",
+    ["Tools"],
+    1
+  )
+  MainApp.Tools()
+  MainApp.UI.Show("xCenter yCenter")
+}
+
+#HotIf version = "full" and (ActiveBrowser("BI-Client") or ActiveBrowser("chrome"))
 
 F1:: { ; Click Submit
   SendMode "Event"
   SetDefaultMouseSpeed 0
-  Click
   MouseGetPos &previousX, &previousY
   switch A_ScreenHeight {
     case 1080: Click "1830 1010"
@@ -44,35 +53,39 @@ F1:: { ; Click Submit
   MouseMove previousX, previousY
 }
 
-F2:: { ; Open main app with Tools tab selected
-  SendInput "^c"
-  Sleep 100
-  MainApp := App(
-    "Appeals Kit",
-    ["Account Suspension", "Ad Group", "Others", "Tools", "About"],
-    4
-  )
-  MainApp.AccountSuspension()
-  MainApp.AdGroup()
-  MainApp.Others()
-  MainApp.Tools()
-  MainApp.About()
-  MainApp.UI.Show("xCenter yCenter")
+F2:: { ; Open Account Suspension links from selected Adv ID
+  SendMode "Event"
+  Send "^c"
+  Sleep 50
+  AdvID := Trim(A_Clipboard)
+  OpenURL("Actor Search", AdvID)
+  OpenURL("JEDI Features", AdvID)
+  OpenURL("Content Search Video by Adv ID", AdvID)
+  OpenURL("JEDI Video Embedding", AdvID)
+  Send "^+{Tab}^+{Tab}^+{Tab}"
 }
 
-F3:: { ; Open Actor Search, All video, JEDI from ticket
+F3:: { ; Open Account Suspension links from ticket
   SendMode "Event"
-  SetKeyDelay 75
   Send "^a^c"
+  Sleep 50
   Click
   loop parse A_Clipboard, "`n", "`r"
     if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
       AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
       break
     }
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
-  OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
-  OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&type=1")
+  OpenURL("Actor Search", AdvID)
+  OpenURL("JEDI Features", AdvID)
+  OpenURL("Content Search Video by Adv ID", AdvID)
+  OpenURL("JEDI Video Embedding", AdvID)
+  Send "^+{Tab}^+{Tab}^+{Tab}"
+}
+
+F4:: {
+  SendMode "Event"
+  SetKeyDelay 75
+  Send "^w^w^w^w"
 }
 
 F6:: { ; Copy ticket platform info to Lark Sheet
@@ -87,76 +100,69 @@ F6:: { ; Copy ticket platform info to Lark Sheet
   SendInput "{Home}^{Down}{Down}^v"
 }
 
-!1:: { ; Switch to Ad Task Tab in ad group ticket view
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  MouseGetPos &previousX, &previousY
-  Click "142 207"
-  MouseMove previousX, previousY
+#MaxThreadsPerHotkey 2
+!RButton:: { ; Spam click
+  static on := false
+  on := !on
+  while on {
+    Click
+    Sleep 50
+  }
 }
-
-!2:: { ; Open Reply
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  Click "1878 207"
-  Sleep 50
-  Click "1720 380"
-}
-
-!LButton:: {
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  Click
-  MouseGetPos &previousX, &previousY
-  Click "1465 250" ; Click Label
-  Click "1480 310" ; Click Policy
-  MouseMove previousX, previousY
-}
-
-!RButton:: {
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  Click
-  MouseGetPos &previousX, &previousY
-  Click "1465 250" ; Click Label
-  Click "1560 310" ; Click Industry
-  MouseMove previousX, previousY
-}
-
-!`:: { ; View Added Policy
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  MouseGetPos &previousX, &previousY
-  Click "1540 250" ; Click Added Label
-  Click "1480 310" ; Click Policy
-  MouseMove previousX, previousY
-}
+#MaxThreadsPerHotkey 1
 
 !x:: { ; Filter Features
   SendMode "Event"
   SetDefaultMouseSpeed 0
-  switch A_ScreenHeight {
-    case 1080:
-      Click "426 382"
-      Sleep 100
-      Click "403 411" ; video
-      Click "403 490" ; all url types
-      Click "403 596" ; did
-      Click "403 633" ; card info
-      Click "403 667" ; email
-      Click "403 703" ; registered email
-      Click "403 740" ; phone number
-    case 1440:
-      Click "476 380"
-      Sleep 100
-      Click "360 411" ; video
-      Click "360 490" ; all url types
-      Click "360 596" ; did
-      Click "360 633" ; card info
-      Click "360 667" ; email
-      Click "360 703" ; registered email
-      Click "360 740" ; phone number
+  switch WinGetProcessName("A") {
+    case "BI-Client.exe":
+      switch A_ScreenHeight {
+        case 1080:
+          Click "426 382"
+          Sleep 100
+          Click "403 411" ; video
+          Click "403 490" ; all url types
+          Click "403 596" ; did
+          Click "403 633" ; card info
+          Click "403 667" ; email
+          Click "403 703" ; registered email
+          Click "403 740" ; phone number
+        case 1440:
+          Click "476 380"
+          Sleep 100
+          Click "360 411" ; video
+          Click "360 490" ; all url types
+          Click "360 596" ; did
+          Click "360 633" ; card info
+          Click "360 667" ; email
+          Click "360 703" ; registered email
+          Click "360 740" ; phone number
+      }
+    case "chrome.exe":
+      switch A_ScreenHeight {
+        case 1080:
+          Click "430 360"
+          Sleep 100
+          Click "430 390" ; video
+          Click "430 460" ; all url types
+          Click "430 570" ; did
+          Click "430 600" ; card info
+          Click "430 640" ; email
+          Click "430 680" ; registered email
+          Click "430 720" ; phone number
+        case 1440:
+          Click "476 360"
+          Sleep 100
+          Click "476 390" ; video
+          Click "476 462" ; all url types
+          Click "476 570" ; did
+          Click "476 610" ; card info
+          Click "476 640" ; email
+          Click "476 686" ; registered email
+          Click "476 730" ; phone number
+      }
   }
+
 }
 
 :*:``rj:: { ; Minimal reply temp    
@@ -197,28 +203,12 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 
 #HotIf version = "full" and ActiveBrowser()
 
-!q:: { ; Switch to the tab on the left
-  SendInput "^+{Tab}"
-}
-
-!w:: { ; Switch to the tab on the right
-  SendInput "^{Tab}"
-}
-
-!WheelDown:: { ; Press End
-    SendInput "{End}"
-}
-
-!WheelUp:: { ; Press Home
-    SendInput "{Home}"
-}
+!q::SendInput "^+{Tab}" ; Switch to the tab on the left
+!w::SendInput "^{Tab}" ; Switch to the tab on the right
+!WheelDown::SendInput "{End}" ; Press End
+!WheelUp::SendInput "{Home}" ; Press Home
 
 #HotIf version = "full"
-
-:*:``name:: {
-  A_Clipboard := "@Vinh Nguyen	Keep block"
-  Send "^v"
-}  
 
 :*:``qq:: { ; Query account suspension
   A_Clipboard :=
@@ -262,7 +252,5 @@ F6:: { ; Copy ticket platform info to Lark Sheet
 }
 
 ^Space::Enter ; Ctrl+Space to Enter
-
 Del::Home ; Remap Del to Home
-
 Home::Del ;  Remap Home to Del

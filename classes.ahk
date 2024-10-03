@@ -335,273 +335,29 @@ Class App {
 
   Tools() {
     this.Tab.UseTab("Tools")
-
-    ; Column 1
-    this.UI.AddText(
-      "w200 Section",
-      "Input"
-    )
-    InputText := this.UI.AddEdit(
-      "w415 xp y+2 R6",
-      A_Clipboard
-    )
-  
-    ; Column 3
-    this.UI.AddText(
-      "w200 x+15 ys Section",
-      "Input Edit"
-    )
-    this.Button("Delete", Delete, true)
-  
-    ; Lower Sections
-    this.UI.AddText(
-      "w200 xs-430 ys+120 Section",
-      "Action"
-    )
+    ; Input box
+    InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
+    this.Button("Clear Input", Delete, true)
+    ; Buttons
+    this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Operation")
     this.Button("Filter Unique LPs", RemoveDupLP, true)
     this.Button("Manual Actor Search Loop", ManualLoop, true)
     if version = "full"
-      this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)
-    this.Button("Open TikTok handle", TikTok, true)
-  
-    this.UI.AddText(
-      "w200 x+15 ys Section",
-      "Search Ad Group ID(s)"
-    )
-    this.Button("Content Search", AGSearch, true)
-  
-    this.UI.AddText(
-      "wp xs y+8",
-      "Search Advertiser ID"
-    )
-    this.Button("Actor Search", ActorSearch, true)
-    this.Button("Content Search (Video/Item)", AllVideo, true)
-    this.Button("JEDI", JEDI, true)
-    this.Button("Video Embedding", VideoEmbedding, true)
-    this.Button("Industry Qualification", Industry, true)
-  
-    this.UI.AddText(
-      "wp xs y+8",
-      "Search Video Item ID"
-    )
-    this.Button("Lighthouse", Lighthouse, true)
-  
-    this.UI.AddText(
-      "wp xs y+8",
-      "Search Ticket ID"
-    )
-    this.Button("Mercury", Mercury, true)      
-
-    AutopayLoop(*) {
-      ; Process input data then exit main app to run script
-      AdvID := []
-      Result := ""
-      BadActorNum := 0
-      Stop := false
-      InputData := InputText.Text
-      for char in ["`r`n", "`r", "`n", "`t", " "]
-        InputData := StrReplace(InputData, char, ",")
-      loop parse InputData, ","
-        if A_LoopField != ""
-          AdvID.Push(A_LoopField)
-      this.UI.Destroy()
-      
-      ; Create script running status UI
-      StatusUI := Gui("+AlwaysOnTop", "Searching...")
-      StatusUI.SetFont("s9", "Tahoma")
-      StatusUI.AddText(
-        "w400 cMaroon Center Section",
-        (
-          "!!! WARNING !!!
-          Avoid clicking elsewhere while the search is in progress.
-          To stop the search, simply close this window."
-        )
-      )
-      ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
-      ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
-      BadActorText := StatusUI.AddText("wp xp y+8 Center", "Nothing found yet :c")
-      CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
-      CopyButton.Enabled := false
-      CopyButton.OnEvent("Click", Finish)
-      StatusUI.OnEvent("Close", Cancel)
-      StatusUI.Show("xCenter yCenter")
-
-      ; Refocus on browser to run script
-      WinActivate "BI-Client"
-      SendMode "Event"
-      SetKeyDelay 75
-
-      ; Loop to search
-      for id in AdvID {
-        if Stop = false {
-          ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(2*(AdvID.Length-A_Index))
-          ProgressBar.Value += 1
-          A_Clipboard := id
-          Send "^a^v{Tab}{Enter}"
-          Sleep 1500
-          Send "^a^c"
-          ClipWait
-          CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
-          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
-            if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
-              Result .= id "`n"
-              BadActorNum += 1
-              BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
-            }
-          if A_Index = AdvID.Length {
-            ProgressText.Text := "Checking complete!"
-            CopyButton.Enabled := true
-          } else Send "+{Tab}"
-        } else break
-      }
-
-      FormatSeconds(NumberOfSeconds) { ; Convert number of seconds to hours, minutes and seconds
-        time := 19990101  ; *Midnight* of an arbitrary date.
-        time := DateAdd(time, NumberOfSeconds, "Seconds")
-        if NumberOfSeconds//3600 != 0
-          return NumberOfSeconds//3600 "h " FormatTime(time, "m'm 'ss's'")
-        else
-          return FormatTime(time, "m'm 'ss's'")
-      }
-
-      Cancel(*) {
-        Stop := true
-      }
-
-      Finish(*) {
-        A_Clipboard := Result
-        StatusUI.Destroy()
-      }
-    }
-
-    VideoEmbedding(*) {
-      if InputText.Text = "" {
-        this.UI.Destroy()
-        SendMode "Event"
-        SetKeyDelay 75
-        Send "^a^c"
-        Click
-        loop parse A_Clipboard, "`n", "`r"
-          if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-            AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-            break
-          }
-      } else {
-        AdvID := InputText.Text
-        For char in ["`r`n", "`r", "`n", "`t", " "]
-          AdvID := StrReplace(AdvID, char, "")
-        this.UI.Destroy()
-      }
-      OpenURL("https://www.adsintegrity.net/se/actor?actors=" AdvID "&pageNo=1&pageSize=200&ruleId=9999999989")
-    }
-
-    Mercury(*) {
-      ItemID := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "]
-        ItemID := StrReplace(ItemID, char, "")
-      this.UI.Destroy()
-      OpenURL("https://www.adsintegrity.net/integrity_experience_center/mercury/tickets/detail/" ItemID "?isOca=false") 
-    }
-    
-    TikTok(*) {
-      handle := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "]
-        handle := StrReplace(handle, char, "")
-      this.UI.Destroy()
-      OpenURL("https://www.tiktok.com/@" handle)
-    }
+      this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)  
+    this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
+    this.Button("Content Search", () => QuickURL("Content Search AG"), true)
+    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Advertiser ID")
+    this.Button("Actor Search", () => QuickURL("Actor Search"), true)
+    this.Button("Content Search (Video/Item)", () => QuickURL("Content Search Video by Adv ID"), true)
+    this.Button("JEDI Features", () => QuickURL("JEDI Features"), true)
+    this.Button("JEDI Video Embedding", () => QuickURL("JEDI Video Embedding"), true)
+    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Others")
+    this.Button("Lighthouse", () => QuickURL("Lighthouse"), true)
+    this.Button("TikTok", () => QuickURL("TikTok"), true)
+    this.Button("Mercury", () => QuickURL("Mercury"), true)
   
     Delete(*) {
       InputText.Text := ""
-    }
-    
-    Lighthouse(*) {
-      ItemID := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "]
-        ItemID := StrReplace(ItemID, char, "")
-      this.UI.Destroy()
-      OpenURL("https://lighthouse.tiktok-row.net/detail/video?item_id=" ItemID "&product=tiktok&config_key=tiktok")
-    }
-  
-    AGSearch(*) {
-      AdGroupIDs := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "] {
-        AdGroupIDs := StrReplace(AdGroupIDs, char, ",")
-        AdGroupIDs := Trim(AdGroupIDs, ",")
-      }
-      this.UI.Destroy()
-      OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?ad_ids=" AdGroupIDs "&search_type=ad&show_type=ad")
-    }
-    
-    ActorSearch(*) {
-      if InputText.Text = "" {
-        this.UI.Destroy()
-        SendMode "Event"
-        SetKeyDelay 75
-        Send "^a^c"
-        Click
-        loop parse A_Clipboard, "`n", "`r"
-          if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-            AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-            break
-          }
-      } else {
-        AdvID := InputText.Text
-        For char in ["`r`n", "`r", "`n", "`t", " "]
-          AdvID := StrReplace(AdvID, char, "")
-        this.UI.Destroy()
-      }
-      OpenURL("https://satellite.tiktok-row.net/troubleshooting/actor/1/" AdvID "?page=2")
-    }
-    
-    AllVideo(*) {
-      if InputText.Text = "" {
-        this.UI.Destroy()
-        SendMode "Event"
-        SetKeyDelay 75
-        Send "^a^c"
-        Click
-        loop parse A_Clipboard, "`n", "`r"
-          if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-            AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-            break
-          }
-      } else {
-        AdvID := InputText.Text
-        For char in ["`r`n", "`r", "`n", "`t", " "]
-          AdvID := StrReplace(AdvID, char, "")
-        this.UI.Destroy()
-      }
-      OpenURL("https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=" AdvID "&search_type=video&show_type=video")
-    }
-  
-    JEDI(*) {
-      if InputText.Text = "" {
-        this.UI.Destroy()
-        SendMode "Event"
-        SetKeyDelay 75
-        Send "^a^c"
-        Click
-        loop parse A_Clipboard, "`n", "`r"
-          if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-            AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-            break
-          }
-      } else {
-        AdvID := InputText.Text
-        For char in ["`r`n", "`r", "`n", "`t", " "]
-          AdvID := StrReplace(AdvID, char, "")
-        this.UI.Destroy()
-      }
-      OpenURL("https://www.adsintegrity.net/se/actor/detail?value=" AdvID "&/")
-    }
-    
-    Industry(*) {
-      AdvID := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "]
-        AdvID := StrReplace(AdvID, char, "")
-      this.UI.Destroy()
-      OpenURL("https://www.adsintegrity.net/actor-integrity-center/evaluation-lookup/accounts/details?accountId=" AdvID "&businessPlatform=13&propertyType=3")
     }
   
     RemoveDupLP(*) {
@@ -694,6 +450,93 @@ Class App {
         ResultMsg,
         "Results"
       )
+    }
+
+    AutopayLoop(*) {
+      ; Process input data then exit main app to run script
+      AdvID := []
+      Result := ""
+      BadActorNum := 0
+      Stop := false
+      InputData := InputText.Text
+      for char in ["`r`n", "`r", "`n", "`t", " "]
+        InputData := StrReplace(InputData, char, ",")
+      loop parse InputData, ","
+        if A_LoopField != ""
+          AdvID.Push(A_LoopField)
+      this.UI.Destroy()
+      
+      ; Create script running status UI
+      StatusUI := Gui("+AlwaysOnTop", "Searching...")
+      StatusUI.SetFont("s9", "Tahoma")
+      StatusUI.AddText(
+        "w400 cMaroon Center Section",
+        (
+          "!!! WARNING !!!
+          Avoid clicking elsewhere while the search is in progress.
+          To stop the search, simply close this window."
+        )
+      )
+      ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
+      ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
+      BadActorText := StatusUI.AddText("wp xp y+8 Center", "Be patient, nothing found yet!")
+      CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
+      CopyButton.Enabled := false
+      CopyButton.OnEvent("Click", Finish)
+      StatusUI.OnEvent("Close", Cancel)
+      StatusUI.Show("xCenter yCenter")
+
+      ; Refocus on browser to run script
+      WinActivate "ahk_exe chrome.exe"
+      SendMode "Event"
+
+      ; Loop to search
+      for id in AdvID {
+        if Stop = false {
+          ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(Integer(1.2*(AdvID.Length-A_Index)))
+          ProgressBar.Value += 1
+          A_Clipboard := id
+          Send "^a^v{Tab}{Enter}"
+          Sleep 1200
+          Send "^a^c"
+          ClipWait
+          CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
+          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
+            if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
+              Result .= id "`n"
+              BadActorNum += 1
+              BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
+            }
+          if A_Index = AdvID.Length {
+            ProgressText.Text := "Checking complete!"
+            CopyButton.Enabled := true
+          } else Send "+{Tab}"
+        } else break
+      }
+
+      FormatSeconds(NumberOfSeconds) { ; Convert number of seconds to hours, minutes and seconds
+        time := 19990101  ; *Midnight* of an arbitrary date.
+        time := DateAdd(time, NumberOfSeconds, "Seconds")
+        if NumberOfSeconds//3600 != 0
+          return NumberOfSeconds//3600 "h " FormatTime(time, "m'm 'ss's'")
+        else
+          return FormatTime(time, "m'm 'ss's'")
+      }
+
+      Cancel(*) {
+        Stop := true
+      }
+
+      Finish(*) {
+        A_Clipboard := Result
+        StatusUI.Destroy()
+      }
+    }
+
+    QuickURL(destination) {
+      InputID := InputText.Text
+      this.UI.Destroy()
+      OpenURL(destination, InputID)
     }
   }
 

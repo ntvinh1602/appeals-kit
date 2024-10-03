@@ -2,30 +2,41 @@
 
 previous180 := FormatTime(DateAdd(A_Now, -180, "days"), "dddd, dd MMMM, yyyy")
 week := SubStr(A_YWeek, -2)
-TetCountdown := DateDiff(20250129, A_Now, "days") + 1
 
 ActiveBrowser(Browser?) {
-  if IsSet(Browser)
-    if WinGetProcessName("A") = Browser ".exe"
-      return True
-    else
-      return False
-  else
-    if WinGetProcessName("A") = "msedge.exe" or WinGetProcessName("A") = "BI-Client.exe" or WinGetProcessName("A") = "chrome.exe" or WinGetProcessName("A") = "firefox.exe"
-      return True
-    else
-      return False
+  switch IsSet(Browser) {
+    case true:
+      switch WinGetProcessName("A") {
+        case Browser ".exe": return true
+        default: return
+      }
+    case false:
+      switch WinGetProcessName("A") {
+        case "msedge.exe", "BI-Client.exe", "chrome.exe", "firefox.exe": return true
+        default: return false
+      }
+  }
 }
 
-OpenURL(URL) {  
-  if ActiveBrowser() {
+OpenURL(destination, id) {
+  Target := Map(
+    "Content Search AG", "https://satellite.tiktok-row.net/troubleshooting/content/result/?ad_ids=_INPUT_ID&search_type=ad&show_type=ad",
+    "Content Search Video by Adv ID", "https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=_INPUT_ID&search_type=video&show_type=video",
+    "Actor Search", "https://satellite.tiktok-row.net/troubleshooting/actor/1/_INPUT_ID?page=2",
+    "JEDI Video Embedding", "https://www.adsintegrity.net/se/actor?actors=_INPUT_ID&pageNo=1&pageSize=200&ruleId=9999999989",
+    "JEDI Features", "https://www.adsintegrity.net/se/actor/detail?value=_INPUT_ID&/",
+    "Mercury", "https://www.adsintegrity.net/integrity_experience_center/mercury/tickets/detail/_INPUT_ID?isOca=false",
+    "Lighthouse", "https://lighthouse.tiktok-row.net/detail/video?item_id=_INPUT_ID&product=tiktok&config_key=tiktok",
+    "TikTok", "https://www.tiktok.com/@_INPUT_ID"
+  )
+
+  try WinActivate("ahk_exe chrome.exe")
+  catch TargetError
+    MsgBox("Open Chrome first then try again", "Error!", "0x30")
+  else {
     SendMode "Event"
-    SetKeyDelay 75
-    A_Clipboard := URL
-    Send "^t"
-    if ActiveBrowser("BI-Client")
-      Sleep IniRead("settings.ini", "Settings", "bidelay")
-    Send "^v{Enter}"
+    A_Clipboard := StrReplace(Target[destination], "_INPUT_ID", Trim(id))
+    Send "^t^v{Enter}"
   }
 }
 
