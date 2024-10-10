@@ -76,10 +76,10 @@ F3:: { ; Open Account Suspension links from ticket
       break
     }
   OpenURL("Actor Search", AdvID)
-  OpenURL("JEDI Features", AdvID)
-  OpenURL("Content Search Video by Adv ID", AdvID)
-  OpenURL("JEDI Video Embedding", AdvID)
-  Send "^+{Tab}^+{Tab}^+{Tab}"
+  ;OpenURL("JEDI Features", AdvID)
+ ; OpenURL("Content Search Video by Adv ID", AdvID)
+ ; OpenURL("JEDI Video Embedding", AdvID)
+;  Send "^+{Tab}^+{Tab}^+{Tab}"
 }
 
 F4:: {

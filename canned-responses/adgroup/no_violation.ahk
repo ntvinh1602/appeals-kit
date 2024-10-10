@@ -75,7 +75,57 @@ LicenseRequired() {
   LicenseRequired.Template := [
     (
       "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
-    )
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    ( ; Medicine
+      "Your ad group industry is currently identified as Medicine due to the claim of some annex identification words ( medicine, cure, treat etc.). Please submit REPLY_ONE following the system notification for Medicine.
+      
+      If not, kindly revise the content of your ad group."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
+    (
+      "Your ad group industry is currently identified as DETAIL_ONE. Please submit REPLY_ONE following the system notification for DETAIL_ONE."
+    ),
   ]
   LicenseRequired.Detail(
     "DropDownList",
@@ -86,7 +136,7 @@ LicenseRequired() {
       "Physical Precious Metals Trading",
       "Precious Metals Derivatives Trading",
       "Dietary Supplement",
-      "Drugs",
+      "Medicine",
       "Insurance",
       "Medical Institution",
       "Medical Devices",
@@ -99,14 +149,14 @@ LicenseRequired() {
       "Overseas/Guest Workers Recruitment",
       "Pharmacy/Pharmaceutical Retail",
     ],
-    false,
+    true,
     [
       "SBV License",
       "Securities Trading License from State Securities Commission",
       "1/ Business Registration license and 2/ Gold Bar Trading License from State Bank of Vietnam (SBV)",
       "1/ Business Registration license and 2/ Gold Bar Trading License from State Bank of Vietnam (SBV) and 3/ License of Operation for Credit Institution from State Bank of Vietnam (SBV) and 4/ Permission/Approval of Prime Minister (for other gold trading services)",
       "Supplement License from VFA",
-      "Drugs License from DAV",
+      "Medicine License from Ministry of Health",
       "Insurance License from MOF",
       "Medical Institution License from MOH",
       "Medical Device Circulation Number ('Số lưu hành') issued by Ministry of Health",

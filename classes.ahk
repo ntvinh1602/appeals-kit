@@ -337,13 +337,13 @@ Class App {
     this.Tab.UseTab("Tools")
     ; Input box
     InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
-    this.Button("Clear Input", Delete, true)
+    this.Button("Clear", Delete, true)
     ; Buttons
     this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Operation")
-    this.Button("Filter Unique LPs", RemoveDupLP, true)
-    this.Button("Manual Actor Search Loop", ManualLoop, true)
-    if version = "full"
-      this.Button("Autopay Bad Debts Auto Loop", AutopayLoop, true)  
+    this.Button("Unique LP", RemoveDupLP, true)
+    this.Button("Actor Search Loop", ManualLoop, true)
+    this.Button("Autopay Bad Debts", AutopayLoop, true)
+    this.Button("Standby Mode", Standby, true)
     this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
     this.Button("Content Search", () => QuickURL("Content Search AG"), true)
     this.UI.AddText("wp xs y+8 cMaroon Center", "Search Advertiser ID")
@@ -354,10 +354,67 @@ Class App {
     this.UI.AddText("wp xs y+8 cMaroon Center", "Search Others")
     this.Button("Lighthouse", () => QuickURL("Lighthouse"), true)
     this.Button("TikTok", () => QuickURL("TikTok"), true)
+    this.Button("Whois", () => QuickURL("Whois"), true)
     this.Button("Mercury", () => QuickURL("Mercury"), true)
   
     Delete(*) {
       InputText.Text := ""
+    }
+
+    Standby(*) {
+      ; Close main app
+      this.UI.Destroy()
+      ; Launch authentication
+      switch Authorization("''''") {
+        case true:
+          ; Ask user for delay time between refreshes
+          loop {
+            DelayTime := InputBox("Time between refreshes (in minutes)", "Time Interval", "w300 h100")
+            WaitTime := DelayTime.Value
+          } until IsNumber(DelayTime.Value)
+          WaitTime := DelayTime.Value
+
+          ; Create status UI
+          StatusUI := Gui("+AlwaysOnTop", "Standby")
+          StatusUI.SetFont("s9", "Tahoma")
+          StatusText := StatusUI.AddText(
+            "w400 Center Section",
+            "Initializing...")
+          ProgressBar := StatusUI.AddProgress("wp xp y+8 R1 cGreen BackgroundMaroon Range0-" Round(WaitTime * 60, 0))
+          StatusUI.Show("xCenter yCenter")
+          StatusUI.OnEvent("Close", Stop)
+
+          Running := true
+          SendMode "Event"
+          SetKeyDelay 75
+
+          while Running {
+            CurrentApp := WinGetProcessName("A")
+            BlockInput true
+            WinActivate "ahk_exe chrome.exe"
+            switch WinGetTitle("A") {
+              case "Ticket Platform - Google Chrome":
+                Send "{F5}^+{Tab}"
+              case "Workforce Management - Google Chrome":
+                Send "^{Tab}{F5}^+{Tab}"
+            }
+            WinActivate "ahk_exe " CurrentApp
+            BlockInput false
+            TimeRemain := Round(WaitTime * 60, 0)
+            ProgressBar.Value := 0
+            loop {
+              StatusText.Text := "Refresh in " FormatSeconds(TimeRemain) ". Close this window to stop."
+              ProgressBar.Value += 1
+              TimeRemain := TimeRemain - 1
+              Sleep 1000
+            } until TimeRemain = 0
+          }
+        case false: return
+
+        Stop(*) {
+          running := false
+        }
+      }
     }
   
     RemoveDupLP(*) {
@@ -453,74 +510,72 @@ Class App {
     }
 
     AutopayLoop(*) {
-      ; Process input data then exit main app to run script
+      ; Collect input data and close the main app
       AdvID := []
       Result := ""
       BadActorNum := 0
       Stop := false
       InputData := InputText.Text
-      for char in ["`r`n", "`r", "`n", "`t", " "]
-        InputData := StrReplace(InputData, char, ",")
-      loop parse InputData, ","
-        if A_LoopField != ""
-          AdvID.Push(A_LoopField)
       this.UI.Destroy()
-      
-      ; Create script running status UI
-      StatusUI := Gui("+AlwaysOnTop", "Searching...")
-      StatusUI.SetFont("s9", "Tahoma")
-      StatusUI.AddText(
-        "w400 cMaroon Center Section",
-        (
-          "!!! WARNING !!!
-          Avoid clicking elsewhere while the search is in progress.
-          To stop the search, simply close this window."
-        )
-      )
-      ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
-      ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
-      BadActorText := StatusUI.AddText("wp xp y+8 Center", "Be patient, nothing found yet!")
-      CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
-      CopyButton.Enabled := false
-      CopyButton.OnEvent("Click", Finish)
-      StatusUI.OnEvent("Close", Cancel)
-      StatusUI.Show("xCenter yCenter")
 
-      ; Refocus on browser to run script
-      WinActivate "ahk_exe chrome.exe"
-      SendMode "Event"
-
-      ; Loop to search
-      for id in AdvID {
-        if Stop = false {
-          ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(Integer(1.2*(AdvID.Length-A_Index)))
-          ProgressBar.Value += 1
-          A_Clipboard := id
-          Send "^a^v{Tab}{Enter}"
-          Sleep 1200
-          Send "^a^c"
-          ClipWait
-          CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
-          if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
-            if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
-              Result .= id "`n"
-              BadActorNum += 1
-              BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
-            }
-          if A_Index = AdvID.Length {
-            ProgressText.Text := "Checking complete!"
-            CopyButton.Enabled := true
-          } else Send "+{Tab}"
-        } else break
-      }
-
-      FormatSeconds(NumberOfSeconds) { ; Convert number of seconds to hours, minutes and seconds
-        time := 19990101  ; *Midnight* of an arbitrary date.
-        time := DateAdd(time, NumberOfSeconds, "Seconds")
-        if NumberOfSeconds//3600 != 0
-          return NumberOfSeconds//3600 "h " FormatTime(time, "m'm 'ss's'")
-        else
-          return FormatTime(time, "m'm 'ss's'")
+      ; Launch authentication
+      switch Authorization("''''") {
+        case true:
+          ; Process input data
+          for char in ["`r`n", "`r", "`n", "`t", " "]
+            InputData := StrReplace(InputData, char, ",")
+          loop parse InputData, ","
+            if A_LoopField != ""
+              AdvID.Push(A_LoopField)
+          
+          ; Create script running status UI
+          StatusUI := Gui("+AlwaysOnTop", "Searching...")
+          StatusUI.SetFont("s9", "Tahoma")
+          StatusUI.AddText(
+            "w400 cMaroon Center Section",
+            (
+              "!!! WARNING !!!
+              Avoid clicking elsewhere while the search is in progress.
+              To stop the search, simply close this window."
+            )
+          )
+          ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
+          ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
+          BadActorText := StatusUI.AddText("wp xp y+8 Center", "Be patient, nothing found yet!")
+          CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
+          CopyButton.Enabled := false
+          CopyButton.OnEvent("Click", Finish)
+          StatusUI.OnEvent("Close", Cancel)
+          StatusUI.Show("xCenter yCenter")
+    
+          ; Refocus on browser to run script
+          WinActivate "ahk_exe chrome.exe"
+          SendMode "Event"
+    
+          ; Search loop
+          for id in AdvID {
+            if Stop = false {
+              ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(Integer(1.2*(AdvID.Length-A_Index)))
+              ProgressBar.Value += 1
+              A_Clipboard := id
+              Send "^a^v{Tab}{Enter}"
+              Sleep 1200
+              Send "^a^c"
+              ClipWait
+              CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
+              if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
+                if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
+                  Result .= id "`n"
+                  BadActorNum += 1
+                  BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
+                }
+              if A_Index = AdvID.Length {
+                ProgressText.Text := "Checking complete!"
+                CopyButton.Enabled := true
+              } else Send "+{Tab}"
+            } else break
+          }
+        case false: return
       }
 
       Cancel(*) {
