@@ -19,7 +19,7 @@ ActiveBrowser(Browser?) {
 }
 
 Authorization(password) {
-  Auth := InputBox("Enter launch code", "Authorization", "W200 H100 Password")
+  Auth := InputBox("Enter code to launch", "Security Clearance Required", "W250 H100 Password")
   switch Auth.Result {
     case "OK":
       switch Auth.Value {

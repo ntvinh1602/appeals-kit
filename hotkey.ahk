@@ -49,6 +49,7 @@ F1:: { ; Click Submit
   switch A_ScreenHeight {
     case 1080: Click "1830 1010"
     case 1440: Click "2450 1370"
+    case 1600: Click "2450 1516"
   }
   MouseMove previousX, previousY
 }
@@ -80,24 +81,6 @@ F3:: { ; Open Account Suspension links from ticket
  ; OpenURL("Content Search Video by Adv ID", AdvID)
  ; OpenURL("JEDI Video Embedding", AdvID)
 ;  Send "^+{Tab}^+{Tab}^+{Tab}"
-}
-
-F4:: {
-  SendMode "Event"
-  SetKeyDelay 75
-  Send "^w^w^w^w"
-}
-
-F6:: { ; Copy ticket platform info to Lark Sheet
-  A_Clipboard := ""
-  SendInput "^c"
-  if !ClipWait(2) {
-    MsgBox "The attempt to copy text onto the clipboard failed."
-    return
-  }
-  SendInput "!{Tab}"
-  Sleep 300
-  SendInput "{Home}^{Down}{Down}^v"
 }
 
 #MaxThreadsPerHotkey 2
@@ -160,6 +143,16 @@ F6:: { ; Copy ticket platform info to Lark Sheet
           Click "476 640" ; email
           Click "476 686" ; registered email
           Click "476 730" ; phone number
+        case 1600:
+          Click "546 490"
+          Sleep 100
+          Click "546 530" ; video
+          Click "546 630" ; all url types
+          Click "546 760" ; did
+          Click "546 810" ; card info
+          Click "546 850" ; email
+          Click "546 900" ; registered email
+          Click "546 940" ; phone number
       }
   }
 

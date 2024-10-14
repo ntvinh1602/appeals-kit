@@ -244,3 +244,8 @@ VietnameseScenario["Permanent Suspension"] := Map(
     TikTok for Business"
   )
 )
+
+VietnameseScenario["Soft Enforcement"] :=
+  (
+    ""
+  )

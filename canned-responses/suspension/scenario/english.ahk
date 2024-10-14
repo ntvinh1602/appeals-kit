@@ -250,3 +250,39 @@ EnglishScenario["Permanent Suspension"] := Map(
     TikTok for Business"
   )
 )
+
+EnglishScenario["Soft Enforcement"] := Map(
+  "1st message",
+  (
+    "Dear valued client, 
+
+    We regret to inform you that your landing page has been identified as lacking sufficient original content or having a high ratio of ads relative to original content. You can still log into your account, but your ads will not be delivered on TikTok.
+
+    Suggestion: Please ensure that your landing page has a significant amount of original content.
+
+    Here is a checklist to consider when modifying your ad: https://ads.tiktok.com/help/article/ad-review-checklist?aadvid=72391499277&lang=en. Additionally, please refer to section `"Landing Page`" for more policy details: https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives-landing-page-ad-format-and-functionality?lang=en#anchor-1
+
+    Note: Following these tips will help you in modifying your advertisement to ensure a smoother review process.
+
+    Best Regards, 
+    TikTok for Business"
+  ),
+  "2nd message",
+  (
+    "Dear valued client, 
+
+    Thank you for your patience. Your ads will be now delivered as usual. We are sorry for any inconvenience caused.  Thank you for your kind cooperation and support.   
+
+    Thanks and regards, 
+    TikTok For Business"
+  ),
+  "Final message",
+  (
+    "Dear Valued Client,
+
+    Unfortunately, your account continues to lack insufficient original content. As a result, your ads will continue to not deliver.
+
+    Thank you and regards,
+    TikTok For Business"
+  )
+)

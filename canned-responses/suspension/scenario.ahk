@@ -15,6 +15,7 @@ Scenario["Type"] := [
   "Over 180 days",
   "Out of Scope",
   "SMB Sanctions",
+  "Soft Enforcement",
   "Payment Team",
   "Credit Team",
   "ACE Fulfillment",
