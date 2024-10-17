@@ -5,12 +5,11 @@
 :*:````:: { ; Open main app with account suspension tab selected
   MainApp := App(
     "Appeals Kit",
-    ["Account Suspension", "Ad Group", "Others", "About"],
+    ["Account Suspension", "Ad Group", "About"],
     1
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
-  MainApp.Others()
   MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
@@ -18,12 +17,11 @@
 :*:``1:: { ; Open main app with ad group tab selected
   MainApp := App(
     "Appeals Kit",
-    ["Account Suspension", "Ad Group", "Others", "About"],
+    ["Account Suspension", "Ad Group", "About"],
     2
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
-  MainApp.Others()
   MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
@@ -76,11 +74,16 @@ F3:: { ; Open Account Suspension links from ticket
       AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
       break
     }
-  OpenURL("Actor Search", AdvID)
-  ;OpenURL("JEDI Features", AdvID)
- ; OpenURL("Content Search Video by Adv ID", AdvID)
- ; OpenURL("JEDI Video Embedding", AdvID)
-;  Send "^+{Tab}^+{Tab}^+{Tab}"
+  switch IniRead("settings.ini", "Settings", "f3allurl") {
+    case 0:
+      OpenURL("Actor Search", AdvID)
+    case 1:
+      OpenURL("Actor Search", AdvID)
+      OpenURL("JEDI Features", AdvID)
+      OpenURL("Content Search Video by Adv ID", AdvID)
+      OpenURL("JEDI Video Embedding", AdvID)
+      Send "^+{Tab}^+{Tab}^+{Tab}"      
+  }
 }
 
 #MaxThreadsPerHotkey 2
@@ -176,11 +179,6 @@ F3:: { ; Open Account Suspension links from ticket
 
 :*:``nv:: {
   A_Clipboard := "after review there is no content violation, no association with bad actors, no bad debts"
-  Send "^v"
-}
-
-:*:``credit:: {
-  A_Clipboard := "credit team punish, no other active suspension strategy"
   Send "^v"
 }
 

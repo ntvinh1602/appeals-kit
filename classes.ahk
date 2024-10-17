@@ -299,14 +299,8 @@ Class App {
     this.Button("Smoking && Cigarettes", Smoking)
     this.Button("Weapons / Lesser Weapons", Weapon)
   
-  }
-
-  Others() {
-    this.Tab.UseTab("Others")
-  
-    ; 1st column
     this.UI.AddText(
-      "w200 Section",
+      "wp xs y+8 cBlue Center",
       "Document Review"
     )
     this.Button("Low Risk", Low)
@@ -317,21 +311,7 @@ Class App {
     this.Button("Invalid Watermark", InvalidWatermark)
     this.Button("Wrong Document", WrongDoc)
   
-    ; 3rd column
-    this.UI.AddText(
-      "w200 x+15 ys Section",
-      "Pushback"
-    )
-    this.Button("Slow Review", ReminderPushback)
-    this.Button("Online Available", OnlineAvailable)
-    this.Button("Oversize Consultation (>10 vids)", ConsultationMaterial)
-  
-    this.UI.AddText(
-      "wp xs y+8",
-      "Mercury Proactive"
-    )
-    this.Button("Mercury Consultation", Consult)
-  }  
+  }
 
   Tools() {
     this.Tab.UseTab("Tools")
@@ -339,11 +319,11 @@ Class App {
     InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
     this.Button("Clear", Delete, true)
     ; Buttons
-    this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Automated Tasks")
+    this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Tasks")
     this.Button("Unique LP", RemoveDupLP, true)
     this.Button("Actor Search Loop", ActorSearchLoop, true)
-    this.Button("Operation Argus", Autopay, true)
-    this.Button("Operation Sisyphus", Standby, true)
+    this.Button("Argus", Autopay, true)
+    this.Button("Sisyphus", Standby, true)
     this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
     this.Button("Content Search", () => QuickURL("Content Search AG"), true)
     this.UI.AddText("wp xs y+8 cMaroon Center", "Search Advertiser ID")
@@ -402,7 +382,7 @@ Class App {
             Text0.Text .= A_Index = TicketID.Length ? "." : ", "
           }
           Text1 := StatusUI.AddText("w400 xp y+8 Center", "Initializing...")
-          Text2 := StatusUI.AddText("w400 xp y+8 Center", "Close this window to stop the operation.")
+          Text2 := StatusUI.AddText("w400 xp y+8 Center", "Close this window to stop the operation")
           ProgressBar := StatusUI.AddProgress("wp xp y+8 R1 cGreen BackgroundMaroon Range0-" Round(WaitTime * 60, 0))
           StatusUI.Show("xCenter yCenter")
           StatusUI.OnEvent("Close", Stop)
@@ -424,11 +404,6 @@ Class App {
             A_Clipboard := "https://www.adsintegrity.net/ticket-platform/task?__appId=1001&__nodeId=" SelectedTicket-1
             Send "^v{Enter}^1" ; Go back to WFM tab
 
-            ; Perform a random mouse move to prevent screen lock
-            MouseGetPos &xpos, &ypos
-            MouseMove xpos+Random(-50,50), ypos+Random(-50,50), 2
-            MouseMove xpos, ypos, 2
-
             ; Go back to the previous window and allow input again
             WinActivate "ahk_exe " CurrentApp
             BlockInput false
@@ -437,6 +412,8 @@ Class App {
             TimeRemain := Round(WaitTime * 60, 0)
             ProgressBar.Value := 0
             loop {
+              if A_TimeIdle > 60000
+                Send "{RShift}"
               Text1.Text := "Handling ticket ID " SelectedTicket ". Fetch a new one in " FormatSeconds(TimeRemain)
               ProgressBar.Value += 1
               TimeRemain := TimeRemain - 1
@@ -661,26 +638,19 @@ Class App {
           - Current week number is Week " week
       )
     )
-    this.UI.AddText(
-      "w200 xs+430 ys Section",
-      "Update"
-    )
-    this.Button("Check for Update", Update)
   
-    this.UI.AddText(
-      "w200 xs y+8 Section",
-      "Settings"
-    )
-    LiteCheckbox := this.UI.AddCheckbox(
-      "wp y+4",
-      "Lite version"
-    )
+    this.UI.AddText("w200 xp y+8", "Settings")
+    this.Button("Check for Update", Update)
+    this.Button("Save Settings", ApplySetting, false)
+    LiteCheckbox := this.UI.AddCheckbox("w400 xp y+8", "Lite version")
+    F3Button := this.UI.AddCheckbox("wp xp y+6", "F3 opens all suspension URLs")
+
     LiteCheckbox.Value := IniRead("settings.ini", "Settings", "liteversion")
-    LiteCheckbox.OnEvent("Click", ApplySetting)
+    F3Button.Value := IniRead("settings.ini", "Settings", "f3allurl")
   
     ApplySetting(*) {
       IniWrite LiteCheckbox.Value, "settings.ini", "settings", "liteversion"
-      reload
+      IniWrite F3Button.Value, "settings.ini", "settings", "f3allurl"
     }
   }
 }
