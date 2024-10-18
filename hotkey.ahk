@@ -2,43 +2,43 @@
 
 #HotIf ActiveBrowser()
 
-:*:````:: { ; Open main app with account suspension tab selected
-  MainApp := App(
-    "Appeals Kit",
-    ["Account Suspension", "Ad Group", "About"],
+:*:````:: { ; Open account suspension CR
+  MainApp := Basic(
+    "Basic Kit",
+    ["Account Suspension", "Ad Group"],
     1
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
-  MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
 
-:*:``1:: { ; Open main app with ad group tab selected
-  MainApp := App(
-    "Appeals Kit",
-    ["Account Suspension", "Ad Group", "About"],
+:*:``1:: { ; Open ad group CR
+  MainApp := Basic(
+    "Basic Kit",
+    ["Account Suspension", "Ad Group"],
     2
   )
   MainApp.AccountSuspension()
   MainApp.AdGroup()
-  MainApp.About()
   MainApp.UI.Show("xCenter yCenter")
 }
 
-:*:``2:: { ; Open main app with tools tab selected
+:*:``2:: { ; Open automation tool
   SendInput "^c"
   Sleep 100
-  MainApp := App(
-    "Appeals Kit",
-    ["Tools"],
+  MainApp := Advanced(
+    "Advanced Kit",
+    ["Tools", "Hotkeys", "Settings"],
     1
   )
   MainApp.Tools()
+  MainApp.Hotkeys()
+  MainApp.Settings()
   MainApp.UI.Show("xCenter yCenter")
 }
 
-#HotIf version = "full" and (ActiveBrowser("BI-Client") or ActiveBrowser("chrome"))
+#HotIf version = "full" and ActiveBrowser()
 
 F1:: { ; Click Submit
   SendMode "Event"
@@ -57,11 +57,11 @@ F2:: { ; Open Account Suspension links from selected Adv ID
   Send "^c"
   Sleep 50
   AdvID := Trim(A_Clipboard)
-  OpenURL("Actor Search", AdvID)
-  OpenURL("JEDI Features", AdvID)
-  OpenURL("Content Search Video by Adv ID", AdvID)
-  OpenURL("JEDI Video Embedding", AdvID)
-  Send "^+{Tab}^+{Tab}^+{Tab}"
+  ;OpenURL("Actor Search", AdvID)
+  ;OpenURL("JEDI Features", AdvID)
+  App.OpenURL("Content Search Video by Adv ID", AdvID)
+  ;OpenURL("JEDI Video Embedding", AdvID)
+  ;Send "^+{Tab}^+{Tab}^+{Tab}"
 }
 
 F3:: { ; Open Account Suspension links from ticket
@@ -74,16 +74,15 @@ F3:: { ; Open Account Suspension links from ticket
       AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
       break
     }
-  switch IniRead("settings.ini", "Settings", "f3allurl") {
-    case 0:
-      OpenURL("Actor Search", AdvID)
-    case 1:
-      OpenURL("Actor Search", AdvID)
-      OpenURL("JEDI Features", AdvID)
-      OpenURL("Content Search Video by Adv ID", AdvID)
-      OpenURL("JEDI Video Embedding", AdvID)
-      Send "^+{Tab}^+{Tab}^+{Tab}"      
-  }
+  if IniRead("settings.ini", "F3", "actorsearch") =1
+    App.OpenURL("Actor Search", AdvID)
+  if IniRead("settings.ini", "F3", "jedifeature") =1
+    App.OpenURL("JEDI Features", AdvID)
+  if IniRead("settings.ini", "F3", "contentsearchvideo") =1
+    App.OpenURL("Content Search Video by Adv ID", AdvID)
+  if IniRead("settings.ini", "F3", "videoembedding") =1
+    App.OpenURL("JEDI Video Embedding", AdvID)
+  Send "^{Tab}^{Tab}"
 }
 
 #MaxThreadsPerHotkey 2
@@ -177,22 +176,15 @@ F3:: { ; Open Account Suspension links from ticket
   Send "^v"
 }
 
-:*:``nv:: {
+:*:``nv:: { ; No Violation temp
   A_Clipboard := "after review there is no content violation, no association with bad actors, no bad debts"
   Send "^v"
 }
 
-:*:``labubu:: {
+:*:``labubu:: { ; Raffle gambling
   A_Clipboard := "labubu raffles gambling livestream"
   Send "^v"
 }
-
-:*:``debt:: {
-  A_Clipboard := "autopay bad debt"
-  Send "^v"
-}
-
-#HotIf version = "full" and ActiveBrowser()
 
 !q::SendInput "^+{Tab}" ; Switch to the tab on the left
 !w::SendInput "^{Tab}" ; Switch to the tab on the right

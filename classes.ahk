@@ -1,24 +1,9 @@
 ﻿#Requires AutoHotkey v2.0
 
-#Include canned-responses\suspension\policy.ahk
-#Include canned-responses\suspension\scenario.ahk
-
-#Include %A_ScriptDir%\canned-responses\adgroup\no_violation.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\ad_format.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\adult_sexual_content.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\false_content.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\ip_infringement.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\political_religion_culture.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\prohibited_industry.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\restricted_content.ahk
-#Include %A_ScriptDir%\canned-responses\adgroup\violence_horror_dangerous.ahk
-
-#Include %A_ScriptDir%\canned-responses\others.ahk
-
 Class App {
 
   __New(Title, Tabs?, SelectTab?) {
-    this.UI := Gui("+AlwaysOnTop", Title " - v" IniRead("settings.ini", "App", "build"))
+    this.UI := Gui("+AlwaysOnTop", Title)
     this.UI.SetFont("s9", "Tahoma")
     if IsSet(Tabs)
       this.Tab := this.UI.AddTab3("Choose" SelectTab, Tabs)
@@ -27,6 +12,7 @@ Class App {
     this.LocalLanguage := []
   }
 
+  ; Create button with pre-defined format and action
   Button(Name, Action, KeepUI?) {
     ButtonControl := this.UI.AddButton(
       this.ButtonPosition,
@@ -43,11 +29,458 @@ Class App {
     }
     return ButtonControl
   }
+  
+  ; Open URL from given IDs
+  static OpenURL(destination, id) {
+    Target := Map(
+      "Content Search AG", "https://satellite.tiktok-row.net/troubleshooting/content/result/?ad_ids=_INPUT_ID&search_type=ad&show_type=ad",
+      "Content Search Video by Adv ID", "https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=_INPUT_ID&search_type=video&show_type=video",
+      "Actor Search", "https://satellite.tiktok-row.net/troubleshooting/actor/1/_INPUT_ID?page=5",
+      "JEDI Video Embedding", "https://www.adsintegrity.net/se/actor?actors=_INPUT_ID&ruleId=9999999989",
+      "JEDI Features", "https://www.adsintegrity.net/se/actor/detail?value=_INPUT_ID&/",
+      "Mercury", "https://www.adsintegrity.net/integrity_experience_center/mercury/tickets/detail/_INPUT_ID",
+      "Lighthouse", "https://lighthouse.tiktok-row.net/detail/video?item_id=_INPUT_ID&config_key=tiktok",
+      "TikTok", "https://www.tiktok.com/@_INPUT_ID",
+      "Whois", "https://www.whois.com/whois/_INPUT_ID",
+    )
+  
+    try WinActivate("ahk_exe chrome.exe")
+    catch TargetError
+      MsgBox("Open Chrome first then try again", "Error!", "0x30")
+    else {
+      SendMode "Event"
+      A_Clipboard := StrReplace(Target[destination], "_INPUT_ID", Trim(id))
+      Send "^t^v{Enter}"
+    }
+  }
+}
+
+Class Advanced extends App {
+
+  Tools() {
+    this.Tab.UseTab("Tools")
+    ; Input box
+    InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
+    this.Button("Clear", () => Format("Delete"), true)
+    this.Button("Comma Delimiter", () => Format("Delimiter"), true)
+
+    ; Tasks
+    this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Tasks")
+    this.Button("Unique LP", RemoveDupLP, true)
+    this.Button("Actor Search Loop", ActorSearchLoop, true)
+    ;this.Button("Autopay Bad Debt", Autopay, true)
+    this.Button("Take a Break", TakeaBreak, true)
+
+    this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
+    this.Button("Content Search", () => QuickURL("Content Search AG"), true)
+
+    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Advertiser ID")
+    this.Button("Actor Search", () => QuickURL("Actor Search"), true)
+    this.Button("Content Search (Video/Item)", () => QuickURL("Content Search Video by Adv ID"), true)
+    this.Button("JEDI Features", () => QuickURL("JEDI Features"), true)
+    this.Button("JEDI Video Embedding", () => QuickURL("JEDI Video Embedding"), true)
+
+    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Others")
+    this.Button("Lighthouse", () => QuickURL("Lighthouse"), true)
+    this.Button("TikTok", () => QuickURL("TikTok"), true)
+    this.Button("Whois", () => QuickURL("Whois"), true)
+    this.Button("Mercury", () => QuickURL("Mercury"), true)
+
+    ; Asking for password to run private tasks
+    Authorization(password) {
+      Auth := InputBox("Enter code to launch", "Security Clearance Required", "w230 h90 Password")
+      switch Auth.Result {
+        case "OK":
+          switch Auth.Value {
+            case password: return true
+            default: return false
+          }
+        default: return false
+      }
+    }
+
+    ; Convert number of seconds to hours, minutes and seconds
+    FormatSeconds(Seconds) { 
+      time := 19990101  ; *Midnight* of an arbitrary date.
+      time := DateAdd(time, Seconds, "Seconds")
+      if Seconds//3600 != 0
+        return Seconds//3600 "h " FormatTime(time, "m'm 'ss's'")
+      else
+        if Seconds <= 60
+          return Seconds "s"
+        else
+          return FormatTime(time, "m'm 'ss's'")
+    }
+    
+  
+    Format(action) {
+      switch action {
+        case "Delete":
+          InputText.Text := ""
+        case "Delimiter":
+          For char in ["`r`n", "`r", "`n", "`t", " "]
+            InputText.Text := StrReplace(InputText.Text, char, ",")
+          InputText.Text := Trim(InputText.Text, ",")
+      }
+    }
+
+    TakeaBreak(*) {
+      ; Collect input data and close the main app
+      InputData := InputText.Text
+      this.UI.Destroy()
+
+      ; Launch authentication
+      switch Authorization("''''") {
+
+        ; Correct password
+        case true:
+
+          ; Set up variables and settings
+          TicketID := []
+          Running := true
+          WaitTime := IniRead("settings.ini", "Idle", "time")
+          ElapsedTime := 0
+          CoordMode "Mouse", "Client"
+          SendMode "Event"
+          SetKeyDelay 75
+
+          ; Process input data
+          for char in ["`r`n", "`r", "`n", "`t", " "]
+            InputData := StrReplace(InputData, char, ",")
+          loop parse InputData, ","
+            if IsInteger(A_LoopField) and StrLen(A_LoopField) = 9
+              TicketID.Push(A_LoopField)
+
+          ; Create status UI
+          StatusUI := Gui("+AlwaysOnTop", "Ongoing")
+          StatusUI.SetFont("s9", "Tahoma")
+          Text1 := StatusUI.AddText("w200", "Initializing...")
+          Text2 := StatusUI.AddText("wp xp y+8", "Initializing...")
+          Text3 := StatusUI.AddText("wp xp y+8", "Initializing...")
+          ProgressBar := StatusUI.AddProgress("wp xp y+8 R1 cGreen BackgroundMaroon Range0-" Round(WaitTime * 60, 0))
+          StatusUI.Show("xCenter yCenter")
+          StatusUI.OnEvent("Close", Stop)
+
+          ; Switch to chrome, open a blank tab
+          WinActivate "ahk_exe chrome.exe"
+          Send "^t"
+
+          ; Main refresh loop, run when the status window still open
+          while Running {
+            ; Block mouse and keyboard input, remember the current window
+            BlockInput true
+            CurrentApp := WinGetProcessName("A")
+
+            ; Active Chrome and open a random ticket
+            WinActivate "ahk_exe chrome.exe"
+            Send "^2^l"
+            SelectedTicket := TicketID[Random(1, TicketID.Length)]
+            A_Clipboard := "https://www.adsintegrity.net/ticket-platform/task?__appId=1001&__nodeId=" SelectedTicket-1
+            Send "^v{Enter}^1" ; Go back to WFM tab
+
+            ; Go back to the previous window and allow input again
+            WinActivate "ahk_exe " CurrentApp
+            BlockInput false
+
+            ; Countdown timer update
+            TimeRemain := Round(WaitTime * 60, 0)
+            ProgressBar.Value := 0
+            loop {
+              ElapsedTime += 1
+              if A_TimeIdle > 60000
+                Send "{RShift}"
+              Text1.Text := "Current ticket ID: " SelectedTicket
+              Text2.Text := "Time to open next ticket: " FormatSeconds(TimeRemain)
+              Text3.Text := "Elapsed time: " FormatSeconds(ElapsedTime)
+              ProgressBar.Value += 1
+              TimeRemain := TimeRemain - 1
+              Sleep 1000
+            } until TimeRemain = 0 or !Running
+          }
+
+          ; Close the ticket tab when the script is stopped (status window closed)
+          CurrentApp := WinGetProcessName("A")
+          BlockInput true
+          WinActivate "ahk_exe chrome.exe"
+          Send "^2^w"
+          WinActivate "ahk_exe " CurrentApp
+          BlockInput false
+
+        ; Incorrect password
+        case false:
+          return
+
+        Stop(*) {
+          Running := false
+        }
+      }
+    }
+    
+    /*
+    Autopay(*) {
+      ; Collect input data and close the main app
+      InputData := InputText.Text
+      this.UI.Destroy()
+
+      ; Launch authentication
+      switch Authorization("''''") {
+        case true:
+          AdvID := []
+          Result := ""
+          BadActorNum := 0
+          Stop := false
+          ; Process input data
+          for char in ["`r`n", "`r", "`n", "`t", " "]
+            InputData := StrReplace(InputData, char, ",")
+          loop parse InputData, ","
+            if A_LoopField != ""
+              AdvID.Push(A_LoopField)
+          OpenURL("Actor Search", AdvID[1])
+          Sleep 25
+          Confirm := MsgBox("Is the page fully loaded and cursor in correct position?", "Continue?", "Icon? OKCancel 0x40000")
+          if Confirm = "Cancel"
+            return
+          else {
+            ; Create script running status UI
+            StatusUI := Gui("+AlwaysOnTop", "Searching...")
+            StatusUI.SetFont("s9", "Tahoma")
+            StatusUI.AddText(
+              "w400 cMaroon Center Section",
+              (
+                "!!! WARNING !!!
+                Avoid clicking elsewhere while the search is in progress.
+                To stop the search, simply close this window."
+              )
+            )
+            ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
+            ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
+            BadActorText := StatusUI.AddText("wp xp y+8 Center", "Be patient, nothing found yet!")
+            CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
+            CopyButton.Enabled := false
+            CopyButton.OnEvent("Click", Finish)
+            StatusUI.OnEvent("Close", Cancel)
+            StatusUI.Show("xCenter yCenter")
+      
+            ; Refocus on browser to run script
+            WinActivate "ahk_exe chrome.exe"
+            SendMode "Event"
+      
+            ; Search loop
+            for id in AdvID {
+              if Stop = false {
+                ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(Integer(1.2*(AdvID.Length-A_Index)))
+                ProgressBar.Value += 1
+                A_Clipboard := id
+                Send "^a^v{Tab}{Enter}"
+                Sleep 1200
+                Send "^a^c"
+                ClipWait
+                CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
+                if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
+                  if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
+                    Result .= id "`n"
+                    BadActorNum += 1
+                    BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
+                  }
+                if A_Index = AdvID.Length {
+                  ProgressText.Text := "Checking complete!"
+                  CopyButton.Enabled := true
+                } else Send "+{Tab}"
+              } else break
+            }
+          }
+        case false: return
+      }
+
+      Cancel(*) {
+        Stop := true
+      }
+
+      Finish(*) {
+        A_Clipboard := Result
+        StatusUI.Destroy()
+      }
+    }
+    */
+  
+    RemoveDupLP(*) {
+      RawTextArray := StrSplit(InputText.Value, "`n", "`r")
+      LandingPages := []
+      UniqueLP := []
+      DuplicateCreative := []
+  
+      this.UI.Destroy()
+    
+      loop parse A_Clipboard, "`n", "`r" {
+        LPIndex := A_Index + 1
+        if A_LoopField = "Landing page link"
+          LandingPages.Push RawTextArray[LPIndex]
+      }
+    
+      for link in LandingPages {
+        if A_Index = 1 {
+          UniqueLP.Push link
+        } else {
+          duplicate := false
+          loop UniqueLP.Length {
+            if link = UniqueLP[A_Index] {
+              duplicate := true
+              UniqueLP.Push ""
+              break
+            }
+          }
+          if duplicate = false
+            UniqueLP.Push link
+        }
+      }
+    
+      for link in UniqueLP {
+        creatives := "Creative "
+        loop LandingPages.Length {
+          if link = LandingPages[A_Index] {
+            creatives .= A_Index ", "
+          }
+        }
+        DuplicateCreative.Push creatives
+      }
+    
+      outputText := "Total Ad Creative: " LandingPages.Length "`n`n"
+      for link in UniqueLP {
+        if link != ""
+          outputText .= DuplicateCreative[A_Index] "`n" link "`n`n"
+      }
+  
+      MsgBox(outputText, "Unique Landing Pages")
+    }
+  
+    ActorSearchLoop(*) {
+      SendMode "Event"
+      SetKeyDelay 75
+  
+      AdvIDList := InputText.Text
+      For char in ["`r`n", "`r", "`n", "`t", " "]
+        AdvIDList := StrReplace(AdvIDList, char, ",")
+      AdvIDList := Trim(AdvIDList, ",")
+  
+      ResultMsg := ""
+  
+      this.UI.Destroy()
+  
+      loop parse AdvIDList, "," {
+        A_Clipboard := A_LoopField
+        Send "^a^v{Enter}"
+        result := MsgBox(
+          (
+            "Select this one?
+            
+            YES: Select this Adv ID (auto pay bad debt, L0 content violation etc.)
+            NO: Ignore, search the next Adv ID
+            Cancel: Stop the search"
+          ),
+          "Selection",
+          "YesNoCancel"
+        )
+        if result = "No"
+          continue
+        else if result = "Cancel"
+          return
+        else
+          ResultMsg .= A_LoopField "`n"
+      }
+      A_Clipboard := ResultMsg
+      ResultMsg .= "`nClick OK to copy those Adv IDs to clipboard"
+      MsgBox(
+        ResultMsg,
+        "Results"
+      )
+    }
+
+    QuickURL(destination) {
+      InputID := InputText.Text
+      this.UI.Destroy()
+      App.OpenURL(destination, InputID)
+    }
+  }
+
+  Hotkeys() {
+
+  }
+
+  Settings() {
+    this.Tab.UseTab("Settings")
+    this.UI.AddText("w200 Section", "General")
+  
+    LiteCheckbox := this.UI.AddCheckbox(
+      "w400 xp y+8 Checked" IniRead("settings.ini", "General", "liteversion"),
+      "Lite version"
+    )
+
+    this.UI.AddText("w200 xp y+8", "F2 options")
+    F2actorsearch := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F2", "actorsearch"),
+      "Actor Search"
+    )
+    F2jedifeature := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F2", "jedifeature"),
+      "JEDI Features"
+    )
+    F2contentsearchvideo := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F2", "contentsearchvideo"),
+      "Content Search Video/Item"
+    )
+    F2videoembedding := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F2", "videoembedding"),
+      "JEDI Video Embedding"
+    )
+
+    this.UI.AddText("w200 xp y+8", "F3 options")
+    F3actorsearch := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F3", "actorsearch"),
+      "Actor Search"
+    )
+    F3jedifeature := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F3", "jedifeature"),
+      "JEDI Features"
+    )
+    F3contentsearchvideo := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F3", "contentsearchvideo"),
+      "Content Search Video/Item"
+    )
+    F3videoembedding := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "F3", "videoembedding"),
+      "JEDI Video Embedding"
+    )
+
+    this.UI.AddText("w200 xp y+8", "Take a Break idle time (in minutes)")
+    IdleTime := this.UI.AddEdit(
+      "w200 xp y+8",
+      IniRead("settings.ini", "Idle", "time")
+    )
+
+    this.UI.OnEvent("Close", ApplySetting)
+  
+    ApplySetting(*) {
+      IniWrite LiteCheckbox.Value, "settings.ini", "General", "liteversion"
+      IniWrite F2actorsearch.Value, "settings.ini", "F2", "actorsearch"
+      IniWrite F2jedifeature.Value, "settings.ini", "F2", "jedifeature"
+      IniWrite F2contentsearchvideo.Value, "settings.ini", "F2", "contentsearchvideo"
+      IniWrite F2videoembedding.Value, "settings.ini", "F2", "videoembedding"
+      IniWrite F3actorsearch.Value, "settings.ini", "F3", "actorsearch"
+      IniWrite F3jedifeature.Value, "settings.ini", "F3", "jedifeature"
+      IniWrite F3contentsearchvideo.Value, "settings.ini", "F3", "contentsearchvideo"
+      IniWrite F3videoembedding.Value, "settings.ini", "F3", "videoembedding"
+      IniWrite IdleTime.Value, "settings.ini", "Idle", "time"
+    }
+  }
+}
+
+Class Basic extends App {
 
   AccountSuspension() {
     this.Tab.UseTab("Account Suspension")
     global Scenario
     global Policy
+    previous180 := FormatTime(DateAdd(A_Now, -180, "days"), "dddd, dd MMMM, yyyy")
 
     ; Column 1
     ; Scenario
@@ -312,347 +745,6 @@ Class App {
     this.Button("Wrong Document", WrongDoc)
   
   }
-
-  Tools() {
-    this.Tab.UseTab("Tools")
-    ; Input box
-    InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
-    this.Button("Clear", Delete, true)
-    ; Buttons
-    this.UI.AddText("w200 x+15 ys cMaroon Center Section", "Tasks")
-    this.Button("Unique LP", RemoveDupLP, true)
-    this.Button("Actor Search Loop", ActorSearchLoop, true)
-    this.Button("Argus", Autopay, true)
-    this.Button("Sisyphus", Standby, true)
-    this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
-    this.Button("Content Search", () => QuickURL("Content Search AG"), true)
-    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Advertiser ID")
-    this.Button("Actor Search", () => QuickURL("Actor Search"), true)
-    this.Button("Content Search (Video/Item)", () => QuickURL("Content Search Video by Adv ID"), true)
-    this.Button("JEDI Features", () => QuickURL("JEDI Features"), true)
-    this.Button("JEDI Video Embedding", () => QuickURL("JEDI Video Embedding"), true)
-    this.UI.AddText("wp xs y+8 cMaroon Center", "Search Others")
-    this.Button("Lighthouse", () => QuickURL("Lighthouse"), true)
-    this.Button("TikTok", () => QuickURL("TikTok"), true)
-    this.Button("Whois", () => QuickURL("Whois"), true)
-    this.Button("Mercury", () => QuickURL("Mercury"), true)
-  
-    Delete(*) {
-      InputText.Text := ""
-    }
-
-    Standby(*) {
-      ; Collect input data and close the main app
-      InputData := InputText.Text
-      this.UI.Destroy()
-
-      ; Launch authentication
-      switch Authorization("''''") {
-
-        ; Correct password
-        case true:
-
-          ; Set up variables and settings
-          TicketID := []
-          Running := true
-          CoordMode "Mouse", "Client"
-          SendMode "Event"
-          SetKeyDelay 75
-
-          ; Process input data
-          for char in ["`r`n", "`r", "`n", "`t", " "]
-            InputData := StrReplace(InputData, char, ",")
-          loop parse InputData, ","
-            if IsInteger(A_LoopField) and StrLen(A_LoopField) = 9
-              TicketID.Push(A_LoopField)
-
-          ; Ask user for delay time between refreshes
-          loop {
-            DelayTime := InputBox("Time between refreshes (in minutes)", "Time Interval", "w300 h100")
-            WaitTime := DelayTime.Value
-          } until IsNumber(DelayTime.Value)
-          WaitTime := DelayTime.Value
-
-          ; Create status UI
-          StatusUI := Gui("+AlwaysOnTop", "Operation in process")
-          StatusUI.SetFont("s9", "Tahoma")
-          Text0 := StatusUI.AddText("w400 R3 Center Section", "Ticket Pool: ")
-          for id in TicketID {
-            Text0.Text .= id
-            Text0.Text .= A_Index = TicketID.Length ? "." : ", "
-          }
-          Text1 := StatusUI.AddText("w400 xp y+8 Center", "Initializing...")
-          Text2 := StatusUI.AddText("w400 xp y+8 Center", "Close this window to stop the operation")
-          ProgressBar := StatusUI.AddProgress("wp xp y+8 R1 cGreen BackgroundMaroon Range0-" Round(WaitTime * 60, 0))
-          StatusUI.Show("xCenter yCenter")
-          StatusUI.OnEvent("Close", Stop)
-
-          ; Switch to chrome, open a blank tab
-          WinActivate "ahk_exe chrome.exe"
-          Send "^t"
-
-          ; Main refresh loop, run when the status window still open
-          while Running {
-            ; Block mouse and keyboard input, remember the current window
-            BlockInput true
-            CurrentApp := WinGetProcessName("A")
-
-            ; Active Chrome and open a random ticket
-            WinActivate "ahk_exe chrome.exe"
-            Send "^2^l"
-            SelectedTicket := TicketID[Random(1, TicketID.Length)]
-            A_Clipboard := "https://www.adsintegrity.net/ticket-platform/task?__appId=1001&__nodeId=" SelectedTicket-1
-            Send "^v{Enter}^1" ; Go back to WFM tab
-
-            ; Go back to the previous window and allow input again
-            WinActivate "ahk_exe " CurrentApp
-            BlockInput false
-
-            ; Countdown timer update
-            TimeRemain := Round(WaitTime * 60, 0)
-            ProgressBar.Value := 0
-            loop {
-              if A_TimeIdle > 60000
-                Send "{RShift}"
-              Text1.Text := "Handling ticket ID " SelectedTicket ". Fetch a new one in " FormatSeconds(TimeRemain)
-              ProgressBar.Value += 1
-              TimeRemain := TimeRemain - 1
-              Sleep 1000
-            } until TimeRemain = 0 or !Running
-          }
-
-          ; Close the ticket tab when the script is stopped (status window closed)
-          CurrentApp := WinGetProcessName("A")
-          BlockInput true
-          WinActivate "ahk_exe chrome.exe"
-          Send "^2^w"
-          WinActivate "ahk_exe " CurrentApp
-          BlockInput false
-
-        ; Incorrect password
-        case false:
-          return
-
-        Stop(*) {
-          Running := false
-        }
-      }
-    }
-
-    Autopay(*) {
-      ; Collect input data and close the main app
-      InputData := InputText.Text
-      this.UI.Destroy()
-
-      ; Launch authentication
-      switch Authorization("''''") {
-        case true:
-          AdvID := []
-          Result := ""
-          BadActorNum := 0
-          Stop := false
-          ; Process input data
-          for char in ["`r`n", "`r", "`n", "`t", " "]
-            InputData := StrReplace(InputData, char, ",")
-          loop parse InputData, ","
-            if A_LoopField != ""
-              AdvID.Push(A_LoopField)
-          OpenURL("Actor Search", AdvID[1])
-          Sleep 25
-          Confirm := MsgBox("Is the page fully loaded and cursor in correct position?", "Continue?", "Icon? OKCancel 0x40000")
-          if Confirm = "Cancel"
-            return
-          else {
-            ; Create script running status UI
-            StatusUI := Gui("+AlwaysOnTop", "Searching...")
-            StatusUI.SetFont("s9", "Tahoma")
-            StatusUI.AddText(
-              "w400 cMaroon Center Section",
-              (
-                "!!! WARNING !!!
-                Avoid clicking elsewhere while the search is in progress.
-                To stop the search, simply close this window."
-              )
-            )
-            ProgressBar := StatusUI.AddProgress("wp xp y+8 R2 cGreen BackgroundMaroon Range0-" AdvID.Length)
-            ProgressText := StatusUI.AddText("wp xp y+8 Center", "")
-            BadActorText := StatusUI.AddText("wp xp y+8 Center", "Be patient, nothing found yet!")
-            CopyButton := StatusUI.AddButton("w200 xp+100 y+8", "Copy Result and Exit")
-            CopyButton.Enabled := false
-            CopyButton.OnEvent("Click", Finish)
-            StatusUI.OnEvent("Close", Cancel)
-            StatusUI.Show("xCenter yCenter")
-      
-            ; Refocus on browser to run script
-            WinActivate "ahk_exe chrome.exe"
-            SendMode "Event"
-      
-            ; Search loop
-            for id in AdvID {
-              if Stop = false {
-                ProgressText.Text := "Checked " A_Index " / " AdvID.Length " advertisers. Estimated to finish in " FormatSeconds(Integer(1.2*(AdvID.Length-A_Index)))
-                ProgressBar.Value += 1
-                A_Clipboard := id
-                Send "^a^v{Tab}{Enter}"
-                Sleep 1200
-                Send "^a^c"
-                ClipWait
-                CrawledText := StrReplace(A_Clipboard, "`r`n", ",")
-                if RegExMatch(CrawledText, "Payment Method,Autopay") != 0
-                  if RegExMatch(CrawledText, "Bad Debt Amount,\$(?!0\.00)\d+\.\d{2}") != 0 {
-                    Result .= id "`n"
-                    BadActorNum += 1
-                    BadActorText.Text := "Yay! " BadActorNum " Autopay Bad Debts has been found!"
-                  }
-                if A_Index = AdvID.Length {
-                  ProgressText.Text := "Checking complete!"
-                  CopyButton.Enabled := true
-                } else Send "+{Tab}"
-              } else break
-            }
-          }
-        case false: return
-      }
-
-      Cancel(*) {
-        Stop := true
-      }
-
-      Finish(*) {
-        A_Clipboard := Result
-        StatusUI.Destroy()
-      }
-    }
-  
-    RemoveDupLP(*) {
-      RawTextArray := StrSplit(InputText.Value, "`n", "`r")
-      LandingPages := []
-      UniqueLP := []
-      DuplicateCreative := []
-  
-      this.UI.Destroy()
-    
-      loop parse A_Clipboard, "`n", "`r" {
-        LPIndex := A_Index + 1
-        if A_LoopField = "Landing page link"
-          LandingPages.Push RawTextArray[LPIndex]
-      }
-    
-      for link in LandingPages {
-        if A_Index = 1 {
-          UniqueLP.Push link
-        } else {
-          duplicate := false
-          loop UniqueLP.Length {
-            if link = UniqueLP[A_Index] {
-              duplicate := true
-              UniqueLP.Push ""
-              break
-            }
-          }
-          if duplicate = false
-            UniqueLP.Push link
-        }
-      }
-    
-      for link in UniqueLP {
-        creatives := "Creative "
-        loop LandingPages.Length {
-          if link = LandingPages[A_Index] {
-            creatives .= A_Index ", "
-          }
-        }
-        DuplicateCreative.Push creatives
-      }
-    
-      outputText := "Total Ad Creative: " LandingPages.Length "`n`n"
-      for link in UniqueLP {
-        if link != ""
-          outputText .= DuplicateCreative[A_Index] "`n" link "`n`n"
-      }
-  
-      MsgBox(outputText, "Unique Landing Pages")
-    }
-  
-    ActorSearchLoop(*) {
-      SendMode "Event"
-      SetKeyDelay 75
-  
-      AdvIDList := InputText.Text
-      For char in ["`r`n", "`r", "`n", "`t", " "]
-        AdvIDList := StrReplace(AdvIDList, char, ",")
-      AdvIDList := Trim(AdvIDList, ",")
-  
-      ResultMsg := ""
-  
-      this.UI.Destroy()
-  
-      loop parse AdvIDList, "," {
-        A_Clipboard := A_LoopField
-        Send "^a^v{Enter}"
-        result := MsgBox(
-          (
-            "Select this one?
-            
-            YES: Select this Adv ID (auto pay bad debt, L0 content violation etc.)
-            NO: Ignore, search the next Adv ID
-            Cancel: Stop the search"
-          ),
-          "Selection",
-          "YesNoCancel"
-        )
-        if result = "No"
-          continue
-        else if result = "Cancel"
-          return
-        else
-          ResultMsg .= A_LoopField "`n"
-      }
-      A_Clipboard := ResultMsg
-      ResultMsg .= "`nClick OK to copy those Adv IDs to clipboard"
-      MsgBox(
-        ResultMsg,
-        "Results"
-      )
-    }
-
-    QuickURL(destination) {
-      InputID := InputText.Text
-      this.UI.Destroy()
-      OpenURL(destination, InputID)
-    }
-  }
-
-  About() {
-    this.Tab.UseTab("About")
-    this.UI.AddText(
-      "w415 Section",
-      (
-        "About:
-  
-          Developed by nguyen.thevinh@bytedance.com
-        
-        Facts:
-  
-          - 180 days before today is " previous180 "
-          - Current week number is Week " week
-      )
-    )
-  
-    this.UI.AddText("w200 xp y+8", "Settings")
-    this.Button("Check for Update", Update)
-    this.Button("Save Settings", ApplySetting, false)
-    LiteCheckbox := this.UI.AddCheckbox("w400 xp y+8", "Lite version")
-    F3Button := this.UI.AddCheckbox("wp xp y+6", "F3 opens all suspension URLs")
-
-    LiteCheckbox.Value := IniRead("settings.ini", "Settings", "liteversion")
-    F3Button.Value := IniRead("settings.ini", "Settings", "f3allurl")
-  
-    ApplySetting(*) {
-      IniWrite LiteCheckbox.Value, "settings.ini", "settings", "liteversion"
-      IniWrite F3Button.Value, "settings.ini", "settings", "f3allurl"
-    }
-  }
 }
 
 Class AdGroup extends App {
@@ -720,6 +812,7 @@ Class AdGroup extends App {
     else
       this.templateswitcher.Push(0)
   }
+  
   BottomUI(VioLocation?, Frame?, Screenshot?, Grace?, PolicyURL?) {
     loop this.alldetails.Length
       this.alldetails[A_Index].OnEvent("Change", PreviewChange)
