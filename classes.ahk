@@ -2,13 +2,11 @@
 
 Class App {
 
-  __New(Title, Tabs?, SelectTab?) {
+  __New(Title) {
     this.UI := Gui("+AlwaysOnTop", Title)
     this.UI.SetFont("s9", "Tahoma")
-    if IsSet(Tabs)
-      this.Tab := this.UI.AddTab3("Choose" SelectTab, Tabs)
+    this.Tab := this.UI.AddTab3(, [])
     this.ButtonPosition := "wp xp y+2"
-    this.Template := []
     this.LocalLanguage := []
   }
 
@@ -35,7 +33,7 @@ Class App {
     Target := Map(
       "Content Search AG", "https://satellite.tiktok-row.net/troubleshooting/content/result/?ad_ids=_INPUT_ID&search_type=ad&show_type=ad",
       "Content Search Video by Adv ID", "https://satellite.tiktok-row.net/troubleshooting/content/result/?adv_ids=_INPUT_ID&search_type=video&show_type=video",
-      "Actor Search", "https://satellite.tiktok-row.net/troubleshooting/actor/1/_INPUT_ID?page=5",
+      "Actor Search", "https://satellite.tiktok-row.net/troubleshooting/actor/1/_INPUT_ID?page=" IniRead("settings.ini", "Tasks", "defaultactortab"),
       "JEDI Video Embedding", "https://www.adsintegrity.net/se/actor?actors=_INPUT_ID&ruleId=9999999989",
       "JEDI Features", "https://www.adsintegrity.net/se/actor/detail?value=_INPUT_ID&/",
       "Mercury", "https://www.adsintegrity.net/integrity_experience_center/mercury/tickets/detail/_INPUT_ID",
@@ -53,12 +51,23 @@ Class App {
       Send "^t^v{Enter}"
     }
   }
+
+  ; Check if active window is a browser
+  static OnBrowser() {
+    switch WinGetProcessName("A") {
+      case "msedge.exe", "BI-Client.exe", "chrome.exe", "firefox.exe": return true
+      default: return false
+    }
+  }
+
 }
 
 Class Advanced extends App {
 
   Tools() {
+    this.Tab.Add(["Tools"])
     this.Tab.UseTab("Tools")
+
     ; Input box
     InputText := this.UI.AddEdit("w200 R25 Section", A_Clipboard)
     this.Button("Clear", () => Format("Delete"), true)
@@ -69,7 +78,7 @@ Class Advanced extends App {
     this.Button("Unique LP", RemoveDupLP, true)
     this.Button("Actor Search Loop", ActorSearchLoop, true)
     ;this.Button("Autopay Bad Debt", Autopay, true)
-    this.Button("Take a Break", TakeaBreak, true)
+    this.Button("Idle Mode", Idle, true)
 
     this.UI.AddText("wp xs y+8 cMaroon Center Section", "Search Ad Group ID")
     this.Button("Content Search", () => QuickURL("Content Search AG"), true)
@@ -124,7 +133,7 @@ Class Advanced extends App {
       }
     }
 
-    TakeaBreak(*) {
+    Idle(*) {
       ; Collect input data and close the main app
       InputData := InputText.Text
       this.UI.Destroy()
@@ -138,7 +147,7 @@ Class Advanced extends App {
           ; Set up variables and settings
           TicketID := []
           Running := true
-          WaitTime := IniRead("settings.ini", "Idle", "time")
+          WaitTime := IniRead("settings.ini", "Tasks", "idletime")
           ElapsedTime := 0
           CoordMode "Mouse", "Client"
           SendMode "Event"
@@ -402,20 +411,22 @@ Class Advanced extends App {
     }
   }
 
-  Hotkeys() {
-
-  }
-
   Settings() {
+    this.Tab.Add(["Settings"])
     this.Tab.UseTab("Settings")
-    this.UI.AddText("w200 Section", "General")
-  
-    LiteCheckbox := this.UI.AddCheckbox(
-      "w400 xp y+8 Checked" IniRead("settings.ini", "General", "liteversion"),
-      "Lite version"
+
+    this.UI.AddGroupBox("w415 R2 Section", "General")
+    Globalapp := this.UI.AddCheckbox(
+      "w395 xp+10 yp+20 Checked" IniRead("settings.ini", "General", "globalapp"),
+      "Remove active browser requirement to open app"
+    )
+    Mousecontrol := this.UI.AddCheckbox(
+      "wp xp y+6 Checked" IniRead("settings.ini", "General", "mousecontrol"),
+      "Enable hotkeys featuring mouse movement"
     )
 
-    this.UI.AddText("w200 xp y+8", "F2 options")
+    this.UI.AddGroupBox("w415 xs y+10 R5 Section", "Hotkeys")
+    this.UI.AddText("w190 xp+10 yp+20", "F2 opens...")
     F2actorsearch := this.UI.AddCheckbox(
       "wp xp y+6 Checked" IniRead("settings.ini", "F2", "actorsearch"),
       "Actor Search"
@@ -433,7 +444,7 @@ Class Advanced extends App {
       "JEDI Video Embedding"
     )
 
-    this.UI.AddText("w200 xp y+8", "F3 options")
+    this.UI.AddText("w190 xs+215 ys+20", "F3 opens...")
     F3actorsearch := this.UI.AddCheckbox(
       "wp xp y+6 Checked" IniRead("settings.ini", "F3", "actorsearch"),
       "Actor Search"
@@ -451,16 +462,27 @@ Class Advanced extends App {
       "JEDI Video Embedding"
     )
 
-    this.UI.AddText("w200 xp y+8", "Take a Break idle time (in minutes)")
-    IdleTime := this.UI.AddEdit(
-      "w200 xp y+8",
-      IniRead("settings.ini", "Idle", "time")
+    this.UI.AddGroupBox("w415 xs y+10 R5 Section", "Tasks")
+    this.UI.AddText("w300 xp+10 yp+20 R1", "Time between refreshes in Idle Mode (minutes):")
+    this.UI.AddEdit("w50 x+10 yp")
+    Idletime := this.UI.AddUpDown("Range1-20", IniRead("settings.ini", "Tasks", "idletime"))
+    this.UI.AddText("w200 xs+10 y+6 R1", "Default tab of Actor Search result:")
+    DefaultActor := this.UI.AddDDL(
+      "w150 x+10 yp Choose" IniRead("settings.ini", "Tasks", "defaultactortab"),
+      [
+        "Enforcement History",
+        "",
+        "",
+        "",
+        "Capital Risk",
+      ]
     )
 
     this.UI.OnEvent("Close", ApplySetting)
   
     ApplySetting(*) {
-      IniWrite LiteCheckbox.Value, "settings.ini", "General", "liteversion"
+      IniWrite Globalapp.Value, "settings.ini", "General", "globalapp"
+      IniWrite Mousecontrol.Value, "settings.ini", "General", "mousecontrol"
       IniWrite F2actorsearch.Value, "settings.ini", "F2", "actorsearch"
       IniWrite F2jedifeature.Value, "settings.ini", "F2", "jedifeature"
       IniWrite F2contentsearchvideo.Value, "settings.ini", "F2", "contentsearchvideo"
@@ -469,7 +491,8 @@ Class Advanced extends App {
       IniWrite F3jedifeature.Value, "settings.ini", "F3", "jedifeature"
       IniWrite F3contentsearchvideo.Value, "settings.ini", "F3", "contentsearchvideo"
       IniWrite F3videoembedding.Value, "settings.ini", "F3", "videoembedding"
-      IniWrite IdleTime.Value, "settings.ini", "Idle", "time"
+      IniWrite Idletime.Value, "settings.ini", "Tasks", "idletime"
+      IniWrite DefaultActor.Value, "settings.ini", "Tasks", "defaultactortab"
     }
   }
 }
@@ -477,6 +500,7 @@ Class Advanced extends App {
 Class Basic extends App {
 
   AccountSuspension() {
+    this.Tab.Add(["Account Suspension"])
     this.Tab.UseTab("Account Suspension")
     global Scenario
     global Policy
@@ -628,6 +652,7 @@ Class Basic extends App {
   }
 
   AdGroup() {
+    this.Tab.Add(["Ad Group"])
     this.Tab.UseTab("Ad Group")
   
     ; 1st column
@@ -748,69 +773,38 @@ Class Basic extends App {
 }
 
 Class AdGroup extends App {
-  static Opening :=
-  (
-    "Dear Valuable Client,
+
+  __New(Title) {
+    this.UI := Gui("+AlwaysOnTop", Title)
+    this.UI.SetFont("s9", "Tahoma")
+    this.Template := []
+  }
+
+  static Opening := "Dear Valuable Client,`n`nThanks for contacting us and sorry for keeping you waiting.`n`n"
   
-    Thanks for contacting us and sorry for keeping you waiting.
-    
-    "
-  )
-  static Closing :=
-  (
-    "
-    
-    Hope my explanation is able to assist you. Please feel free to let us know if you have any further questions."
-  )
-  static Screenshot :=
-  (
-    "
-    
-    Please take note that the provided screenshots are for reference purposes only. Violations include but are not limited to those screenshots."
-  )
-  static Grace :=
-  (
-    "
-    
-    Grace Period: 3 Days. You will have 3 days to fix the ad group and within this grace period your ad will not be interrupted. If the ad group is not fixed within the grace period, the ad group will be rejected and the advertiser is at risk of being removed from Tier 0."
-  )
+  static Closing := "`n`nHope my explanation is able to assist you. Please feel free to let us know if you have any further questions."
+  
+  static Screenshot := "`n`nPlease take note that the provided screenshots are for reference purposes only. Violations include but are not limited to those screenshots."
+  
+  static Grace := "`n`nGrace Period: 3 Days. You will have 3 days to fix the ad group and within this grace period your ad will not be interrupted. If the ad group is not fixed within the grace period, the ad group will be rejected and the advertiser is at risk of being removed from Tier 0."
+
   violocations := ""
   alldetails := []
   allreplies := []
   templateswitcher := []
-  detailplaceholder := [
-    "DETAIL_ONE",
-    "DETAIL_TWO",
-    "DETAIL_THREE",
-    "DETAIL_FOUR",
-  ]
-  replyplaceholder := [
-    "REPLY_ONE",
-    "REPLY_TWO",
-    "REPLY_THREE",
-    "REPLY_FOUR",
-  ]
+  detailplaceholder := ["DETAIL_ONE", "DETAIL_TWO", "DETAIL_THREE", "DETAIL_FOUR"]
+  replyplaceholder := ["REPLY_ONE", "REPLY_TWO", "REPLY_THREE", "REPLY_FOUR"]
+  
   Detail(Type, Prompt, Options, TemplateSwitcher, Reply := Options) {
-    this.UI.AddText(
-      "w350",
-      Prompt
+    this.UI.AddText("w350", Prompt)
+    DetailControl := this.UI.Add(
+      Type = "ComboBox" ? "ComboBox" : "DropDownList",
+      "wp xp y+8 Choose1",
+      Options
     )
-    if Type = "ComboBox" {
-      DetailControl := this.UI.AddComboBox(
-        "wp xp y+8 Choose1",
-        Options
-      )
-    } else
-      DetailControl := this.UI.AddDropDownList(
-        "wp xp y+8 Choose1",
-        Options
-      )
     this.alldetails.Push(DetailControl)
     this.allreplies.Push(Reply)
-    if TemplateSwitcher
-      this.templateswitcher.Push(1)
-    else
-      this.templateswitcher.Push(0)
+    this.templateswitcher.Push(TemplateSwitcher ? 1 : 0)
   }
   
   BottomUI(VioLocation?, Frame?, Screenshot?, Grace?, PolicyURL?) {
@@ -819,41 +813,17 @@ Class AdGroup extends App {
     
     ; Violation Locations
     if VioLocation {
-      this.UI.AddText(
-        "w350 xp y+8 Section",
-        "Violation locations"
-      )
+      this.UI.AddText("w350 xp y+8 Section", "Violation locations")
       this.location := [
         ; Right col
-        this.UI.AddCheckBox(
-          "xp+140 ys+20",
-          "Profile Photo"
-        ),
-        this.UI.AddCheckBox(
-          "xp y+5",
-          "Source"
-        ),
-        this.UI.AddCheckBox(
-          "xp y+5",
-          "Custom Image Card"
-        ),
+        this.UI.AddCheckBox("xp+140 ys+20", "Profile Photo"),
+        this.UI.AddCheckBox("xp y+5", "Source"),
+        this.UI.AddCheckBox("xp y+5", "Custom Image Card"),
         ; Left col
-        this.UI.AddCheckBox(
-          "xp-140 ys+20",
-          "Landing Page"
-        ),
-        this.UI.AddCheckBox(
-          "xp y+5 Checked",
-          "Ad Video"
-        ),
-        this.UI.AddCheckBox(
-          "xp y+5",
-          "Ad Title"
-        ),
-        this.UI.AddCheckBox(
-          "xp y+5",
-          "Download Card App Description"
-        ),
+        this.UI.AddCheckBox("xp-140 ys+20", "Landing Page"),
+        this.UI.AddCheckBox("xp y+5 Checked", "Ad Video"),
+        this.UI.AddCheckBox("xp y+5", "Ad Title"),
+        this.UI.AddCheckBox("xp y+5", "Download Card App Description"),
       ]
       Loop this.location.Length
         this.location[A_Index].OnEvent("Click", PreviewChange)
@@ -861,74 +831,44 @@ Class AdGroup extends App {
 
     ; Opening/Closing
     if Frame {
-      this.UI.AddText(
-        "w350 xp y+8 Section",
-        "Options"
-      )
-      this.Frame := this.UI.AddCheckBox(
-        "w350 xp ys+20 Checked",
-        "Opening and Closing texts"
-      )
+      this.UI.AddText("w350 xp y+8 Section", "Options")
+      this.Frame := this.UI.AddCheckBox("w350 xp ys+20 Checked", "Opening and Closing texts")
       this.Frame.OnEvent("Click", PreviewChange)
 
       ; Space for other violations
-      this.MultiViolation := this.UI.AddCheckBox(
-        "w350 xp y+5",
-        "Add bullet point and spacing for next violations"
-      )
+      this.MultiViolation := this.UI.AddCheckBox("w350 xp y+5", "Add bullet point and spacing for next violations")
       this.MultiViolation.OnEvent("Click", PreviewChange)
     }
 
     ; Screenshot
     if Screenshot {
-      this.Screenshot := this.UI.AddCheckBox(
-        "w350 xp y+5",
-        "Screenshots are not exhaustive"
-      )
+      this.Screenshot := this.UI.AddCheckBox("w350 xp y+5", "Screenshots are not exhaustive")
       this.Screenshot.OnEvent("Click", PreviewChange)
     }
 
     ; Grace Period
     if Grace {
-      this.Grace := this.UI.AddCheckBox(
-        "w350 xp y+5",
-        "Grace period for T0"
-      )
+      this.Grace := this.UI.AddCheckBox("w350 xp y+5", "Grace period for T0")
       this.Grace.OnEvent("Click", PreviewChange)
     }
 
     ; Policy Link
     if PolicyURL != false {
-      this.InternalPolicy := this.UI.AddCheckBox(
-        "xp+140 ys+96",
-        "Internal policy link"
-      )
+      this.InternalPolicy := this.UI.AddCheckBox("xp+140 ys+96", "Internal policy link")
       this.InternalPolicy.OnEvent("Click", SwitchtoInternal)
       this.InternalPolicy.OnEvent("Click", PreviewChange)
-      this.ExternalPolicy := this.UI.AddCheckBox(
-        "xp-140 ys+96",
-        "External policy link"
-      )
+      this.ExternalPolicy := this.UI.AddCheckBox("xp-140 ys+96", "External policy link")
       this.ExternalPolicy.OnEvent("Click", SwitchtoExternal)
       this.ExternalPolicy.OnEvent("Click", PreviewChange)
     }
 
     ; Preview
     this.UI.AddText("w350 y+8", "Preview")
-    this.Preview := this.UI.AddEdit(
-      "wp xp y+5 R10 ReadOnly",
-      ""
-    )
+    this.Preview := this.UI.AddEdit("wp xp y+5 R10 ReadOnly", "")
 
     ; Buttons
-    this.UI.AddButton(
-      "Default w170 y+8",
-      "Submit"
-    ).OnEvent("Click", SubmitBtn)
-    this.UI.AddButton(
-      "w170 x+8 yp",
-      "Copy to Clipboard"
-    ).OnEvent("Click", CopyBtn)
+    this.UI.AddButton("Default w170 y+8", "Submit").OnEvent("Click", SubmitBtn)
+    this.UI.AddButton("w170 x+8 yp", "Copy to Clipboard").OnEvent("Click", CopyBtn)
 
     SubmitBtn(*) {
       A_Clipboard := this.Preview.Value
@@ -947,77 +887,17 @@ Class AdGroup extends App {
       this.InternalPolicy.Value := 0
     }
     PreviewChange(*) {
-      if Frame {
-        if this.Frame.Value = 1 {
-          OpenFrame := AdGroup.Opening
-          CloseFrame := AdGroup.Closing
-        } else {
-          OpenFrame := ""
-          CloseFrame := ""
-        }
-        if this.MultiViolation.Value = 1 {
-          CurrentBullet := "+ "
-          NextBullet := 
-            (
-              "
-
-              + "
-            )
-        } else {
-          CurrentBullet := ""
-          NextBullet := ""
-        }
-      } else {
-        OpenFrame := ""
-        CloseFrame := ""
-        CurrentBullet := ""
-        NextBullet := ""
-      }
-      if Screenshot {
-        if this.Screenshot.Value = 1
-          ScreenshotText := AdGroup.Screenshot
-        else
-          ScreenshotText := ""
-      } else
-        ScreenshotText := ""
-      if Grace {
-        if this.Grace.Value = 1
-          GraceText := AdGroup.Grace
-        else
-          GraceText := ""
-      } else
-        GraceText := ""
+      OpenFrame := Frame ? this.Frame.Value = 1 ? AdGroup.Opening : "" : ""
+      CloseFrame := Frame ? this.Frame.Value = 1 ? AdGroup.Closing : "" : ""
+      CurrentBullet := Frame ? this.MultiViolation.Value = 1 ? "+ " : "" : ""
+      NextBullet := Frame ? this.MultiViolation.Value = 1 ? "`n`n+ " : "" : ""
+      ScreenshotText := Screenshot ? this.Screenshot.Value = 1 ? AdGroup.Screenshot : "" : ""
+      GraceText := Grace ? this.Grace.Value = 1 ? AdGroup.Grace : "" : ""
       if PolicyURL != false {
         if this.InternalPolicy.Value = 1 {
-          if PolicyURL = "creative"
-            PolicyURLText := 
-              (
-                "
-                
-                For more policy details, please refer to https://bytedance.sg.feishu.cn/docs/doccnIbnmgMRkyJlvt1cakgpCYd"
-              )
-          else
-            PolicyURLText := 
-              (
-                "
-                
-                For more policy details, please refer to https://bytedance.sg.feishu.cn/docs/doccn7grSHplBqjcZSwQ5IdwntP"
-              )
+          PolicyURLText := PolicyURL = "creative" ? "`n`nFor more policy details, please refer to https://bytedance.sg.feishu.cn/docs/doccnIbnmgMRkyJlvt1cakgpCYd" : "`n`nFor more policy details, please refer to https://bytedance.sg.feishu.cn/docs/doccn7grSHplBqjcZSwQ5IdwntP"
         } else if this.ExternalPolicy.Value = 1 {
-          if PolicyURL = "creative"
-            PolicyURLText := 
-              (
-                "
-                
-                For more policy details, please refer to https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives-landing-page"
-              )
-          else
-            PolicyURLText := 
-              (
-                "
-                
-                For more policy details, please refer to https://ads.tiktok.com/help/article/tiktok-advertising-policies-industry-entry"
-              )
+          PolicyURLText := PolicyURL = "creative" ? "`n`nFor more policy details, please refer to https://ads.tiktok.com/help/article/tiktok-advertising-policies-ad-creatives-landing-page" : "`n`nFor more policy details, please refer to https://ads.tiktok.com/help/article/tiktok-advertising-policies-industry-entry"
         } else
           PolicyURLText := ""
       } else
@@ -1045,15 +925,8 @@ Class AdGroup extends App {
         this.violocations := ""
         loop this.location.Length
           if this.location[A_Index].Value = 1
-            if this.violocations = ""
-              this.violocations := this.location[A_Index].Text
-            else
-              this.violocations := this.violocations ", " this.location[A_Index].Text
-        this.Preview.Value := StrReplace(
-          this.Preview.Value,
-          "VIO_LOCATION",
-          this.violocations
-        )
+            this.violocations := this.violocations = "" ? this.location[A_Index].Text : this.violocations ", " this.location[A_Index].Text
+        this.Preview.Value := StrReplace(this.Preview.Value, "VIO_LOCATION", this.violocations)
       }
     }
     PreviewChange()

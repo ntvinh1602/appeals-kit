@@ -1,28 +1,7 @@
 ﻿#Requires AutoHotkey v2.0
 
-ActiveBrowser(Browser?) {
-  switch IsSet(Browser) {
-    case true:
-      switch WinGetProcessName("A") {
-        case Browser ".exe": return true
-        default: return
-      }
-    case false:
-      switch WinGetProcessName("A") {
-        case "msedge.exe", "BI-Client.exe", "chrome.exe", "firefox.exe": return true
-        default: return false
-      }
-  }
-}
-
-if IniRead("settings.ini", "General", "liteversion") = 0
-  version := "full"
-else
-  version := "lite"
-
 #Include canned-responses\suspension\policy.ahk
 #Include canned-responses\suspension\scenario.ahk
-
 #Include canned-responses\adgroup\no_violation.ahk
 #Include canned-responses\adgroup\ad_format.ahk
 #Include canned-responses\adgroup\adult_sexual_content.ahk

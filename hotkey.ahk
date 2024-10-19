@@ -1,88 +1,128 @@
 ﻿#Requires AutoHotkey v2.0
 
-#HotIf ActiveBrowser()
-
-:*:````:: { ; Open account suspension CR
-  MainApp := Basic(
-    "Basic Kit",
-    ["Account Suspension", "Ad Group"],
-    1
-  )
-  MainApp.AccountSuspension()
-  MainApp.AdGroup()
-  MainApp.UI.Show("xCenter yCenter")
-}
-
-:*:``1:: { ; Open ad group CR
-  MainApp := Basic(
-    "Basic Kit",
-    ["Account Suspension", "Ad Group"],
-    2
-  )
-  MainApp.AccountSuspension()
-  MainApp.AdGroup()
-  MainApp.UI.Show("xCenter yCenter")
-}
-
-:*:``2:: { ; Open automation tool
-  SendInput "^c"
-  Sleep 100
-  MainApp := Advanced(
-    "Advanced Kit",
-    ["Tools", "Hotkeys", "Settings"],
-    1
-  )
-  MainApp.Tools()
-  MainApp.Hotkeys()
-  MainApp.Settings()
-  MainApp.UI.Show("xCenter yCenter")
-}
-
-#HotIf version = "full" and ActiveBrowser()
-
-F1:: { ; Click Submit
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  MouseGetPos &previousX, &previousY
-  switch A_ScreenHeight {
-    case 1080: Click "1830 1010"
-    case 1440: Click "2450 1370"
-    case 1600: Click "2450 1516"
+; Main App
+:*:````:: { ; Account suspension CR
+  if IniRead("settings.ini", "General", "globalapp") = 1 or App.OnBrowser() {
+    MainApp := Basic("Canned Responses")
+    MainApp.AccountSuspension()
+    MainApp.AdGroup()
+    MainApp.UI.Show("xCenter yCenter")
   }
-  MouseMove previousX, previousY
+}
+
+:*:``1:: { ; Ad group CR
+  if IniRead("settings.ini", "General", "globalapp") = 1 or App.OnBrowser() {
+    MainApp := Basic("Canned Responses")
+    MainApp.AdGroup()
+    MainApp.AccountSuspension()
+    MainApp.UI.Show("xCenter yCenter")
+  }
+}
+
+:*:``2:: { ; Automation tools
+  if IniRead("settings.ini", "General", "globalapp") = 1 or App.OnBrowser() {
+    SendInput "^c"
+    Sleep 100
+    MainApp := Advanced("Tools")
+    MainApp.Tools()
+    MainApp.Settings()
+    MainApp.UI.Show("xCenter yCenter")
+  }
+}
+
+; Moderation hotkey
+F1:: { ; Click Submit
+  if IniRead("settings.ini", "General", "mousecontrol") = 1 and WinGetProcessName("A") = "BI-Client.exe" {
+    SendMode "Event"
+    SetDefaultMouseSpeed 0
+    MouseGetPos &previousX, &previousY
+    switch A_ScreenHeight {
+      case 1080: Click "1830 1010"
+      case 1440: Click "2450 1370"
+      case 1600: Click "2450 1516"
+    }
+    MouseMove previousX, previousY
+  }
 }
 
 F2:: { ; Open Account Suspension links from selected Adv ID
-  SendMode "Event"
-  Send "^c"
-  Sleep 50
-  AdvID := Trim(A_Clipboard)
-  ;OpenURL("Actor Search", AdvID)
-  ;OpenURL("JEDI Features", AdvID)
-  App.OpenURL("Content Search Video by Adv ID", AdvID)
-  ;OpenURL("JEDI Video Embedding", AdvID)
-  ;Send "^+{Tab}^+{Tab}^+{Tab}"
+  if App.OnBrowser() {
+    SendMode "Event"
+    Send "^c"
+    Sleep 50
+    AdvID := Trim(A_Clipboard)
+    if IniRead("settings.ini", "F2", "actorsearch") =1
+      App.OpenURL("Actor Search", AdvID)
+    if IniRead("settings.ini", "F2", "jedifeature") =1
+      App.OpenURL("JEDI Features", AdvID)
+    if IniRead("settings.ini", "F2", "contentsearchvideo") =1
+      App.OpenURL("Content Search Video by Adv ID", AdvID)
+    if IniRead("settings.ini", "F2", "videoembedding") =1
+      App.OpenURL("JEDI Video Embedding", AdvID)
+    Send "^{Tab}^{Tab}"
+  }
 }
 
 F3:: { ; Open Account Suspension links from ticket
-  SendMode "Event"
-  Send "^a^c"
-  Sleep 50
-  Click
-  loop parse A_Clipboard, "`n", "`r"
-    if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
-      AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
-      break
+  if App.OnBrowser() {
+    SendMode "Event"
+    Send "^a^c"
+    Sleep 50
+    Click
+    loop parse A_Clipboard, "`n", "`r"
+      if RegExMatch(A_LoopField, "Advertisers\sID[0-9]+") != 0 {
+        AdvID := StrReplace(A_LoopField, "Advertisers ID", "")
+        break
+      }
+    if IniRead("settings.ini", "F3", "actorsearch") =1
+      App.OpenURL("Actor Search", AdvID)
+    if IniRead("settings.ini", "F3", "jedifeature") =1
+      App.OpenURL("JEDI Features", AdvID)
+    if IniRead("settings.ini", "F3", "contentsearchvideo") =1
+      App.OpenURL("Content Search Video by Adv ID", AdvID)
+    if IniRead("settings.ini", "F3", "videoembedding") =1
+      App.OpenURL("JEDI Video Embedding", AdvID)
+    Send "^{Tab}^{Tab}"
+  }
+}
+
+!x:: { ; Select JEDI strong features
+  if IniRead("settings.ini", "General", "mousecontrol") = 1 and WinGetProcessName("A") = "chrome.exe" {
+    SendMode "Event"
+    SetDefaultMouseSpeed 0
+    switch A_ScreenHeight {
+      case 1080:
+        Click "430 360"
+        Sleep 100
+        Click "430 390" ; video
+        Click "430 460" ; all url types
+        Click "430 570" ; did
+        Click "430 600" ; card info
+        Click "430 640" ; email
+        Click "430 680" ; registered email
+        Click "430 720" ; phone number
+      case 1440:
+        Click "476 360"
+        Sleep 100
+        Click "476 390" ; video
+        Click "476 462" ; all url types
+        Click "476 570" ; did
+        Click "476 610" ; card info
+        Click "476 640" ; email
+        Click "476 686" ; registered email
+        Click "476 730" ; phone number
+      case 1600:
+        Click "546 490"
+        Sleep 100
+        Click "546 530" ; video
+        Click "546 630" ; all url types
+        Click "546 760" ; did
+        Click "546 810" ; card info
+        Click "546 850" ; email
+        Click "546 900" ; registered email
+        Click "546 940" ; phone number
     }
-  if IniRead("settings.ini", "F3", "actorsearch") =1
-    App.OpenURL("Actor Search", AdvID)
-  if IniRead("settings.ini", "F3", "jedifeature") =1
-    App.OpenURL("JEDI Features", AdvID)
-  if IniRead("settings.ini", "F3", "contentsearchvideo") =1
-    App.OpenURL("Content Search Video by Adv ID", AdvID)
-  if IniRead("settings.ini", "F3", "videoembedding") =1
-    App.OpenURL("JEDI Video Embedding", AdvID)
-  Send "^{Tab}^{Tab}"
+  }
 }
 
 #MaxThreadsPerHotkey 2
@@ -96,70 +136,7 @@ F3:: { ; Open Account Suspension links from ticket
 }
 #MaxThreadsPerHotkey 1
 
-!x:: { ; Filter Features
-  SendMode "Event"
-  SetDefaultMouseSpeed 0
-  switch WinGetProcessName("A") {
-    case "BI-Client.exe":
-      switch A_ScreenHeight {
-        case 1080:
-          Click "426 382"
-          Sleep 100
-          Click "403 411" ; video
-          Click "403 490" ; all url types
-          Click "403 596" ; did
-          Click "403 633" ; card info
-          Click "403 667" ; email
-          Click "403 703" ; registered email
-          Click "403 740" ; phone number
-        case 1440:
-          Click "476 380"
-          Sleep 100
-          Click "360 411" ; video
-          Click "360 490" ; all url types
-          Click "360 596" ; did
-          Click "360 633" ; card info
-          Click "360 667" ; email
-          Click "360 703" ; registered email
-          Click "360 740" ; phone number
-      }
-    case "chrome.exe":
-      switch A_ScreenHeight {
-        case 1080:
-          Click "430 360"
-          Sleep 100
-          Click "430 390" ; video
-          Click "430 460" ; all url types
-          Click "430 570" ; did
-          Click "430 600" ; card info
-          Click "430 640" ; email
-          Click "430 680" ; registered email
-          Click "430 720" ; phone number
-        case 1440:
-          Click "476 360"
-          Sleep 100
-          Click "476 390" ; video
-          Click "476 462" ; all url types
-          Click "476 570" ; did
-          Click "476 610" ; card info
-          Click "476 640" ; email
-          Click "476 686" ; registered email
-          Click "476 730" ; phone number
-        case 1600:
-          Click "546 490"
-          Sleep 100
-          Click "546 530" ; video
-          Click "546 630" ; all url types
-          Click "546 760" ; did
-          Click "546 810" ; card info
-          Click "546 850" ; email
-          Click "546 900" ; registered email
-          Click "546 940" ; phone number
-      }
-  }
-
-}
-
+; Short text macro
 :*:``rj:: { ; Minimal reply temp    
   A_Clipboard :=
   (
@@ -185,13 +162,6 @@ F3:: { ; Open Account Suspension links from ticket
   A_Clipboard := "labubu raffles gambling livestream"
   Send "^v"
 }
-
-!q::SendInput "^+{Tab}" ; Switch to the tab on the left
-!w::SendInput "^{Tab}" ; Switch to the tab on the right
-!WheelDown::SendInput "{End}" ; Press End
-!WheelUp::SendInput "{Home}" ; Press Home
-
-#HotIf version = "full"
 
 :*:``qq:: { ; Query account suspension
   A_Clipboard :=
@@ -234,6 +204,9 @@ F3:: { ; Open Account Suspension links from ticket
   Send "^v"
 }
 
-^Space::Enter ; Ctrl+Space to Enter
-Del::Home ; Remap Del to Home
-Home::Del ;  Remap Home to Del
+; Key remapping
+!q::^+Tab
+!w::^Tab
+!WheelDown::End
+!WheelUp::Home
+^Space::Enter
